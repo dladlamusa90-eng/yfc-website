@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership | Youth For Christ International (YFC RSA)</title>
+    <meta name="description" content="Apply for YFC RSA membership and connect with Friday Prayer and Home Cells community discipleship.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container nav-bar">
+            <a class="brand" href="../index.html" aria-label="Youth For Christ International home">
+                <img class="brand-logo" src="../assets/images/logo3.png" alt="Youth For Christ logo">
+                <span class="brand-text">Youth For Christ International</span>
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
+                <a href="../index.html">Home</a>
+                <a href="../about/index.html">About</a>
+                <a href="../programs/daily-juice.html">Programs</a>
+                <a href="../events/index.html">Events</a>
+                <a href="membership.html">Get Involved</a>
+                <a href="../giving/index.html">Giving</a>
+                <a href="../contact/index.html">Contact</a>
+                <a class="button nav-cta" href="membership.html">Join Now</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="content-section">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="section-label">Get Involved</p>
+                    <h1>Membership Application</h1>
+                </div>
+                <div class="ministry-layout">
+                    <article class="content-card">
+                        <h2>Community Rhythms</h2>
+                        <p>Membership connects you to consistent prayer, discipleship, and evangelism with YFC RSA teams.</p>
+                        <ul class="program-list">
+                            <li><strong>Friday Prayer:</strong> Weekly intercession and spiritual growth session.</li>
+                            <li><strong>Home Cells:</strong> Small group fellowship for accountability and Bible study.</li>
+                        </ul>
+                    </article>
+                    <article class="content-card">
+                        <h3>Application Note</h3>
+                        <p>Please complete all sections below. Parent or guardian details are required for younger members.</p>
+                    </article>
+                </div>
+                <form class="membership-form" action="#" method="post">
+                    <section class="form-section">
+                        <h3>Personal Details</h3>
+                        <div class="form-grid">
+                            <label for="first-name">First Name</label>
+                            <input id="first-name" name="first-name" type="text" required>
+
+                            <label for="last-name">Last Name</label>
+                            <input id="last-name" name="last-name" type="text" required>
+
+                            <label for="dob">Date of Birth</label>
+                            <input id="dob" name="dob" type="date" required>
+
+                            <label for="gender">Gender</label>
+                            <input id="gender" name="gender" type="text" placeholder="Male/Female/Other">
+
+                            <label for="phone">Phone Number</label>
+                            <input id="phone" name="phone" type="tel" required>
+
+                            <label for="email">Email Address</label>
+                            <input id="email" name="email" type="email">
+
+                            <label for="address">Home Address</label>
+                            <input id="address" name="address" type="text" required>
+                        </div>
+                    </section>
+
+                    <section class="form-section">
+                        <h3>Parent or Guardian Information</h3>
+                        <div class="form-grid">
+                            <label for="guardian-name">Parent/Guardian Name</label>
+                            <input id="guardian-name" name="guardian-name" type="text" required>
+
+                            <label for="guardian-phone">Parent/Guardian Phone</label>
+                            <input id="guardian-phone" name="guardian-phone" type="tel" required>
+
+                            <label for="guardian-email">Parent/Guardian Email</label>
+                            <input id="guardian-email" name="guardian-email" type="email">
+
+                            <label for="guardian-relationship">Relationship</label>
+                            <input id="guardian-relationship" name="guardian-relationship" type="text" placeholder="Mother/Father/Aunt/Other">
+                        </div>
+                    </section>
+
+                    <section class="form-section">
+                        <h3>Next of Kin</h3>
+                        <div class="form-grid">
+                            <label for="nok-name">Next of Kin Name</label>
+                            <input id="nok-name" name="nok-name" type="text" required>
+
+                            <label for="nok-phone">Next of Kin Phone</label>
+                            <input id="nok-phone" name="nok-phone" type="tel" required>
+
+                            <label for="nok-relationship">Relationship</label>
+                            <input id="nok-relationship" name="nok-relationship" type="text" required>
+                        </div>
+                    </section>
+
+                    <button class="button" type="submit">Submit Membership Application</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

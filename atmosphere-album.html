@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Album | Youth For Christ International</title>
+    <meta name="description" content="Photo albums for Youth For Christ International moments and activities.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container nav-bar">
+            <a class="brand" href="index.html" aria-label="Youth For Christ International home">
+                <img class="brand-logo" src="assets/images/logo3.png" alt="Youth For Christ logo">
+                <span class="brand-text">Youth For Christ International</span>
+            </a>
+            <button
+                class="nav-toggle"
+                type="button"
+                aria-expanded="false"
+                aria-controls="primary-navigation"
+                aria-label="Open navigation menu"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
+                <a href="index.html">Home</a>
+                <a href="about/index.html">About</a>
+                <a href="programs/daily-juice.html">Programs</a>
+                <a href="events/index.html">Events</a>
+                <a href="get-involved/membership.html">Get Involved</a>
+                <a href="giving/index.html">Giving</a>
+                <a href="contact/index.html">Contact</a>
+                <a class="button nav-cta" href="get-involved/membership.html">Join Now</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="album-hero" id="album-hero">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="section-label" id="album-category-label">Photo Album</p>
+                    <h1 id="album-title">Moments Gallery</h1>
+                    <p id="album-description">A collection of captured moments from Youth For Christ gatherings and activities.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="album-section" aria-label="Category photo album">
+            <div class="container">
+                <div class="album-meta">
+                    <p id="album-photo-count" class="album-count">0 / 0 photos</p>
+                </div>
+                <div id="album-grid" class="album-grid"></div>
+                <div class="album-load-wrap">
+                    <button id="album-load-more" class="button album-load-more" type="button">Load More Photos</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
