@@ -54,6 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     const outreachPhotos = Array.from({ length: 43 }, (_, index) => `assets/images/outreach ${index + 1}.jpg`);
+    const jrtPhotos = Array.from({ length: 15 }, (_, index) => `assets/images/jrt ${index + 1}.JPG`);
+    const tourPhotos = Array.from({ length: 18 }, (_, index) => `assets/images/tour ${index + 1}.jpg`);
 
     const defaultAlbumPhoto = "assets/images/home.jpg";
     const albumConfig = {
@@ -68,13 +70,13 @@ document.addEventListener("DOMContentLoaded", () => {
             label: "Jesus Roundtable",
             title: "Jesus Roundtable Album",
             description: "Roundtable sessions and meaningful conversations centered on Christ.",
-            photos: [defaultAlbumPhoto]
+            photos: jrtPhotos
         },
         tours: {
             label: "Tours",
             title: "Tours Album",
             description: "Memories from ministry trips, visits, and shared journeys.",
-            photos: [defaultAlbumPhoto]
+            photos: tourPhotos
         },
         games: {
             label: "Games",
@@ -227,6 +229,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const previewPhotos = atmospherePhotos.slice(0, 8);
     const outreachPreviewPhotos = [4, 5, 9, 14, 18, 23, 28, 33, 38, 43].map((number) => outreachPhotos[number - 1]);
+    const jrtPreviewPhotos = [1, 3, 5, 7, 9, 11, 13, 15].map((number) => jrtPhotos[number - 1]);
+    const tourPreviewPhotos = [2, 4, 7, 10, 13, 16, 18].map((number) => tourPhotos[number - 1]);
 
     // Auto-advancing photo preview on the Outreach card.
     const outreachPreview = document.querySelector("[data-outreach-preview='true']");
@@ -258,6 +262,39 @@ document.addEventListener("DOMContentLoaded", () => {
         setPreview();
         setInterval(() => {
             previewIndex = (previewIndex + 1) % previewPhotos.length;
+            setPreview();
+        }, 3200);
+    }
+
+    // Auto-advancing photo preview on the Jesus Roundtable card.
+    const jrtPreview = document.querySelector("[data-jrt-preview='true']");
+    if (jrtPreview) {
+        let previewIndex = 0;
+        jrtPreview.classList.add("is-live-photo");
+
+        const setPreview = () => {
+            jrtPreview.style.backgroundImage = `url("${jrtPreviewPhotos[previewIndex]}")`;
+        };
+
+        setPreview();
+        setInterval(() => {
+            previewIndex = (previewIndex + 1) % jrtPreviewPhotos.length;
+            setPreview();
+        }, 3200);
+    }
+    // Auto-advancing photo preview on the Tours card.
+    const tourPreview = document.querySelector("[data-tours-preview='true']");
+    if (tourPreview) {
+        let previewIndex = 0;
+        tourPreview.classList.add("is-live-photo");
+
+        const setPreview = () => {
+            tourPreview.style.backgroundImage = `url("${tourPreviewPhotos[previewIndex]}")`;
+        };
+
+        setPreview();
+        setInterval(() => {
+            previewIndex = (previewIndex + 1) % tourPreviewPhotos.length;
             setPreview();
         }, 3200);
     }

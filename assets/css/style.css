@@ -1071,6 +1071,18 @@ p {
     background-repeat: no-repeat;
 }
 
+.jrt-bg.is-live-photo {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.tours-bg.is-live-photo {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .atmosphere-bg::before {
     content: "";
     position: absolute;
@@ -1085,6 +1097,14 @@ p {
 }
 
 .outreach-bg.is-live-photo::before {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.42));
+}
+
+.jrt-bg.is-live-photo::before {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.42));
+}
+
+.tours-bg.is-live-photo::before {
     background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.42));
 }
 
