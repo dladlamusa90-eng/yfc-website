@@ -57,6 +57,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const jrtPhotos = Array.from({ length: 15 }, (_, index) => `assets/images/jrt ${index + 1}.JPG`);
     const tourPhotos = Array.from({ length: 18 }, (_, index) => `assets/images/tour ${index + 1}.jpg`);
     const leadershipPhotos = Array.from({ length: 4 }, (_, index) => `assets/images/leadership ${index + 1}.jpg`);
+    const yfcwUppercasePhotoNumbers = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 22, 23, 24, 25, 26, 27]);
+    const yfcwPhotos = Array.from({ length: 30 }, (_, index) => {
+        const photoNumber = index + 1;
+        const extension = yfcwUppercasePhotoNumbers.has(photoNumber) ? "JPG" : "jpg";
+
+        return `assets/images/yfcw (${photoNumber}).${extension}`;
+    });
+    const moreUppercasePhotoNumbers = new Set([2, 3, 4, 5, 6, 7, 8, 15, 46, 49, 50, 52]);
+    const morePhotos = Array.from({ length: 52 }, (_, index) => {
+        const photoNumber = index + 1;
+        const extension = moreUppercasePhotoNumbers.has(photoNumber) ? "JPG" : "jpg";
+
+        return `assets/images/other 1 (${photoNumber}).${extension}`;
+    });
 
     const defaultAlbumPhoto = "assets/images/home.jpg";
     const albumConfig = {
@@ -98,6 +112,13 @@ document.addEventListener("DOMContentLoaded", () => {
             banner: "assets/images/leadership 1.jpg",
             photos: leadershipPhotos
         },
+        yfcw: {
+            label: "Youth For Christ Worship (YFCW)",
+            title: "Youth For Christ Worship (YFCW) Album",
+            description: "Powerful moments of worship, praise, and spiritual encounter with YFC youth.",
+            banner: "assets/images/yfcw (1).JPG",
+            photos: yfcwPhotos
+        },
         biblestudy: {
             label: "Bible Study",
             title: "Bible Study Album",
@@ -114,7 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
             label: "And More",
             title: "More Moments Album",
             description: "More meaningful moments and highlights from Youth For Christ.",
-            photos: [defaultAlbumPhoto]
+            banner: "assets/images/other 1 (1).jpg",
+            photos: morePhotos
         }
     };
 
@@ -234,6 +256,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const jrtPreviewPhotos = [1, 3, 5, 7, 9, 11, 13, 15].map((number) => jrtPhotos[number - 1]);
     const tourPreviewPhotos = [2, 4, 7, 10, 13, 16, 18].map((number) => tourPhotos[number - 1]);
     const leadershipPreviewPhotos = [1, 2, 3, 4].map((number) => leadershipPhotos[number - 1]);
+    const yfcwPreviewPhotos = [1, 4, 8, 12, 16, 20, 24, 27, 30].map((number) => yfcwPhotos[number - 1]);
+    const morePreviewPhotos = [1, 6, 12, 18, 24, 30, 36, 42, 48, 52].map((number) => morePhotos[number - 1]);
 
     // Create preview rotator with random offset (no sync between previews)
     const createPreviewRotator = (elementSelector, photoArray, interval = 3200) => {
@@ -265,6 +289,8 @@ document.addEventListener("DOMContentLoaded", () => {
     createPreviewRotator("[data-jrt-preview='true']", jrtPreviewPhotos);
     createPreviewRotator("[data-tours-preview='true']", tourPreviewPhotos);
     createPreviewRotator("[data-leadership-preview='true']", leadershipPreviewPhotos);
+    createPreviewRotator("[data-yfcw-preview='true']", yfcwPreviewPhotos);
+    createPreviewRotator("[data-more-preview='true']", morePreviewPhotos);
 
     // Album page renderer in batches to keep initial page load fast.
     const albumGrid = document.querySelector("#album-grid");
