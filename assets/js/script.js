@@ -116,20 +116,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const heroSection = document.querySelector(".hero-section");
 
     if (heroSection) {
-        const storageKey = "yfc-last-hero-image";
-        let nextHeroIndex = Math.floor(Math.random() * homeHeroPhotos.length);
-
-        try {
-            const previousHeroIndex = Number.parseInt(localStorage.getItem(storageKey) || "-1", 10);
-
-            if (homeHeroPhotos.length > 1 && previousHeroIndex === nextHeroIndex) {
-                nextHeroIndex = (nextHeroIndex + 1) % homeHeroPhotos.length;
-            }
-
-            localStorage.setItem(storageKey, String(nextHeroIndex));
-        } catch {
-            // Ignore storage issues and still use the randomized selection.
-        }
+        const randomBuffer = new Uint32Array(1);
+        window.crypto.getRandomValues(randomBuffer);
+        const nextHeroIndex = randomBuffer[0] % homeHeroPhotos.length;
 
         heroSection.style.backgroundImage = `url("${homeHeroPhotos[nextHeroIndex]}")`;
     }
