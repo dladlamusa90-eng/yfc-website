@@ -289,7 +289,7 @@ p {
     min-height: calc(100vh - 84px);
     padding: 6rem 0;
     overflow: clip;
-    background-image: url("../images/home.jpg");
+    background-image: none;
     background-size: cover;
     background-position: center 32%;
     background-repeat: no-repeat;
@@ -1065,6 +1065,12 @@ p {
     background-repeat: no-repeat;
 }
 
+.outreach-bg.is-live-photo {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .atmosphere-bg::before {
     content: "";
     position: absolute;
@@ -1075,6 +1081,10 @@ p {
 }
 
 .atmosphere-bg.is-live-photo::before {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.42));
+}
+
+.outreach-bg.is-live-photo::before {
     background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.42));
 }
 

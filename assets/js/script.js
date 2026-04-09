@@ -7,11 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
         "assets/images/home 3.jpg",
         "assets/images/home 4.jpg",
         "assets/images/home 5.jpg",
-        "assets/images/home 6.jpg",
         "assets/images/home 7.jpg",
         "assets/images/home 8.jpg",
         "assets/images/home 9.jpg",
-        "assets/images/home 10.jpg"
+        "assets/images/home 10.jpg",
+        "assets/images/home 11.jpg",
+        "assets/images/home 12.jpg"
     ];
 
     const atmospherePhotos = [
@@ -52,13 +53,16 @@ document.addEventListener("DOMContentLoaded", () => {
         "assets/images/atmosphere 35.jpg"
     ];
 
+    const outreachPhotos = Array.from({ length: 43 }, (_, index) => `assets/images/outreach ${index + 1}.jpg`);
+
     const defaultAlbumPhoto = "assets/images/home.jpg";
     const albumConfig = {
         outreach: {
             label: "Outreach",
             title: "Outreach Album",
             description: "Outreach moments that reflect compassion, service, and faith in action.",
-            photos: [defaultAlbumPhoto]
+            banner: "assets/images/outreach 33.jpg",
+            photos: outreachPhotos
         },
         jrt: {
             label: "Jesus Roundtable",
@@ -118,9 +122,37 @@ document.addEventListener("DOMContentLoaded", () => {
     if (heroSection) {
         const randomBuffer = new Uint32Array(1);
         window.crypto.getRandomValues(randomBuffer);
-        const nextHeroIndex = randomBuffer[0] % homeHeroPhotos.length;
 
-        heroSection.style.backgroundImage = `url("${homeHeroPhotos[nextHeroIndex]}")`;
+        let candidateIndex = randomBuffer[0] % homeHeroPhotos.length;
+        let attempts = 0;
+
+        const applyHeroImage = (imagePath) => {
+            heroSection.style.backgroundImage = `url("${imagePath}")`;
+        };
+
+        const tryLoadHeroImage = () => {
+            const imagePath = homeHeroPhotos[candidateIndex];
+            const probeImage = new Image();
+
+            probeImage.onload = () => {
+                applyHeroImage(imagePath);
+            };
+
+            probeImage.onerror = () => {
+                attempts += 1;
+
+                if (attempts >= homeHeroPhotos.length) {
+                    return;
+                }
+
+                candidateIndex = (candidateIndex + 1) % homeHeroPhotos.length;
+                tryLoadHeroImage();
+            };
+
+            probeImage.src = imagePath;
+        };
+
+        tryLoadHeroImage();
     }
 
     const normalizePath = (path) => path.replace(/\\/g, "/").replace(/\/index\.html$/i, "/").replace(/\/+$/g, "");
@@ -194,6 +226,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const previewPhotos = atmospherePhotos.slice(0, 8);
+    const outreachPreviewPhotos = [4, 5, 9, 14, 18, 23, 28, 33, 38, 43].map((number) => outreachPhotos[number - 1]);
+
+    // Auto-advancing photo preview on the Outreach card.
+    const outreachPreview = document.querySelector("[data-outreach-preview='true']");
+    if (outreachPreview) {
+        let previewIndex = 0;
+        outreachPreview.classList.add("is-live-photo");
+
+        const setPreview = () => {
+            outreachPreview.style.backgroundImage = `url("${outreachPreviewPhotos[previewIndex]}")`;
+        };
+
+        setPreview();
+        setInterval(() => {
+            previewIndex = (previewIndex + 1) % outreachPreviewPhotos.length;
+            setPreview();
+        }, 3200);
+    }
 
     // Auto-advancing photo preview on the Atmosphere of Faith card.
     const atmospherePreview = document.querySelector("[data-atmosphere-preview='true']");
@@ -245,7 +295,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (albumHero && albumPhotos.length > 0) {
-            albumHero.style.backgroundImage = `linear-gradient(160deg, rgba(19, 11, 6, 0.65) 0%, rgba(42, 20, 9, 0.68) 55%, rgba(19, 11, 6, 0.72) 100%), url("${albumPhotos[0]}")`;
+            const bannerPhoto = selectedAlbum.banner || albumPhotos[0];
+            albumHero.style.backgroundImage = `linear-gradient(160deg, rgba(19, 11, 6, 0.65) 0%, rgba(42, 20, 9, 0.68) 55%, rgba(19, 11, 6, 0.72) 100%), url("${bannerPhoto}")`;
             albumHero.style.backgroundSize = "cover";
             albumHero.style.backgroundPosition = "center";
             albumHero.style.backgroundRepeat = "no-repeat";
