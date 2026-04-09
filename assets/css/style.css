@@ -1087,6 +1087,13 @@ p {
     transition: background-image 0.6s ease-in-out;
 }
 
+.leadership-bg.is-live-photo {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 0.6s ease-in-out;
+}
+
 .atmosphere-bg::before {
     content: "";
     position: absolute;
@@ -1109,6 +1116,10 @@ p {
 }
 
 .tours-bg.is-live-photo::before {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.42));
+}
+
+.leadership-bg.is-live-photo::before {
     background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.42));
 }
 

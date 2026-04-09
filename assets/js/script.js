@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const outreachPhotos = Array.from({ length: 43 }, (_, index) => `assets/images/outreach ${index + 1}.jpg`);
     const jrtPhotos = Array.from({ length: 15 }, (_, index) => `assets/images/jrt ${index + 1}.JPG`);
     const tourPhotos = Array.from({ length: 18 }, (_, index) => `assets/images/tour ${index + 1}.jpg`);
+    const leadershipPhotos = Array.from({ length: 4 }, (_, index) => `assets/images/leadership ${index + 1}.jpg`);
 
     const defaultAlbumPhoto = "assets/images/home.jpg";
     const albumConfig = {
@@ -94,7 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
             label: "Leadership",
             title: "Leadership Album",
             description: "Raising young leaders through mentorship, training, and purpose-driven growth.",
-            photos: [defaultAlbumPhoto]
+            banner: "assets/images/leadership 1.jpg",
+            photos: leadershipPhotos
         },
         biblestudy: {
             label: "Bible Study",
@@ -231,6 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const outreachPreviewPhotos = [4, 5, 9, 14, 18, 23, 28, 33, 38, 43].map((number) => outreachPhotos[number - 1]);
     const jrtPreviewPhotos = [1, 3, 5, 7, 9, 11, 13, 15].map((number) => jrtPhotos[number - 1]);
     const tourPreviewPhotos = [2, 4, 7, 10, 13, 16, 18].map((number) => tourPhotos[number - 1]);
+    const leadershipPreviewPhotos = [1, 2, 3, 4].map((number) => leadershipPhotos[number - 1]);
 
     // Create preview rotator with random offset (no sync between previews)
     const createPreviewRotator = (elementSelector, photoArray, interval = 3200) => {
@@ -261,6 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
     createPreviewRotator("[data-atmosphere-preview='true']", previewPhotos);
     createPreviewRotator("[data-jrt-preview='true']", jrtPreviewPhotos);
     createPreviewRotator("[data-tours-preview='true']", tourPreviewPhotos);
+    createPreviewRotator("[data-leadership-preview='true']", leadershipPreviewPhotos);
 
     // Album page renderer in batches to keep initial page load fast.
     const albumGrid = document.querySelector("#album-grid");
