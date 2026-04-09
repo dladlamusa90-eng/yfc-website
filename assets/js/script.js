@@ -232,72 +232,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const jrtPreviewPhotos = [1, 3, 5, 7, 9, 11, 13, 15].map((number) => jrtPhotos[number - 1]);
     const tourPreviewPhotos = [2, 4, 7, 10, 13, 16, 18].map((number) => tourPhotos[number - 1]);
 
-    // Auto-advancing photo preview on the Outreach card.
-    const outreachPreview = document.querySelector("[data-outreach-preview='true']");
-    if (outreachPreview) {
+    // Create preview rotator with random offset (no sync between previews)
+    const createPreviewRotator = (elementSelector, photoArray, interval = 3200) => {
+        const element = document.querySelector(elementSelector);
+        if (!element) return;
+        
         let previewIndex = 0;
-        outreachPreview.classList.add("is-live-photo");
-
+        element.classList.add("is-live-photo");
+        
         const setPreview = () => {
-            outreachPreview.style.backgroundImage = `url("${outreachPreviewPhotos[previewIndex]}")`;
+            element.style.backgroundImage = `url("${photoArray[previewIndex]}")`;
         };
-
+        
         setPreview();
-        setInterval(() => {
-            previewIndex = (previewIndex + 1) % outreachPreviewPhotos.length;
-            setPreview();
-        }, 3200);
-    }
+        
+        // Random offset (0-2000ms) so previews don't sync
+        const randomDelay = Math.random() * 2000;
+        setTimeout(() => {
+            setInterval(() => {
+                previewIndex = (previewIndex + 1) % photoArray.length;
+                setPreview();
+            }, interval);
+        }, randomDelay);
+    };
 
-    // Auto-advancing photo preview on the Atmosphere of Faith card.
-    const atmospherePreview = document.querySelector("[data-atmosphere-preview='true']");
-    if (atmospherePreview) {
-        let previewIndex = 0;
-        atmospherePreview.classList.add("is-live-photo");
-
-        const setPreview = () => {
-            atmospherePreview.style.backgroundImage = `url("${previewPhotos[previewIndex]}")`;
-        };
-
-        setPreview();
-        setInterval(() => {
-            previewIndex = (previewIndex + 1) % previewPhotos.length;
-            setPreview();
-        }, 3200);
-    }
-
-    // Auto-advancing photo preview on the Jesus Roundtable card.
-    const jrtPreview = document.querySelector("[data-jrt-preview='true']");
-    if (jrtPreview) {
-        let previewIndex = 0;
-        jrtPreview.classList.add("is-live-photo");
-
-        const setPreview = () => {
-            jrtPreview.style.backgroundImage = `url("${jrtPreviewPhotos[previewIndex]}")`;
-        };
-
-        setPreview();
-        setInterval(() => {
-            previewIndex = (previewIndex + 1) % jrtPreviewPhotos.length;
-            setPreview();
-        }, 3200);
-    }
-    // Auto-advancing photo preview on the Tours card.
-    const tourPreview = document.querySelector("[data-tours-preview='true']");
-    if (tourPreview) {
-        let previewIndex = 0;
-        tourPreview.classList.add("is-live-photo");
-
-        const setPreview = () => {
-            tourPreview.style.backgroundImage = `url("${tourPreviewPhotos[previewIndex]}")`;
-        };
-
-        setPreview();
-        setInterval(() => {
-            previewIndex = (previewIndex + 1) % tourPreviewPhotos.length;
-            setPreview();
-        }, 3200);
-    }
+    // Initialize all preview rotators
+    createPreviewRotator("[data-outreach-preview='true']", outreachPreviewPhotos);
+    createPreviewRotator("[data-atmosphere-preview='true']", previewPhotos);
+    createPreviewRotator("[data-jrt-preview='true']", jrtPreviewPhotos);
+    createPreviewRotator("[data-tours-preview='true']", tourPreviewPhotos);
 
     // Album page renderer in batches to keep initial page load fast.
     const albumGrid = document.querySelector("#album-grid");
