@@ -251,47 +251,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    const previewPhotos = atmospherePhotos.slice(0, 8);
-    const outreachPreviewPhotos = [4, 5, 9, 14, 18, 23, 28, 33, 38, 43].map((number) => outreachPhotos[number - 1]);
-    const jrtPreviewPhotos = [1, 3, 5, 7, 9, 11, 13, 15].map((number) => jrtPhotos[number - 1]);
-    const tourPreviewPhotos = [2, 4, 7, 10, 13, 16, 18].map((number) => tourPhotos[number - 1]);
-    const leadershipPreviewPhotos = [1, 2, 3, 4].map((number) => leadershipPhotos[number - 1]);
-    const yfcwPreviewPhotos = [1, 4, 8, 12, 16, 20, 24, 27, 30].map((number) => yfcwPhotos[number - 1]);
-    const morePreviewPhotos = [1, 6, 12, 18, 24, 30, 36, 42, 48, 52].map((number) => morePhotos[number - 1]);
-
-    // Create preview rotator with random offset (no sync between previews)
-    const createPreviewRotator = (elementSelector, photoArray, interval = 3200) => {
-        const element = document.querySelector(elementSelector);
-        if (!element) return;
-        
-        let previewIndex = 0;
-        element.classList.add("is-live-photo");
-        
-        const setPreview = () => {
-            element.style.backgroundImage = `url("${photoArray[previewIndex]}")`;
-        };
-        
-        setPreview();
-        
-        // Random offset (0-2000ms) so previews don't sync
-        const randomDelay = Math.random() * 2000;
-        setTimeout(() => {
-            setInterval(() => {
-                previewIndex = (previewIndex + 1) % photoArray.length;
-                setPreview();
-            }, interval);
-        }, randomDelay);
-    };
-
-    // Initialize all preview rotators
-    createPreviewRotator("[data-outreach-preview='true']", outreachPreviewPhotos);
-    createPreviewRotator("[data-atmosphere-preview='true']", previewPhotos);
-    createPreviewRotator("[data-jrt-preview='true']", jrtPreviewPhotos);
-    createPreviewRotator("[data-tours-preview='true']", tourPreviewPhotos);
-    createPreviewRotator("[data-leadership-preview='true']", leadershipPreviewPhotos);
-    createPreviewRotator("[data-yfcw-preview='true']", yfcwPreviewPhotos);
-    createPreviewRotator("[data-more-preview='true']", morePreviewPhotos);
-
     // Album page renderer in batches to keep initial page load fast.
     const albumGrid = document.querySelector("#album-grid");
     const loadMoreButton = document.querySelector("#album-load-more");
