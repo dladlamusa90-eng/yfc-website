@@ -41,16 +41,63 @@
                     <p class="section-label">Programs</p>
                     <h1>Daily Juice</h1>
                 </div>
-                <div class="content-grid">
-                    <article class="content-card">
-                        <h2>Weekly Devotional</h2>
-                        <p>Daily Juice is our discipleship devotional designed for youth and new believers. It is written in simple English so every learner can grow in Scripture with confidence.</p>
+                <div class="daily-juice-layout">
+                    <article class="content-card daily-juice-today-card">
+                        <h2>Today's Daily Juice</h2>
+                        <p>Read today's devotional and download it as a JPG.</p>
+                        <div class="daily-juice-today-visual">
+                            <img src="../assets/images/Fri.jpg" alt="Today's Daily Juice devotional image" loading="lazy" decoding="async">
+                        </div>
+                        <div class="program-stack">
+                            <a class="button" href="../assets/images/Fri.jpg" download="daily-juice-fri.jpg">Download JPG</a>
+                        </div>
                     </article>
-                    <aside class="content-card">
-                        <h3>Release Schedule</h3>
-                        <p><strong>Published:</strong> Every Sunday</p>
-                        <p><strong>Focus:</strong> Bible-based growth and practical Christian living</p>
-                    </aside>
+
+                    <article class="content-card">
+                        <h2>Create Your Own Daily Juice</h2>
+                        <p>Fill in your details, adjust your photo, and generate a letter-size JPG you can download.</p>
+
+                        <form id="daily-juice-form" class="daily-juice-form" novalidate>
+                            <label for="dj-title">Title <span class="daily-juice-limit" id="dj-title-limit"></span></label>
+                            <input id="dj-title" name="title" type="text" maxlength="90" placeholder="e.g. Faith that Holds" required>
+
+                            <label for="dj-theme-verse">Theme Verse <span class="daily-juice-limit" id="dj-theme-limit"></span></label>
+                            <input id="dj-theme-verse" name="themeVerse" type="text" placeholder="e.g. Romans 8:28" required>
+
+                            <label for="dj-message">Main Message <span class="daily-juice-limit" id="dj-message-limit"></span></label>
+                            <textarea id="dj-message" name="message" rows="5" placeholder="Share your Daily Juice message..." required></textarea>
+
+                            <label for="dj-further-verse">Further Study Verse <span class="daily-juice-limit" id="dj-further-limit"></span></label>
+                            <textarea id="dj-further-verse" name="furtherVerse" rows="3" placeholder="e.g. Psalm 1:1-3, John 15:5" required></textarea>
+                            <div class="daily-juice-verse-tools">
+                                <button type="button" class="button button-outline" id="dj-open-bible">Open Free Bible (Popup)</button>
+                                <button type="button" class="button button-outline" id="dj-add-reference">Add Verse Reference</button>
+                            </div>
+
+                            <label for="dj-photo">Your Photo</label>
+                            <input id="dj-photo" name="photo" type="file" accept="image/*">
+
+                            <div class="daily-juice-photo-controls">
+                                <div class="daily-juice-photo-frame" id="dj-photo-frame">
+                                    <img id="dj-photo-preview" alt="Photo fit preview" hidden>
+                                    <p id="dj-photo-placeholder">Upload a photo to fit inside this frame</p>
+                                </div>
+                                <p class="daily-juice-photo-hint">Hold and drag to position. Pinch on touch devices to zoom. On desktop, use mouse wheel to zoom.</p>
+                            </div>
+
+                            <button type="submit" class="button" id="dj-generate-button">Generate Daily Juice JPG</button>
+                            <p class="daily-juice-generating" id="dj-generating" hidden>
+                                <span class="daily-juice-spinner" aria-hidden="true"></span>
+                                Generating JPG...
+                            </p>
+                        </form>
+
+                        <section class="daily-juice-result" id="daily-juice-result" hidden>
+                            <h3>Your Generated Daily Juice</h3>
+                            <img id="dj-output" alt="Generated Daily Juice JPG preview">
+                            <a id="dj-download" class="button" href="#" download="my-daily-juice.jpg">Download Generated JPG</a>
+                        </section>
+                    </article>
                 </div>
             </div>
         </section>

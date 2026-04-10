@@ -738,6 +738,146 @@ p {
     outline-offset: 2px;
 }
 
+.daily-juice-layout {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 1.1rem;
+    align-items: start;
+}
+
+.daily-juice-today-card {
+    gap: 0.65rem;
+}
+
+.daily-juice-today-visual {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 8.5 / 11;
+    min-height: 0;
+    border-radius: calc(var(--radius-md) - 6px);
+    border: 1px solid rgba(27, 43, 68, 0.12);
+    background:
+        radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.45), transparent 35%),
+        linear-gradient(145deg, #f8ede6 0%, #fff7f3 55%, #f6e6dc 100%);
+    padding: clamp(0.45rem, 1vw, 0.7rem);
+    box-shadow: 0 10px 28px rgba(18, 28, 44, 0.12);
+}
+
+.daily-juice-today-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: calc(var(--radius-md) - 10px);
+    background: #ffffff;
+    display: block;
+}
+
+.daily-juice-form {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 0.4rem;
+}
+
+.daily-juice-form label {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #1f2734;
+}
+
+.daily-juice-form input,
+.daily-juice-form select,
+.daily-juice-form textarea {
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: #ffffff;
+    color: #1f2734;
+    font: inherit;
+    padding: 0.75rem 0.9rem;
+}
+
+.daily-juice-form input {
+    min-height: 48px;
+}
+
+.daily-juice-form textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.daily-juice-form input:focus-visible,
+.daily-juice-form select:focus-visible,
+.daily-juice-form textarea:focus-visible {
+    outline: 2px solid rgba(239, 71, 35, 0.5);
+    outline-offset: 2px;
+}
+
+.daily-juice-limit {
+    color: var(--color-gold);
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-left: 0.35rem;
+}
+
+.daily-juice-verse-tools {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+}
+
+.daily-juice-photo-controls {
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.8rem;
+    border: 1px solid rgba(27, 43, 68, 0.12);
+    border-radius: 12px;
+    background: rgba(239, 71, 35, 0.03);
+}
+
+.daily-juice-photo-controls input[type="range"] {
+    min-height: 34px;
+    padding: 0;
+}
+
+.daily-juice-result {
+    margin-top: 0.9rem;
+    display: grid;
+    gap: 0.7rem;
+}
+
+.daily-juice-result img {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(27, 43, 68, 0.16);
+    box-shadow: 0 10px 24px rgba(18, 28, 44, 0.14);
+}
+
+.daily-juice-generating {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #7a3f2b;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.daily-juice-spinner {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(239, 71, 35, 0.25);
+    border-top-color: #ef4723;
+    animation: dailyJuiceSpin 800ms linear infinite;
+}
+
+@keyframes dailyJuiceSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .membership-form {
     margin-top: 1.2rem;
     display: grid;
@@ -1448,6 +1588,7 @@ p {
     }
 
     .content-grid,
+    .daily-juice-layout,
     .ministry-layout,
     .ministry-grid,
     .form-grid,
@@ -1488,6 +1629,10 @@ p {
     .cta-actions {
         flex-direction: column;
         align-items: center;
+    }
+
+    .daily-juice-verse-tools {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1547,4 +1692,50 @@ p {
     .scroll-indicator {
         display: none;
     }
+}
+
+.daily-juice-photo-frame {
+    position: relative;
+    width: min(240px, 100%);
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid rgba(27, 43, 68, 0.16);
+    background: linear-gradient(145deg, #fff8f5 0%, #fcecdf 100%);
+    margin-bottom: 0.3rem;
+    touch-action: none;
+    cursor: grab;
+}
+
+.daily-juice-photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform-origin: center center;
+    user-select: none;
+    pointer-events: none;
+}
+
+.daily-juice-photo-frame.is-dragging {
+    cursor: grabbing;
+}
+
+.daily-juice-photo-frame p {
+    margin: 0;
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 0.8rem;
+    color: #8a4a32;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.daily-juice-photo-hint {
+    margin: 0;
+    color: #7a3f2b;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
