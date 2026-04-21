@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Merchandise | Youth For Christ International (YFC RSA)</title>
-    <meta name="description" content="Browse YFC RSA attire and merchandise that supports ministry visibility and outreach initiatives.">
+    <title>Merchandise | Youth For Christ International</title>
+    <meta name="description" content="Shop the YFC Collection — stylish hoodies, t-shirts, and sweaters for those who move with purpose.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,55 +24,116 @@
             </button>
             <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
                 <a href="../index.html">Home</a>
-                <a href="../about/index.html">About</a>
+                <div class="nav-dropdown">
+                    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">About <span class="nav-dropdown-caret" aria-hidden="true"></span></button>
+                    <div class="nav-dropdown-menu" role="menu">
+                        <a href="../about/index.html" role="menuitem">About Us</a>
+                        <a href="../contact/index.html" role="menuitem">Contact</a>
+                    </div>
+                </div>
                 <a href="../programs/daily-juice.html">Programs</a>
                 <a href="../events/index.html">Events</a>
                 <a href="membership.html">Get Involved</a>
                 <a href="../giving/index.html">Giving</a>
-                <a href="../contact/index.html">Contact</a>
+                <a href="../get-involved/merchandise.html">Merchandise</a>
             </nav>
         </div>
     </header>
 
     <main>
-        <section class="content-section">
+        <section class="merch-hero">
             <div class="container">
-                <div class="section-heading">
-                    <p class="section-label">Get Involved</p>
-                    <h1>YFC Attire Gallery</h1>
+                <div class="merch-hero-content fade-in-up">
+                    <p class="section-label">YFC Collection 2026</p>
+                    <h1>Wear the<br>Movement</h1>
+                    <p class="merch-hero-sub">Stylish. Bold. Purposeful. Youth For Christ attire made for those who move with intention.</p>
                 </div>
-                <p class="gallery-intro">Merchandise proceeds support discipleship resources, outreach travel, and youth ministry events.</p>
-                <div class="merch-grid">
-                    <article class="merch-card">
-                        <div class="merch-image" role="img" aria-label="YFC branded hoodie placeholder"></div>
-                        <h3>YFC Hoodie</h3>
-                        <p>Premium black hoodie with gold embroidered logo.</p>
+            </div>
+        </section>
+
+        <section class="merch-section">
+            <div class="container">
+                <div class="merch-filters" role="group" aria-label="Filter by product category">
+                    <button type="button" class="merch-filter is-active" data-filter="all">All</button>
+                    <button type="button" class="merch-filter" data-filter="hoodies">Hoodies</button>
+                    <button type="button" class="merch-filter" data-filter="tshirts">T-Shirts</button>
+                    <button type="button" class="merch-filter" data-filter="sweaters">Sweaters</button>
+                </div>
+
+                <div class="merch-product-grid">
+
+                    <article class="merch-product-card" data-category="hoodies">
+                        <div class="merch-photo merch-photo-hoodie-black">
+                            <span class="merch-badge">Hoodie</span>
+                        </div>
+                        <div class="merch-info">
+                            <h3>Classic Hoodie — Black</h3>
+                            <p>Premium heavyweight pullover with gold embroidered YFC logo. Oversized drop-shoulder cut for that perfect streetwear silhouette.</p>
+                            <p class="merch-sizes">XS · S · M · L · XL · XXL</p>
+                            <a class="button" href="../contact/index.html">Enquire to Order</a>
+                        </div>
                     </article>
-                    <article class="merch-card">
-                        <div class="merch-image" role="img" aria-label="YFC branded t-shirt placeholder"></div>
-                        <h3>YFC T-Shirt</h3>
-                        <p>Comfort fit outreach shirt for teams and volunteers.</p>
+
+                    <article class="merch-product-card" data-category="hoodies">
+                        <div class="merch-photo merch-photo-hoodie-white">
+                            <span class="merch-badge">Hoodie</span>
+                        </div>
+                        <div class="merch-info">
+                            <h3>Classic Hoodie — White</h3>
+                            <p>Clean all-white pullover hoodie with subtle black YFC embroidery. Minimal, sharp, and unmistakable.</p>
+                            <p class="merch-sizes">XS · S · M · L · XL · XXL</p>
+                            <a class="button" href="../contact/index.html">Enquire to Order</a>
+                        </div>
                     </article>
-                    <article class="merch-card">
-                        <div class="merch-image" role="img" aria-label="YFC branded cap placeholder"></div>
-                        <h3>YFC Cap</h3>
-                        <p>Classic cap style for event and street outreach days.</p>
+
+                    <article class="merch-product-card" data-category="tshirts">
+                        <div class="merch-photo merch-photo-tshirt-normal">
+                            <span class="merch-badge">T-Shirt · Normal Fit</span>
+                        </div>
+                        <div class="merch-info">
+                            <h3>YFC Tee — Normal Fit</h3>
+                            <p>Classic structured tee with gold-printed YFC chest logo. Versatile and clean for any occasion.</p>
+                            <p class="merch-sizes">XS · S · M · L · XL · XXL</p>
+                            <a class="button" href="../contact/index.html">Enquire to Order</a>
+                        </div>
                     </article>
-                    <article class="merch-card">
-                        <div class="merch-image" role="img" aria-label="YFC branded jacket placeholder"></div>
-                        <h3>YFC Jacket</h3>
-                        <p>Team jacket for winter ministry campaigns.</p>
+
+                    <article class="merch-product-card" data-category="tshirts">
+                        <div class="merch-photo merch-photo-tshirt-baggy">
+                            <span class="merch-badge">T-Shirt · Baggy</span>
+                        </div>
+                        <div class="merch-info">
+                            <h3>YFC Tee — Baggy</h3>
+                            <p>Oversized drop-shoulder tee with bold YFC graphic on the back. Relaxed, expressive, made for the streets.</p>
+                            <p class="merch-sizes">XS · S · M · L · XL · XXL</p>
+                            <a class="button" href="../contact/index.html">Enquire to Order</a>
+                        </div>
                     </article>
-                    <article class="merch-card">
-                        <div class="merch-image" role="img" aria-label="YFC branded tote bag placeholder"></div>
-                        <h3>YFC Tote Bag</h3>
-                        <p>Carry discipleship notes and essentials with purpose.</p>
+
+                    <article class="merch-product-card" data-category="sweaters">
+                        <div class="merch-photo merch-photo-sweater-black">
+                            <span class="merch-badge">Sweater</span>
+                        </div>
+                        <div class="merch-info">
+                            <h3>YFC Crewneck — Black</h3>
+                            <p>Soft heavyweight crewneck in midnight black with embroidered YFC branding. Built for cool days and bold statements.</p>
+                            <p class="merch-sizes">XS · S · M · L · XL · XXL</p>
+                            <a class="button" href="../contact/index.html">Enquire to Order</a>
+                        </div>
                     </article>
-                    <article class="merch-card">
-                        <div class="merch-image" role="img" aria-label="YFC branded wristband placeholder"></div>
-                        <h3>YFC Wristband</h3>
-                        <p>A simple faith statement accessory for youth members.</p>
+
+                    <article class="merch-product-card" data-category="sweaters">
+                        <div class="merch-photo merch-photo-sweater-grey">
+                            <span class="merch-badge">Sweater</span>
+                        </div>
+                        <div class="merch-info">
+                            <h3>YFC Crewneck — Ash Grey</h3>
+                            <p>Washed ash grey crewneck with tonal YFC branding. Relaxed fit, premium feel, all-season wear.</p>
+                            <p class="merch-sizes">XS · S · M · L · XL · XXL</p>
+                            <a class="button" href="../contact/index.html">Enquire to Order</a>
+                        </div>
                     </article>
+
                 </div>
             </div>
         </section>
