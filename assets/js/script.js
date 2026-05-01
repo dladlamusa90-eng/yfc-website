@@ -394,6 +394,23 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Social section heading
+    document.querySelectorAll(".social-section .container").forEach((container) => {
+        if (container.querySelector(".social-heading")) {
+            return;
+        }
+
+        const heading = document.createElement("div");
+        heading.className = "social-heading";
+        heading.innerHTML = `
+            <p class="social-kicker">Connect With Youth For Christ</p>
+            <h2>Follow Us On Social Media</h2>
+            <p class="social-sub">Stay inspired, updated, and connected across all our platforms.</p>
+        `;
+
+        container.prepend(heading);
+    });
+
     // Gallery filter
     const galleryFilters = document.querySelectorAll(".gallery-filter");
     const galleryItems = document.querySelectorAll(".gallery-item");
