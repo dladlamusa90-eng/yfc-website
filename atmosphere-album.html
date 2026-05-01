@@ -166,6 +166,9 @@
                     <button type="button" class="button" id="btnUpload">Upload</button>
                 </div>
                 <div id="uploadProgressList"></div>
+                <div class="album-upload-actions" id="albumUploadActions" style="display:none">
+                    <button type="button" class="button" id="btnUploadDone">Done</button>
+                </div>
             </div>
         </div>
     </div>
@@ -177,7 +180,7 @@
             apiKey: "AIzaSyBhdh8bLPksi2B9Z0bNvufjvDHFibFg_zY",
             authDomain: "yfc-website-d5529.firebaseapp.com",
             projectId: "yfc-website-d5529",
-            storageBucket: "yfc-website-d5529.firebasestorage.app",
+            storageBucket: "yfc-website-d5529.appspot.com",
             messagingSenderId: "184656233306",
             appId: "1:184656233306:web:c9da67faf695b587a2e963"
         };
@@ -192,19 +195,31 @@
         if (grid) {
             db.collection('gallery')
                 .where('category', '==', currentCategory)
-                .orderBy('uploadedAt', 'desc')
                 .onSnapshot(function (snap) {
-                    Array.from(grid.querySelectorAll('.fb-photo')).forEach(function (el) { el.remove(); });
-                    if (snap.empty) { return; }
-                    var frag = document.createDocumentFragment();
+                    var docs = [];
                     snap.forEach(function (doc) {
+                        docs.push(doc);
+                    });
+
+                    docs.sort(function (a, b) {
+                        var aData = a.data() || {};
+                        var bData = b.data() || {};
+                        var aTime = aData.uploadedAt && aData.uploadedAt.toMillis ? aData.uploadedAt.toMillis() : 0;
+                        var bTime = bData.uploadedAt && bData.uploadedAt.toMillis ? bData.uploadedAt.toMillis() : 0;
+                        return bTime - aTime;
+                    });
+
+                    Array.from(grid.querySelectorAll('.fb-photo')).forEach(function (el) { el.remove(); });
+                    if (docs.length === 0) { return; }
+                    var frag = document.createDocumentFragment();
+                    docs.forEach(function (doc) {
                         var d = doc.data();
                         var card = document.createElement('div');
                         card.className = 'album-item fb-photo';
                         card.setAttribute('data-doc-id', doc.id);
                         var img = document.createElement('img');
                         img.className = 'album-image';
-                        img.src = d.url;
+                        img.src = d.imageData || d.url;
                         img.alt = d.caption || currentCategory;
                         img.loading = 'lazy'; img.decoding = 'async';
                         img.width = 1200; img.height = 900;
@@ -243,6 +258,11 @@
         var pwError = document.getElementById('albumPwError');
         var adminPanel = document.getElementById('albumAdminPanel');
         var btnOpen = document.getElementById('btnAdminOpen');
+        var uploadBtn = document.getElementById('btnUpload');
+        var uploadList = document.getElementById('uploadProgressList');
+        var uploadActions = document.getElementById('albumUploadActions');
+        var doneBtn = document.getElementById('btnUploadDone');
+        var isUploading = false;
 
         btnOpen.addEventListener('click', function () {
             if (isAdmin) { adminPanel.style.display = adminPanel.style.display === 'none' ? 'block' : 'none'; return; }
@@ -265,43 +285,171 @@
                 pwError.style.display = 'block'; pwInput.value = ''; pwInput.focus();
             }
         }
-        document.getElementById('albumAdminClose').addEventListener('click', function () {
-            adminPanel.style.display = 'none'; btnOpen.textContent = 'Admin Upload';
-        });
+        function closeUploadPanel() {
+            adminPanel.style.display = 'none';
+            btnOpen.textContent = 'Admin Upload';
+            uploadActions.style.display = 'none';
+            uploadList.innerHTML = '';
+            document.getElementById('uploadFiles').value = '';
+            document.getElementById('uploadCaption').value = '';
+        }
+
+        document.getElementById('albumAdminClose').addEventListener('click', closeUploadPanel);
+        doneBtn.addEventListener('click', closeUploadPanel);
+
+        function compressImage(file, maxSide, quality) {
+            return new Promise(function (resolve) {
+                if (!file.type || !file.type.startsWith('image/')) {
+                    resolve(file);
+                    return;
+                }
+
+                var reader = new FileReader();
+                reader.onload = function (ev) {
+                    var img = new Image();
+                    img.onload = function () {
+                        var w = img.width;
+                        var h = img.height;
+                        var scale = Math.min(1, maxSide / Math.max(w, h));
+                        var tw = Math.max(1, Math.round(w * scale));
+                        var th = Math.max(1, Math.round(h * scale));
+
+                        var canvas = document.createElement('canvas');
+                        canvas.width = tw;
+                        canvas.height = th;
+                        var ctx = canvas.getContext('2d');
+                        if (!ctx) {
+                            resolve(file);
+                            return;
+                        }
+
+                        ctx.drawImage(img, 0, 0, tw, th);
+
+                        // Convert to JPEG for faster mobile upload while keeping quality high.
+                        canvas.toBlob(function (blob) {
+                            if (!blob) {
+                                resolve(file);
+                                return;
+                            }
+                            resolve(new File(
+                                [blob],
+                                file.name.replace(/\.[^.]+$/, '') + '.jpg',
+                                { type: 'image/jpeg', lastModified: Date.now() }
+                            ));
+                        }, 'image/jpeg', quality);
+                    };
+                    img.onerror = function () { resolve(file); };
+                    img.src = ev.target.result;
+                };
+                reader.onerror = function () { resolve(file); };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function optimizeImageForUpload(file) {
+            var attempts = [
+                { maxSide: 1280, quality: 0.72 },
+                { maxSide: 1080, quality: 0.66 },
+                { maxSide: 900, quality: 0.58 },
+                { maxSide: 750, quality: 0.5 }
+            ];
+
+            var best = file;
+            for (var i = 0; i < attempts.length; i += 1) {
+                var attempt = attempts[i];
+                var compressed = await compressImage(file, attempt.maxSide, attempt.quality);
+                if (compressed.size < best.size) {
+                    best = compressed;
+                }
+                if (compressed.size <= 540 * 1024) {
+                    return compressed;
+                }
+            }
+            return best;
+        }
+
+        function fileToDataUrl(file) {
+            return new Promise(function (resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function () { resolve(reader.result); };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
 
         // Upload
-        document.getElementById('btnUpload').addEventListener('click', function () {
-            var files    = document.getElementById('uploadFiles').files;
+        uploadBtn.addEventListener('click', async function () {
+            if (isUploading) { return; }
+
+            var files    = Array.from(document.getElementById('uploadFiles').files || []);
             var category = document.getElementById('uploadCategory').value;
             var caption  = document.getElementById('uploadCaption').value.trim();
             if (!files || files.length === 0) { alert('Please choose at least one photo.'); return; }
-            var list = document.getElementById('uploadProgressList');
-            Array.from(files).forEach(function (file) {
-                if (!file.type.startsWith('image/')) { return; }
-                var safeName = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-                var path = 'gallery/' + category + '/' + safeName;
-                var ref  = storage.ref(path);
+            var list = uploadList;
+            isUploading = true;
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'Uploading...';
+            uploadActions.style.display = 'none';
+            list.innerHTML = '';
+
+            var queuedFiles = files.filter(function (file) {
+                return file.type && file.type.startsWith('image/');
+            }).map(function (file) {
                 var row = document.createElement('div'); row.className = 'album-progress-row';
                 var lbl = document.createElement('span'); lbl.className = 'album-progress-label'; lbl.textContent = file.name;
                 var bar = document.createElement('div'); bar.className = 'album-progress-bar-wrap';
                 var fill = document.createElement('div'); fill.className = 'album-progress-fill';
-                var st = document.createElement('span'); st.className = 'album-progress-status'; st.textContent = '0%';
+                var st = document.createElement('span'); st.className = 'album-progress-status'; st.textContent = 'Queued';
                 bar.appendChild(fill); row.appendChild(lbl); row.appendChild(bar); row.appendChild(st);
                 list.appendChild(row);
-                var task = ref.put(file);
-                task.on('state_changed',
-                    function (sn) { var p = Math.round((sn.bytesTransferred/sn.totalBytes)*100); fill.style.width=p+'%'; st.textContent=p+'%'; },
-                    function (err) { st.textContent='Failed'; row.classList.add('album-progress-error'); console.error(err); },
-                    function () {
-                        task.snapshot.ref.getDownloadURL().then(function (url) {
-                            return db.collection('gallery').add({ url:url, category:category, caption:caption, storagePath:path, uploadedAt:firebase.firestore.FieldValue.serverTimestamp() });
-                        }).then(function () { fill.style.width='100%'; st.textContent='Done \u2713'; row.classList.add('album-progress-done'); })
-                        .catch(function (err) { st.textContent='Save error'; row.classList.add('album-progress-error'); console.error(err); });
-                    }
-                );
+                return { file: file, row: row, fill: fill, status: st };
             });
-            document.getElementById('uploadFiles').value = '';
-            document.getElementById('uploadCaption').value = '';
+
+            try {
+                for (var i = 0; i < queuedFiles.length; i += 1) {
+                    var item = queuedFiles[i];
+                    var file = item.file;
+                    var row = item.row;
+                    var fill = item.fill;
+                    var st = item.status;
+
+                    try {
+                        st.textContent = 'Optimizing...';
+                        var uploadFile = await optimizeImageForUpload(file);
+                        fill.style.width = '25%';
+                        st.textContent = 'Preparing...';
+                        var dataUrl = await fileToDataUrl(uploadFile);
+
+                        if (typeof dataUrl !== 'string' || dataUrl.length > 900000) {
+                            throw new Error('Image is still too large. Please choose a smaller photo.');
+                        }
+
+                        fill.style.width = '70%';
+                        st.textContent = 'Saving...';
+                        await db.collection('gallery').add({
+                            imageData: dataUrl,
+                            category: category,
+                            caption: caption,
+                            uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+
+                        fill.style.width = '100%';
+                        st.textContent = 'Done \u2713';
+                        row.classList.add('album-progress-done');
+                    } catch (err) {
+                        st.textContent = err && (err.code || err.message) ? (err.code || err.message) : 'Failed';
+                        row.classList.add('album-progress-error');
+                        console.error(err);
+                    }
+                }
+            } finally {
+                isUploading = false;
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = 'Upload';
+                if (queuedFiles.length > 0) {
+                    uploadActions.style.display = 'flex';
+                }
+            }
         });
     })();
     </script>

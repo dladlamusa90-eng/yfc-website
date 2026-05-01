@@ -2467,6 +2467,12 @@ p {
 .album-progress-done .album-progress-status { color: #4ade80; }
 .album-progress-error .album-progress-status { color: #f87171; }
 
+.album-upload-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
 /* Lightbox */
 .album-lightbox {
     position: fixed;
