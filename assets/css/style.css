@@ -1632,34 +1632,22 @@ p {
     margin-bottom: 1rem;
 }
 
-.ct-socials {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem;
+.ct-spotify-frame-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 14px 36px rgba(18, 25, 40, 0.16);
+    border: 1px solid #e6ebf4;
+    background: #ffffff;
 }
 
-.ct-social-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    padding: 0.62rem 1.3rem;
-    border-radius: 999px;
-    font-size: 0.88rem;
-    font-weight: 700;
-    text-decoration: none;
-    transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+.ct-spotify-frame {
+    display: block;
+    width: 100%;
+    height: 352px;
+    border: 0;
 }
-
-.ct-social-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    opacity: 0.92;
-}
-
-.ct-yt  { background: #ff0000; color: #ffffff; }
-.ct-fb  { background: #1877f2; color: #ffffff; }
-.ct-tt  { background: #010101; color: #ffffff; }
 
 @media (max-width: 768px) {
     .ct-grid {
@@ -1668,6 +1656,19 @@ p {
 
     .ct-card {
         padding: 1.4rem;
+    }
+
+    .ct-spotify-frame-wrap {
+        border-radius: 0;
+        overflow: visible;
+        box-shadow: none;
+        border: 0;
+        background: transparent;
+    }
+
+    .ct-spotify-frame {
+        height: 320px;
+        border-radius: 0 !important;
     }
 }
 
