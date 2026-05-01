@@ -64,12 +64,58 @@
 
         <section class="album-section" aria-label="Category photo album">
             <div class="container">
-                <div class="album-meta">
-                    <p id="album-photo-count" class="album-count">0 / 0 photos</p>
-                </div>
-                <div id="album-grid" class="album-grid"></div>
-                <div class="album-load-wrap">
-                    <button id="album-load-more" class="button album-load-more" type="button">Load More Photos</button>
+                <div id="album-grid" class="album-grid">
+                    <!-- Firebase-uploaded photos inject here -->
+                    
+                    <!-- Static category thumbnails -->
+                    <div class="album-item outreach-bg" data-category="outreach">
+                        <div class="album-overlay">
+                            <span class="gallery-cat-label">Outreach</span>
+                            <p class="gallery-caption">Reaching hearts in the community</p>
+                        </div>
+                    </div>
+                    
+                    <div class="album-item jrt-bg" data-category="jrt">
+                        <div class="album-overlay">
+                            <span class="gallery-cat-label">Jesus Roundtable</span>
+                            <p class="gallery-caption">Faith conversations that transform</p>
+                        </div>
+                    </div>
+                    
+                    <div class="album-item tours-bg" data-category="tours">
+                        <div class="album-overlay">
+                            <span class="gallery-cat-label">Tours</span>
+                            <p class="gallery-caption">Exploring and growing together</p>
+                        </div>
+                    </div>
+                    
+                    <div class="album-item atmosphere-bg" data-category="atmosphere">
+                        <div class="album-overlay">
+                            <span class="gallery-cat-label">Atmosphere of Faith</span>
+                            <p class="gallery-caption">Worship, prayer, fellowship and encounters with God</p>
+                        </div>
+                    </div>
+                    
+                    <div class="album-item leadership-bg" data-category="leadership">
+                        <div class="album-overlay">
+                            <span class="gallery-cat-label">Leadership</span>
+                            <p class="gallery-caption">Raising the next generation of leaders</p>
+                        </div>
+                    </div>
+                    
+                    <div class="album-item yfcw-bg" data-category="yfcw">
+                        <div class="album-overlay">
+                            <span class="gallery-cat-label">Youth For Christ Worship (YFCW)</span>
+                            <p class="gallery-caption">Worship moments filled with praise and God's presence</p>
+                        </div>
+                    </div>
+                    
+                    <div class="album-item more-bg" data-category="more">
+                        <div class="album-overlay">
+                            <span class="gallery-cat-label">And More</span>
+                            <p class="gallery-caption">Every moment tells a story</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
