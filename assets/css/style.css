@@ -2468,3 +2468,522 @@ p {
         display: none;
     }
 }
+
+/* ===== EVENTS CALENDAR ===== */
+.events-page-section {
+    padding: 3rem 0 4rem;
+    background: #f5f6fa;
+    min-height: 70vh;
+}
+
+.calendar-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 28px rgba(0, 0, 0, 0.08);
+    padding: 2rem 1.75rem;
+    max-width: 660px;
+    margin: 0 auto;
+}
+
+.cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.cal-month-label {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    letter-spacing: -0.01em;
+}
+
+.cal-nav-btn {
+    background: none;
+    border: 1.5px solid #e8e8e8;
+    color: #666;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    line-height: 1;
+}
+
+.cal-nav-btn:hover {
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+    background: rgba(239, 71, 35, 0.05);
+}
+
+.cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.4rem;
+}
+
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+}
+
+.cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    color: #333;
+    cursor: default;
+    position: relative;
+    transition: background 0.15s;
+}
+
+.cal-day.empty {
+    background: transparent;
+}
+
+.cal-day:not(.empty):hover {
+    background: rgba(239, 71, 35, 0.1);
+}
+
+.cal-day.today:hover {
+    background: #d93e1e;
+}
+
+.cal-day.today {
+    background: var(--color-gold);
+    color: #fff;
+    font-weight: 800;
+}
+
+.cal-day.today .day-dot {
+    background: #fff;
+    opacity: 0.8;
+}
+
+.cal-day.has-event:not(.today) {
+    background: rgba(239, 71, 35, 0.08);
+    color: #1a1a2e;
+    font-weight: 600;
+}
+
+.day-dot {
+    width: 5px;
+    height: 5px;
+    background: var(--color-gold);
+    border-radius: 50%;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Events list below calendar */
+.cal-events-list-wrap {
+    max-width: 660px;
+    margin: 1.75rem auto 0;
+}
+
+.cal-events-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 0.9rem;
+}
+
+.cal-event-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: #fff;
+    border-radius: 14px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.6rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.cal-event-badge {
+    min-width: 46px;
+    text-align: center;
+    background: var(--color-gold);
+    color: #fff;
+    border-radius: 10px;
+    padding: 0.35rem 0.4rem 0.25rem;
+    line-height: 1.2;
+}
+
+.cal-event-badge .badge-day {
+    font-size: 1.3rem;
+    font-weight: 800;
+    display: block;
+}
+
+.cal-event-badge .badge-dow {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.9;
+}
+
+.cal-event-info strong {
+    display: block;
+    font-size: 0.97rem;
+    color: #1a1a2e;
+    font-weight: 700;
+}
+
+.cal-event-info span {
+    font-size: 0.83rem;
+    color: #777;
+}
+
+.cal-no-events {
+    text-align: center;
+    padding: 1.5rem 0;
+    color: #aaa;
+    font-size: 0.92rem;
+}
+
+/* Edit Events bar */
+.edit-events-bar {
+    max-width: 660px;
+    margin: 1.25rem auto 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-edit-events {
+    background: none;
+    border: 1.5px solid #ddd;
+    color: #999;
+    font-size: 0.82rem;
+    padding: 0.45rem 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-edit-events:hover {
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+}
+
+/* Password modal */
+.pw-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.pw-modal-overlay.active {
+    display: flex;
+}
+
+.pw-modal-box {
+    background: #fff;
+    border-radius: 18px;
+    padding: 2rem 1.75rem;
+    width: 340px;
+    max-width: 92vw;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+.day-modal-box {
+    width: 400px;
+    padding: 1.75rem 1.75rem 1.5rem;
+}
+
+.day-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.1rem;
+}
+
+.day-modal-header h2 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.day-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: #aaa;
+    cursor: pointer;
+    padding: 0 0.25rem;
+    font-family: inherit;
+}
+
+.day-modal-close:hover {
+    color: #333;
+}
+
+.day-modal-event {
+    border-left: 3px solid var(--color-gold);
+    padding: 0.65rem 0.9rem;
+    background: rgba(239, 71, 35, 0.05);
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 0.6rem;
+}
+
+.day-modal-event strong {
+    display: block;
+    font-size: 0.97rem;
+    color: #1a1a2e;
+    font-weight: 700;
+}
+
+.day-modal-event span {
+    font-size: 0.84rem;
+    color: #777;
+    display: block;
+    margin-top: 0.2rem;
+}
+
+.day-modal-empty {
+    color: #bbb;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 0.75rem 0;
+    margin: 0;
+}
+
+.pw-modal-box h2 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 0.35rem;
+}
+
+.pw-modal-box p {
+    font-size: 0.88rem;
+    color: #888;
+    margin-bottom: 1.1rem;
+}
+
+.pw-modal-box input[type="password"] {
+    width: 100%;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    outline: none;
+    font-family: inherit;
+    box-sizing: border-box;
+    margin-bottom: 0.6rem;
+    transition: border-color 0.2s;
+}
+
+.pw-modal-box input[type="password"]:focus {
+    border-color: var(--color-gold);
+}
+
+.pw-modal-actions {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: flex-end;
+}
+
+.pw-modal-actions button {
+    padding: 0.55rem 1.25rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.pw-btn-cancel {
+    background: #f1f1f1;
+    color: #666;
+}
+
+.pw-btn-submit {
+    background: var(--color-gold);
+    color: #fff;
+}
+
+.pw-error-msg {
+    color: #e53e3e;
+    font-size: 0.82rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+/* Edit panel */
+.edit-panel {
+    display: none;
+    background: #f5f6fa;
+    border-top: 2px solid var(--color-gold);
+    padding: 2.5rem 0 3rem;
+}
+
+.edit-panel.active {
+    display: block;
+}
+
+.edit-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 660px;
+    margin: 0 auto 1.5rem;
+}
+
+.edit-panel-header h2 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1a1a2e;
+}
+
+.btn-close-edit {
+    background: var(--color-gold);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.45rem 1.1rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.add-event-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    max-width: 660px;
+    margin: 0 auto 1.5rem;
+    align-items: center;
+}
+
+.add-event-form input {
+    flex: 1;
+    min-width: 130px;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    background: #fff;
+    transition: border-color 0.2s;
+}
+
+.add-event-form input:focus {
+    border-color: var(--color-gold);
+}
+
+.add-event-form button {
+    background: var(--color-gold);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.3rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.edit-event-list {
+    max-width: 660px;
+    margin: 0 auto;
+}
+
+.edit-event-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    background: #fff;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+
+.edit-event-row-info strong {
+    font-size: 0.95rem;
+    color: #1a1a2e;
+    display: block;
+    font-weight: 700;
+}
+
+.edit-event-row-info span {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.btn-delete-event {
+    background: none;
+    border: 1.5px solid #e53e3e;
+    color: #e53e3e;
+    border-radius: 8px;
+    padding: 0.3rem 0.8rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: inherit;
+    font-weight: 600;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+}
+
+.btn-delete-event:hover {
+    background: #e53e3e;
+    color: #fff;
+}
+
+@media (max-width: 600px) {
+    .calendar-card {
+        padding: 1.25rem 1rem;
+    }
+
+    .cal-day {
+        font-size: 0.78rem;
+        border-radius: 7px;
+    }
+
+    .day-dot {
+        bottom: 3px;
+    }
+
+    .add-event-form {
+        flex-direction: column;
+    }
+
+    .add-event-form input,
+    .add-event-form button {
+        width: 100%;
+        min-width: unset;
+    }
+}
