@@ -1162,6 +1162,189 @@ p {
     gap: 0.75rem;
 }
 
+/* ── Contact Page (Get In Touch) ── */
+.ct-hero {
+    padding: 5.5rem 0 4.5rem;
+    background: linear-gradient(150deg, #0c0704 0%, #1a0a05 55%, #0c0704 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.ct-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 15% 55%, rgba(239, 71, 35, 0.25), transparent 52%),
+        radial-gradient(ellipse at 82% 18%, rgba(255, 155, 50, 0.12), transparent 48%);
+    pointer-events: none;
+}
+
+.ct-hero .section-label {
+    position: relative;
+    z-index: 1;
+    color: rgba(239, 71, 35, 0.9);
+}
+
+.ct-hero h1 {
+    position: relative;
+    z-index: 1;
+    color: #ffffff;
+    font-size: clamp(2.4rem, 5.5vw, 4rem);
+    line-height: 1.1;
+    margin: 0.5rem 0 1.1rem;
+}
+
+.ct-hero-sub {
+    position: relative;
+    z-index: 1;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.05rem;
+    max-width: 44ch;
+    line-height: 1.72;
+    margin: 0;
+}
+
+.ct-body {
+    padding: 3.5rem 0 5rem;
+    background: #f5f4f2;
+}
+
+.ct-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+}
+
+.ct-card {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1.8rem 1.8rem 1.8rem 1.6rem;
+    background: #ffffff;
+    border: 1px solid rgba(27, 43, 68, 0.1);
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 12px rgba(18, 28, 44, 0.07);
+    text-decoration: none;
+    color: inherit;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.ct-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(18, 28, 44, 0.13);
+    border-color: rgba(239, 71, 35, 0.3);
+}
+
+.ct-card-icon {
+    flex-shrink: 0;
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ct-icon-email {
+    background: linear-gradient(135deg, #fff0eb, #ffd9cc);
+    color: var(--color-gold);
+}
+
+.ct-icon-whatsapp {
+    background: linear-gradient(135deg, #e8faf0, #c3f0d6);
+    color: #25d366;
+}
+
+.ct-card-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+}
+
+.ct-card-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #8a94a5;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.ct-card-value {
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: #1b2432;
+    line-height: 1.3;
+}
+
+.ct-card-arrow {
+    font-size: 1.2rem;
+    color: var(--color-gold);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity var(--transition), transform var(--transition);
+}
+
+.ct-card:hover .ct-card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.ct-social-section {
+    text-align: center;
+    padding-top: 1rem;
+}
+
+.ct-social-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #8a94a5;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.ct-socials {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.ct-social-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.62rem 1.3rem;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+}
+
+.ct-social-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    opacity: 0.92;
+}
+
+.ct-yt  { background: #ff0000; color: #ffffff; }
+.ct-fb  { background: #1877f2; color: #ffffff; }
+.ct-tt  { background: #010101; color: #ffffff; }
+
+@media (max-width: 768px) {
+    .ct-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ct-card {
+        padding: 1.4rem;
+    }
+}
+
 /* ── Scroll Indicator ── */
 .scroll-indicator {
     position: absolute;
@@ -1374,12 +1557,15 @@ p {
     line-height: 1.4;
     transform: translateY(6px);
     opacity: 0;
-    transition: transform 280ms ease, opacity 280ms ease;
+    max-height: 0;
+    overflow: hidden;
+    transition: transform 280ms ease, opacity 280ms ease, max-height 280ms ease;
 }
 
 .gallery-item:hover .gallery-caption {
     transform: translateY(0);
     opacity: 1;
+    max-height: 3rem;
 }
 
 .gallery-open-album {
@@ -1831,11 +2017,17 @@ p {
 
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 0;
     }
 
     .stat-item {
         border-right: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        padding: 1.4rem 0.8rem;
+    }
+
+    .stat-item:nth-child(odd) {
+        border-right: 1px solid rgba(255, 255, 255, 0.07);
     }
 
     .stat-item:nth-child(3),
