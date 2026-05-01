@@ -1332,6 +1332,13 @@ p {
     box-shadow: 0 28px 56px rgba(0, 0, 0, 0.55);
 }
 
+@media (hover: none) {
+    .gallery-item:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
+
 .gallery-thumb {
     aspect-ratio: 4 / 3;
     position: relative;
@@ -1742,8 +1749,12 @@ p {
     }
 
     .nav-dropdown-menu {
+        display: none;
         position: static;
         transform: none;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
         min-width: 0;
         width: 100%;
         box-shadow: none;
@@ -1756,6 +1767,7 @@ p {
     }
 
     .nav-dropdown-menu.is-open {
+        display: block;
         transform: none;
     }
 

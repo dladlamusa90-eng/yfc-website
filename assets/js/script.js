@@ -397,6 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Gallery filter
     const galleryFilters = document.querySelectorAll(".gallery-filter");
     const galleryItems = document.querySelectorAll(".gallery-item");
+    const galleryLinks = document.querySelectorAll(".gallery-item-link");
 
     for (const btn of galleryFilters) {
         btn.addEventListener("click", () => {
@@ -406,7 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const filter = btn.dataset.filter;
 
             if (filter !== "all") {
-                window.location.href = `atmosphere-album.html?category=${filter}`;
+                window.location.href = `atmosphere-album.html#${filter}`;
                 return;
             }
 
@@ -420,6 +421,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+
+
     // Album page renderer in batches to keep initial page load fast.
     const albumGrid = document.querySelector("#album-grid");
     const loadMoreButton = document.querySelector("#album-load-more");
@@ -431,8 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const albumDescription = document.querySelector("#album-description");
 
     if (albumGrid) {
-        const params = new URLSearchParams(window.location.search);
-        const category = params.get("category") || "atmosphere";
+        const category = (window.location.hash.slice(1)) || "atmosphere";
         const selectedAlbum = albumConfig[category] || albumConfig.atmosphere;
         const albumPhotos = selectedAlbum.photos;
 
