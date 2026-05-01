@@ -8,7 +8,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css?v=20260501b">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260501g">
+    <!-- Firebase (admin upload only) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 </head>
 <body>
     <header class="site-header">
@@ -54,6 +58,7 @@
                     <h1 id="album-title">Moments Gallery</h1>
                     <p id="album-description">A collection of captured moments from Youth For Christ gatherings and activities.</p>
                 </div>
+                <button class="btn-album-admin" id="btnAdminOpen" type="button">Admin Upload</button>
             </div>
         </section>
 
@@ -120,5 +125,185 @@
     </footer>
 
     <script src="assets/js/script.js?v=20260501"></script>
+
+    <!-- Admin password modal -->
+    <div class="pw-modal" id="albumPwModal" role="dialog" aria-modal="true" aria-label="Admin login" style="display:none">
+        <div class="pw-modal-box">
+            <h3>Admin Access</h3>
+            <p>Enter the admin password to upload photos.</p>
+            <input type="password" id="albumPwInput" placeholder="Password" autocomplete="current-password">
+            <p class="pw-error" id="albumPwError" style="display:none">Incorrect password.</p>
+            <div class="pw-modal-actions">
+                <button type="button" class="button" id="albumPwSubmit">Unlock</button>
+                <button type="button" class="button button-secondary" id="albumPwCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin upload panel -->
+    <div class="album-admin-panel" id="albumAdminPanel" style="display:none">
+        <div class="container">
+            <div class="album-admin-inner">
+                <div class="album-admin-header">
+                    <h3>Upload Photos</h3>
+                    <button type="button" class="album-admin-close" id="albumAdminClose" aria-label="Close">&times;</button>
+                </div>
+                <div class="album-upload-form">
+                    <label class="album-upload-label" for="uploadCategory">Category</label>
+                    <select id="uploadCategory" class="album-upload-select">
+                        <option value="outreach">Outreach</option>
+                        <option value="jrt">Jesus Roundtable</option>
+                        <option value="tours">Tours</option>
+                        <option value="atmosphere">Atmosphere of Faith</option>
+                        <option value="leadership">Leadership</option>
+                        <option value="yfcw">Youth For Christ Worship (YFCW)</option>
+                        <option value="more">More</option>
+                    </select>
+                    <label class="album-upload-label" for="uploadCaption">Caption (optional)</label>
+                    <input type="text" id="uploadCaption" class="album-upload-input" placeholder="e.g. Outreach day in Witbank">
+                    <label class="album-upload-label" for="uploadFiles">Photos (select multiple)</label>
+                    <input type="file" id="uploadFiles" accept="image/*" multiple class="album-upload-file">
+                    <button type="button" class="button" id="btnUpload">Upload</button>
+                </div>
+                <div id="uploadProgressList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        var ADMIN_CODE = 'Musa@990302';
+        var firebaseConfig = {
+            apiKey: "AIzaSyBhdh8bLPksi2B9Z0bNvufjvDHFibFg_zY",
+            authDomain: "yfc-website-d5529.firebaseapp.com",
+            projectId: "yfc-website-d5529",
+            storageBucket: "yfc-website-d5529.firebasestorage.app",
+            messagingSenderId: "184656233306",
+            appId: "1:184656233306:web:c9da67faf695b587a2e963"
+        };
+        var app     = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+        var db      = firebase.firestore();
+        var storage = firebase.storage();
+        var isAdmin = false;
+        var currentCategory = (window.location.hash.slice(1)) || 'atmosphere';
+
+        // Inject Firebase-uploaded photos at the top of the existing #album-grid
+        var grid = document.getElementById('album-grid');
+        if (grid) {
+            db.collection('gallery')
+                .where('category', '==', currentCategory)
+                .orderBy('uploadedAt', 'desc')
+                .onSnapshot(function (snap) {
+                    Array.from(grid.querySelectorAll('.fb-photo')).forEach(function (el) { el.remove(); });
+                    if (snap.empty) { return; }
+                    var frag = document.createDocumentFragment();
+                    snap.forEach(function (doc) {
+                        var d = doc.data();
+                        var card = document.createElement('div');
+                        card.className = 'album-item fb-photo';
+                        card.setAttribute('data-doc-id', doc.id);
+                        var img = document.createElement('img');
+                        img.className = 'album-image';
+                        img.src = d.url;
+                        img.alt = d.caption || currentCategory;
+                        img.loading = 'lazy'; img.decoding = 'async';
+                        img.width = 1200; img.height = 900;
+                        var badge = document.createElement('span');
+                        badge.className = 'album-index'; badge.textContent = 'New';
+                        card.appendChild(img); card.appendChild(badge);
+                        frag.appendChild(card);
+                    });
+                    grid.insertBefore(frag, grid.firstChild);
+                    if (isAdmin) { attachDeleteBtns(); }
+                }, function (err) { console.error('Firebase:', err); });
+        }
+
+        function attachDeleteBtns() {
+            if (!grid) { return; }
+            Array.from(grid.querySelectorAll('.fb-photo')).forEach(function (card) {
+                if (card.querySelector('.fb-del')) { return; }
+                var docId = card.getAttribute('data-doc-id');
+                var btn = document.createElement('button');
+                btn.className = 'fb-del album-photo-delete'; btn.type = 'button'; btn.textContent = '\u2715 Delete';
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (!confirm('Delete this photo?')) { return; }
+                    db.collection('gallery').doc(docId).get().then(function (s) {
+                        var del = (s.data() && s.data().storagePath) ? storage.ref(s.data().storagePath).delete().catch(function(){}) : Promise.resolve();
+                        return del.then(function () { return s.ref.delete(); });
+                    }).catch(function (err) { alert('Could not delete.'); console.error(err); });
+                });
+                card.style.position = 'relative'; card.appendChild(btn);
+            });
+        }
+
+        // Admin password
+        var pwModal = document.getElementById('albumPwModal');
+        var pwInput = document.getElementById('albumPwInput');
+        var pwError = document.getElementById('albumPwError');
+        var adminPanel = document.getElementById('albumAdminPanel');
+        var btnOpen = document.getElementById('btnAdminOpen');
+
+        btnOpen.addEventListener('click', function () {
+            if (isAdmin) { adminPanel.style.display = adminPanel.style.display === 'none' ? 'block' : 'none'; return; }
+            pwInput.value = ''; pwError.style.display = 'none';
+            pwModal.style.display = 'flex';
+            setTimeout(function () { pwInput.focus(); }, 50);
+        });
+        document.getElementById('albumPwSubmit').addEventListener('click', checkPw);
+        pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') checkPw(); });
+        document.getElementById('albumPwCancel').addEventListener('click', function () { pwModal.style.display = 'none'; });
+
+        function checkPw() {
+            if (pwInput.value === ADMIN_CODE) {
+                isAdmin = true; pwModal.style.display = 'none'; adminPanel.style.display = 'block';
+                btnOpen.textContent = 'Close Upload Panel';
+                var sel = document.getElementById('uploadCategory');
+                if (sel && currentCategory) { sel.value = currentCategory; }
+                attachDeleteBtns();
+            } else {
+                pwError.style.display = 'block'; pwInput.value = ''; pwInput.focus();
+            }
+        }
+        document.getElementById('albumAdminClose').addEventListener('click', function () {
+            adminPanel.style.display = 'none'; btnOpen.textContent = 'Admin Upload';
+        });
+
+        // Upload
+        document.getElementById('btnUpload').addEventListener('click', function () {
+            var files    = document.getElementById('uploadFiles').files;
+            var category = document.getElementById('uploadCategory').value;
+            var caption  = document.getElementById('uploadCaption').value.trim();
+            if (!files || files.length === 0) { alert('Please choose at least one photo.'); return; }
+            var list = document.getElementById('uploadProgressList');
+            Array.from(files).forEach(function (file) {
+                if (!file.type.startsWith('image/')) { return; }
+                var safeName = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+                var path = 'gallery/' + category + '/' + safeName;
+                var ref  = storage.ref(path);
+                var row = document.createElement('div'); row.className = 'album-progress-row';
+                var lbl = document.createElement('span'); lbl.className = 'album-progress-label'; lbl.textContent = file.name;
+                var bar = document.createElement('div'); bar.className = 'album-progress-bar-wrap';
+                var fill = document.createElement('div'); fill.className = 'album-progress-fill';
+                var st = document.createElement('span'); st.className = 'album-progress-status'; st.textContent = '0%';
+                bar.appendChild(fill); row.appendChild(lbl); row.appendChild(bar); row.appendChild(st);
+                list.appendChild(row);
+                var task = ref.put(file);
+                task.on('state_changed',
+                    function (sn) { var p = Math.round((sn.bytesTransferred/sn.totalBytes)*100); fill.style.width=p+'%'; st.textContent=p+'%'; },
+                    function (err) { st.textContent='Failed'; row.classList.add('album-progress-error'); console.error(err); },
+                    function () {
+                        task.snapshot.ref.getDownloadURL().then(function (url) {
+                            return db.collection('gallery').add({ url:url, category:category, caption:caption, storagePath:path, uploadedAt:firebase.firestore.FieldValue.serverTimestamp() });
+                        }).then(function () { fill.style.width='100%'; st.textContent='Done \u2713'; row.classList.add('album-progress-done'); })
+                        .catch(function (err) { st.textContent='Save error'; row.classList.add('album-progress-error'); console.error(err); });
+                    }
+                );
+            });
+            document.getElementById('uploadFiles').value = '';
+            document.getElementById('uploadCaption').value = '';
+        });
+    })();
+    </script>
 </body>
 </html>
