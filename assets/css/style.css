@@ -3409,6 +3409,28 @@ p {
     margin-bottom: 0.4rem;
 }
 
+.cal-branch-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.65rem;
+    margin: 0 0 0.7rem;
+}
+
+.cal-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    color: #666;
+}
+
+.cal-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
 .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -3459,14 +3481,20 @@ p {
 }
 
 .day-dot {
-    width: 5px;
-    height: 5px;
-    background: var(--color-gold);
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
+    display: inline-block;
+}
+
+.day-dot-wrap {
     position: absolute;
     bottom: 5px;
     left: 50%;
     transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
 }
 
 /* Events list below calendar */
@@ -3527,6 +3555,23 @@ p {
 .cal-event-info span {
     font-size: 0.83rem;
     color: #777;
+}
+
+.cal-event-branch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.76rem;
+    font-weight: 700;
+    margin-top: 0.2rem;
+    color: #444;
+}
+
+.cal-event-branch-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
 }
 
 .cal-no-events {
@@ -3752,6 +3797,17 @@ p {
     color: #1a1a2e;
 }
 
+.edit-branch-chip {
+    display: inline-block;
+    margin-left: 0.45rem;
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
 .btn-close-edit {
     background: var(--color-gold);
     color: #fff;
@@ -3786,6 +3842,25 @@ p {
     transition: border-color 0.2s;
 }
 
+.add-event-form select,
+#pw-branch {
+    flex: 1;
+    min-width: 130px;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    background: #fff;
+    transition: border-color 0.2s;
+}
+
+.add-event-form select:focus,
+#pw-branch:focus {
+    border-color: var(--color-gold);
+}
+
 .add-event-form input:focus {
     border-color: var(--color-gold);
 }
@@ -3817,6 +3892,7 @@ p {
     border-radius: 12px;
     margin-bottom: 0.5rem;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid transparent;
 }
 
 .edit-event-row-info strong {
@@ -3869,6 +3945,7 @@ p {
     }
 
     .add-event-form input,
+    .add-event-form select,
     .add-event-form button {
         width: 100%;
         min-width: unset;

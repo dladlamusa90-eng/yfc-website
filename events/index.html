@@ -53,6 +53,7 @@
                     <div class="cal-weekdays" aria-hidden="true">
                         <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
                     </div>
+                    <div class="cal-branch-legend" id="cal-branch-legend" aria-label="Branch event colors"></div>
                     <div class="cal-grid" id="cal-grid" role="grid" aria-label="Calendar"></div>
                 </div>
 
@@ -90,6 +91,16 @@
             <div class="pw-modal-box">
                 <h2 id="pw-modal-title">Admin Access</h2>
                 <p>Enter the admin code to manage events.</p>
+                <select id="pw-branch" aria-label="Select branch">
+                    <option value="eastrand">Eastrand</option>
+                    <option value="durban">Durban</option>
+                    <option value="pretoria">Pretoria</option>
+                    <option value="soweto">Soweto</option>
+                    <option value="potchefstroom">Potchefstroom</option>
+                    <option value="gqeberha">Gqeberha</option>
+                    <option value="polokwane">Polokwane</option>
+                    <option value="witbank" selected>Witbank</option>
+                </select>
                 <input type="password" id="pw-input" placeholder="Enter code" autocomplete="off" />
                 <p class="pw-error-msg" id="pw-error">Incorrect code. Please try again.</p>
                 <div class="pw-modal-actions">
@@ -103,12 +114,22 @@
         <section class="edit-panel" id="edit-panel" aria-label="Edit events">
             <div class="container">
                 <div class="edit-panel-header">
-                    <h2>Manage Events</h2>
+                    <h2>Manage Events <span class="edit-branch-chip" id="edit-branch-chip">Witbank</span></h2>
                     <button class="btn-close-edit" id="close-edit">Done</button>
                 </div>
                 <form class="add-event-form" id="add-event-form" novalidate>
                     <input type="text" id="new-event-name" placeholder="Event name" required />
                     <input type="date" id="new-event-date" required />
+                    <select id="new-event-branch" aria-label="Event branch" disabled>
+                        <option value="eastrand">Eastrand</option>
+                        <option value="durban">Durban</option>
+                        <option value="pretoria">Pretoria</option>
+                        <option value="soweto">Soweto</option>
+                        <option value="potchefstroom">Potchefstroom</option>
+                        <option value="gqeberha">Gqeberha</option>
+                        <option value="polokwane">Polokwane</option>
+                        <option value="witbank">Witbank</option>
+                    </select>
                     <input type="text" id="new-event-desc" placeholder="Description (optional)" />
                     <button type="submit">Add Event</button>
                 </form>
@@ -120,15 +141,25 @@
 
     <script>
     (function () {
-        var ADMIN_CODE = 'Musa@990302';
+        var BRANCH_CONFIG = {
+            eastrand: { label: 'Eastrand', color: '#ef4723', code: 'East@123' },
+            durban: { label: 'Durban', color: '#ff8c42', code: 'Durban@123' },
+            pretoria: { label: 'Pretoria', color: '#be8a00', code: 'Pta@123' },
+            soweto: { label: 'Soweto', color: '#1e8e5a', code: 'Soweto@123' },
+            potchefstroom: { label: 'Potchefstroom', color: '#3867d6', code: 'Potch@123' },
+            gqeberha: { label: 'Gqeberha', color: '#7d4fe0', code: 'Gqe@123' },
+            polokwane: { label: 'Polokwane', color: '#db2777', code: 'Polo@123' },
+            witbank: { label: 'Witbank', color: '#0f766e', code: 'Musa@990302' }
+        };
         var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
         var DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        var currentAdminBranch = 'witbank';
 
         var DEFAULT_EVENTS = [
-            { id: '1', name: 'Rockland Ministries, Pretoria', date: '2026-06-04', desc: 'June 4–6' },
-            { id: '2', name: 'Soweto Outreach', date: '2026-09-25', desc: 'Sept 25–26' },
-            { id: '3', name: 'All Night Encounter', date: '2026-12-18', desc: '' },
-            { id: '4', name: 'December Camp', date: '2026-12-22', desc: 'Annual year-end discipleship camp' }
+            { id: '1', name: 'Rockland Ministries, Pretoria', branch: 'pretoria', date: '2026-06-04', desc: 'June 4–6' },
+            { id: '2', name: 'Soweto Outreach', branch: 'soweto', date: '2026-09-25', desc: 'Sept 25–26' },
+            { id: '3', name: 'All Night Encounter', branch: 'witbank', date: '2026-12-18', desc: '' },
+            { id: '4', name: 'December Camp', branch: 'witbank', date: '2026-12-22', desc: 'Annual year-end discipleship camp' }
         ];
 
         // Firebase config
@@ -164,6 +195,39 @@
                 .replace(/"/g, '&quot;');
         }
 
+        function normalizeBranchKey(val) {
+            var key = String(val || '').toLowerCase().trim();
+            if (BRANCH_CONFIG[key]) return key;
+
+            if (key.indexOf('potch') > -1) return 'potchefstroom';
+            if (key.indexOf('east') > -1) return 'eastrand';
+            if (key.indexOf('gqe') > -1 || key.indexOf('port elizabeth') > -1) return 'gqeberha';
+            if (key.indexOf('polo') > -1) return 'polokwane';
+            if (key.indexOf('durban') > -1) return 'durban';
+            if (key.indexOf('soweto') > -1) return 'soweto';
+            if (key.indexOf('pretoria') > -1) return 'pretoria';
+            if (key.indexOf('witbank') > -1 || key.indexOf('emalahleni') > -1) return 'witbank';
+
+            return 'witbank';
+        }
+
+        function getEventBranch(eventObj) {
+            return normalizeBranchKey(eventObj && (eventObj.branch || eventObj.name));
+        }
+
+        function renderBranchLegend() {
+            var legend = document.getElementById('cal-branch-legend');
+            if (!legend) return;
+
+            legend.innerHTML = '';
+            Object.keys(BRANCH_CONFIG).forEach(function (key) {
+                var item = document.createElement('span');
+                item.className = 'cal-legend-item';
+                item.innerHTML = '<span class="cal-legend-dot" style="background:' + BRANCH_CONFIG[key].color + '"></span>' + escHtml(BRANCH_CONFIG[key].label);
+                legend.appendChild(item);
+            });
+        }
+
         // Initialize Firestore with default events if empty
         function initializeFirestore() {
             db.collection('events').get().then(function(querySnapshot) {
@@ -189,7 +253,9 @@
             firestoreListener = db.collection('events').onSnapshot(function(snapshot) {
                 allEvents = [];
                 snapshot.forEach(function(doc) {
-                    allEvents.push(doc.data());
+                    var evt = doc.data() || {};
+                    evt.branch = getEventBranch(evt);
+                    allEvents.push(evt);
                 });
                 if (isInitialized) {
                     renderCalendar();
@@ -217,7 +283,14 @@
 
             var eventDays = {};
             eventsThisMonth.forEach(function (e) {
-                eventDays[parseLocalDate(e.date).getDate()] = true;
+                var dayNumber = parseLocalDate(e.date).getDate();
+                var branchKey = getEventBranch(e);
+                if (!eventDays[dayNumber]) {
+                    eventDays[dayNumber] = [];
+                }
+                if (eventDays[dayNumber].indexOf(branchKey) === -1) {
+                    eventDays[dayNumber].push(branchKey);
+                }
             });
 
             for (var i = 0; i < firstDay; i++) {
@@ -236,9 +309,15 @@
                 numSpan.textContent = d;
                 cell.appendChild(numSpan);
                 if (eventDays[d]) {
-                    var dot = document.createElement('span');
-                    dot.className = 'day-dot';
-                    cell.appendChild(dot);
+                    var dotsWrap = document.createElement('span');
+                    dotsWrap.className = 'day-dot-wrap';
+                    eventDays[d].slice(0, 4).forEach(function (branchKey) {
+                        var dot = document.createElement('span');
+                        dot.className = 'day-dot';
+                        dot.style.background = BRANCH_CONFIG[branchKey].color;
+                        dotsWrap.appendChild(dot);
+                    });
+                    cell.appendChild(dotsWrap);
                 }
                 (function (day) {
                     cell.style.cursor = 'pointer';
@@ -266,6 +345,7 @@
                     return parseLocalDate(a.date) - parseLocalDate(b.date);
                 }).forEach(function (e) {
                     var d = parseLocalDate(e.date);
+                    var branchKey = getEventBranch(e);
                     var item = document.createElement('div');
                     item.className = 'cal-event-item';
                     item.innerHTML =
@@ -275,8 +355,11 @@
                         '</div>' +
                         '<div class="cal-event-info">' +
                             '<strong>' + escHtml(e.name) + '</strong>' +
+                            '<span class="cal-event-branch"><span class="cal-event-branch-dot" style="background:' + BRANCH_CONFIG[branchKey].color + '"></span>' + escHtml(BRANCH_CONFIG[branchKey].label) + '</span>' +
                             (e.desc ? '<span>' + escHtml(e.desc) + '</span>' : '') +
                         '</div>';
+                    item.style.borderLeft = '4px solid ' + BRANCH_CONFIG[branchKey].color;
+                    item.querySelector('.cal-event-badge').style.background = BRANCH_CONFIG[branchKey].color;
                     listEl.appendChild(item);
                 });
             }
@@ -296,11 +379,14 @@
                 body.innerHTML = '<p class="day-modal-empty">No events on this day.</p>';
             } else {
                 eventsOnDay.forEach(function (e) {
+                    var branchKey = getEventBranch(e);
                     var item = document.createElement('div');
                     item.className = 'day-modal-event';
                     item.innerHTML =
                         '<strong>' + escHtml(e.name) + '</strong>' +
+                        '<span class="cal-event-branch"><span class="cal-event-branch-dot" style="background:' + BRANCH_CONFIG[branchKey].color + '"></span>' + escHtml(BRANCH_CONFIG[branchKey].label) + '</span>' +
                         (e.desc ? '<span>' + escHtml(e.desc) + '</span>' : '');
+                    item.style.borderLeft = '4px solid ' + BRANCH_CONFIG[branchKey].color;
                     body.appendChild(item);
                 });
             }
@@ -314,16 +400,28 @@
                 listEl.innerHTML = '<p style="color:#aaa;font-size:.88rem;text-align:center;padding:1rem 0;">No events yet.</p>';
                 return;
             }
-            allEvents.slice().sort(function (a, b) { return parseLocalDate(a.date) - parseLocalDate(b.date); })
+            var editableEvents = allEvents.filter(function (e) {
+                return getEventBranch(e) === currentAdminBranch;
+            });
+
+            if (editableEvents.length === 0) {
+                listEl.innerHTML = '<p style="color:#888;font-size:.88rem;text-align:center;padding:1rem 0;">No events for this branch yet.</p>';
+                return;
+            }
+
+            editableEvents.slice().sort(function (a, b) { return parseLocalDate(a.date) - parseLocalDate(b.date); })
                 .forEach(function (e) {
+                    var branchKey = getEventBranch(e);
                     var row = document.createElement('div');
                     row.className = 'edit-event-row';
                     row.innerHTML =
                         '<div class="edit-event-row-info">' +
                             '<strong>' + escHtml(e.name) + '</strong>' +
+                            '<span class="cal-event-branch"><span class="cal-event-branch-dot" style="background:' + BRANCH_CONFIG[branchKey].color + '"></span>' + escHtml(BRANCH_CONFIG[branchKey].label) + '</span>' +
                             '<span>' + escHtml(e.date) + (e.desc ? ' — ' + escHtml(e.desc) : '') + '</span>' +
                         '</div>' +
                         '<button class="btn-delete-event" data-id="' + e.id + '">Delete</button>';
+                    row.style.borderLeft = '4px solid ' + BRANCH_CONFIG[branchKey].color;
                     listEl.appendChild(row);
                 });
             listEl.querySelectorAll('.btn-delete-event').forEach(function (btn) {
@@ -340,6 +438,7 @@
         viewMonth = now.getMonth();
 
         initializeFirestore();
+        renderBranchLegend();
 
         setTimeout(function() {
             isInitialized = true;
@@ -379,9 +478,15 @@
 
         function tryEnter() {
             var val = document.getElementById('pw-input').value;
-            if (val === ADMIN_CODE) {
+            var selectedBranch = normalizeBranchKey(document.getElementById('pw-branch').value);
+            var selectedConfig = BRANCH_CONFIG[selectedBranch];
+            if (selectedConfig && val === selectedConfig.code) {
+                currentAdminBranch = selectedBranch;
                 document.getElementById('pw-modal').classList.remove('active');
                 document.getElementById('edit-panel').classList.add('active');
+                document.getElementById('new-event-branch').value = selectedBranch;
+                document.getElementById('edit-branch-chip').textContent = selectedConfig.label;
+                document.getElementById('edit-branch-chip').style.background = selectedConfig.color;
                 document.getElementById('edit-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 renderEditList();
             } else {
@@ -410,6 +515,7 @@
             db.collection('events').doc(newId).set({
                 id: newId,
                 name: name,
+                branch: currentAdminBranch,
                 date: date,
                 desc: desc
             });
