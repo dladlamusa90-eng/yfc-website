@@ -596,6 +596,7 @@ p {
     display: grid;
     grid-template-rows: auto auto auto;
     row-gap: 0.35rem;
+    align-content: start;
     padding: var(--space-card);
     background: linear-gradient(180deg, #ffffff, #fffdfc);
     border: 1px solid var(--color-border);
