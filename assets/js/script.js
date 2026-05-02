@@ -338,8 +338,33 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
-        const batchSize = 9;
+        const batchSize = window.matchMedia("(max-width: 768px)").matches ? 8 : 12;
         let renderedCount = 0;
+
+        const supportsIntersectionObserver = "IntersectionObserver" in window;
+        let lazyImageObserver = null;
+
+        if (supportsIntersectionObserver) {
+            lazyImageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    }
+
+                    const image = entry.target;
+                    const deferredSrc = image.dataset.src;
+
+                    if (deferredSrc) {
+                        image.src = deferredSrc;
+                        image.removeAttribute("data-src");
+                    }
+
+                    observer.unobserve(image);
+                });
+            }, {
+                rootMargin: "250px 0px"
+            });
+        }
 
         const renderBatch = () => {
             const fragment = document.createDocumentFragment();
@@ -354,12 +379,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const image = document.createElement("img");
                 image.className = "album-image";
-                image.src = photoPath;
                 image.alt = `${selectedAlbum.label} photo ${index + 1}`;
-                image.loading = "lazy";
+                const shouldPrioritize = index < 4;
+                image.loading = shouldPrioritize ? "eager" : "lazy";
                 image.decoding = "async";
+                image.fetchPriority = shouldPrioritize ? "high" : "low";
                 image.width = 1200;
                 image.height = 900;
+
+                if (shouldPrioritize || !lazyImageObserver) {
+                    image.src = photoPath;
+                } else {
+                    // Keep far-off images deferred until close to the viewport.
+                    image.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3C/svg%3E";
+                    image.dataset.src = photoPath;
+                    lazyImageObserver.observe(image);
+                }
 
                 const badge = document.createElement("span");
                 badge.className = "album-index";
