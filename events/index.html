@@ -242,6 +242,39 @@
             return normalizeBranchKey(eventObj && (eventObj.branch || eventObj.name));
         }
 
+        function resolveBranchFilterFromQuery(value) {
+            var key = String(value || '').toLowerCase().trim();
+            if (!key) return 'all';
+            if (BRANCH_CONFIG[key]) return key;
+
+            if (key.indexOf('potch') > -1) return 'potchefstroom';
+            if (key.indexOf('east') > -1) return 'eastrand';
+            if (key.indexOf('gqe') > -1 || key.indexOf('port elizabeth') > -1) return 'gqeberha';
+            if (key.indexOf('polo') > -1) return 'polokwane';
+            if (key.indexOf('durban') > -1) return 'durban';
+            if (key.indexOf('soweto') > -1) return 'soweto';
+            if (key.indexOf('pretoria') > -1) return 'pretoria';
+            if (key.indexOf('witbank') > -1 || key.indexOf('emalahleni') > -1) return 'witbank';
+
+            return 'all';
+        }
+
+        function resolveInitialBranchFilter() {
+            var searchBranch = new URLSearchParams(window.location.search).get('branch');
+            var fromSearch = resolveBranchFilterFromQuery(searchBranch);
+            if (fromSearch !== 'all') return fromSearch;
+
+            var hashValue = String(window.location.hash || '').replace(/^#/, '').trim();
+            if (!hashValue) return 'all';
+
+            var hashBranch = hashValue;
+            if (hashValue.indexOf('branch=') === 0) {
+                hashBranch = hashValue.slice(7);
+            }
+
+            return resolveBranchFilterFromQuery(hashBranch);
+        }
+
         function resolveBranchFromCode(inputCode) {
             var code = String(inputCode || '').trim();
             var keys = Object.keys(BRANCH_CONFIG);
@@ -541,6 +574,11 @@
         var now = new Date();
         viewYear = now.getFullYear();
         viewMonth = now.getMonth();
+
+        selectedBranchFilter = resolveInitialBranchFilter();
+        if (selectedBranchFilter !== 'all') {
+            document.getElementById('cal-branch-filter').value = selectedBranchFilter;
+        }
 
         initializeFirestore();
         renderBranchLegend();
