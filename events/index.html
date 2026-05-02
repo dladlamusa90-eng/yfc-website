@@ -59,7 +59,20 @@
 
                 <!-- Events list for selected month -->
                 <div class="cal-events-list-wrap">
-                    <p class="cal-events-title" id="cal-events-title">Events this month</p>
+                    <div class="cal-events-toolbar">
+                        <p class="cal-events-title" id="cal-events-title">Events this month</p>
+                        <select id="cal-branch-filter" aria-label="Filter events by branch">
+                            <option value="all" selected>All branches</option>
+                            <option value="eastrand">Eastrand</option>
+                            <option value="durban">Durban</option>
+                            <option value="pretoria">Pretoria</option>
+                            <option value="soweto">Soweto</option>
+                            <option value="potchefstroom">Potchefstroom</option>
+                            <option value="gqeberha">Gqeberha</option>
+                            <option value="polokwane">Polokwane</option>
+                            <option value="witbank">Witbank</option>
+                        </select>
+                    </div>
                     <div id="cal-events-list"></div>
                     <p class="cal-no-events" id="cal-no-events" style="display:none;">No events scheduled this month.</p>
                 </div>
@@ -154,6 +167,7 @@
         var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
         var DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
         var currentAdminBranch = 'witbank';
+        var selectedBranchFilter = 'all';
 
         var DEFAULT_EVENTS = [
             { id: '1', name: 'Rockland Ministries, Pretoria', branch: 'pretoria', date: '2026-06-04', desc: 'June 4–6' },
@@ -267,8 +281,10 @@
         function renderCalendar() {
             var today = new Date();
 
+            var filterSuffix = selectedBranchFilter === 'all' ? '' : ' - ' + BRANCH_CONFIG[selectedBranchFilter].label;
+
             document.getElementById('cal-month-label').textContent = MONTH_NAMES[viewMonth] + ' ' + viewYear;
-            document.getElementById('cal-events-title').textContent = 'Events in ' + MONTH_NAMES[viewMonth];
+            document.getElementById('cal-events-title').textContent = 'Events in ' + MONTH_NAMES[viewMonth] + filterSuffix;
 
             var grid = document.getElementById('cal-grid');
             grid.innerHTML = '';
@@ -281,8 +297,13 @@
                 return d.getFullYear() === viewYear && d.getMonth() === viewMonth;
             });
 
+            var filteredEvents = eventsThisMonth.filter(function (e) {
+                var branchKey = getEventBranch(e);
+                return selectedBranchFilter === 'all' || branchKey === selectedBranchFilter;
+            });
+
             var eventDays = {};
-            eventsThisMonth.forEach(function (e) {
+            filteredEvents.forEach(function (e) {
                 var dayNumber = parseLocalDate(e.date).getDate();
                 var branchKey = getEventBranch(e);
                 if (!eventDays[dayNumber]) {
@@ -337,11 +358,11 @@
             var noMsg = document.getElementById('cal-no-events');
             listEl.innerHTML = '';
 
-            if (eventsThisMonth.length === 0) {
+            if (filteredEvents.length === 0) {
                 noMsg.style.display = 'block';
             } else {
                 noMsg.style.display = 'none';
-                eventsThisMonth.sort(function (a, b) {
+                filteredEvents.sort(function (a, b) {
                     return parseLocalDate(a.date) - parseLocalDate(b.date);
                 }).forEach(function (e) {
                     var d = parseLocalDate(e.date);
@@ -368,7 +389,9 @@
         function openDayModal(day) {
             var eventsOnDay = allEvents.filter(function (e) {
                 var d = parseLocalDate(e.date);
-                return d.getFullYear() === viewYear && d.getMonth() === viewMonth && d.getDate() === day;
+                var branchKey = getEventBranch(e);
+                var branchMatch = selectedBranchFilter === 'all' || branchKey === selectedBranchFilter;
+                return d.getFullYear() === viewYear && d.getMonth() === viewMonth && d.getDate() === day && branchMatch;
             });
             var date = new Date(viewYear, viewMonth, day);
             var title = DAY_NAMES[date.getDay()] + ', ' + MONTH_NAMES[viewMonth] + ' ' + day + ', ' + viewYear;
@@ -454,6 +477,14 @@
         document.getElementById('cal-next').addEventListener('click', function () {
             viewMonth++;
             if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+            renderCalendar();
+        });
+
+        document.getElementById('cal-branch-filter').addEventListener('change', function () {
+            selectedBranchFilter = normalizeBranchKey(this.value);
+            if (this.value === 'all') {
+                selectedBranchFilter = 'all';
+            }
             renderCalendar();
         });
 
