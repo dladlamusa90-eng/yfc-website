@@ -594,8 +594,8 @@ p {
 
 .media-card {
     display: grid;
-    grid-template-rows: auto auto 1fr;
-    gap: 1rem;
+    grid-template-rows: auto auto auto;
+    row-gap: 0.35rem;
     padding: var(--space-card);
     background: linear-gradient(180deg, #ffffff, #fffdfc);
     border: 1px solid var(--color-border);
@@ -612,7 +612,7 @@ p {
 
 .media-card h3 {
     font-size: 1.2rem;
-    margin: 0;
+    margin: 0.2rem 0 0;
 }
 
 .media-card p {
