@@ -123,7 +123,8 @@
                 <form class="add-event-form" id="add-event-form" novalidate>
                     <input type="text" id="new-event-name" placeholder="Event name" required />
                     <input type="date" id="new-event-date" required />
-                    <input type="time" id="new-event-time" aria-label="Event time" />
+                    <input type="time" id="new-event-start-time" aria-label="Event start time" />
+                    <input type="time" id="new-event-end-time" aria-label="Event end time" />
                     <select id="new-event-branch" aria-label="Event branch" disabled>
                         <option value="eastrand">Eastrand</option>
                         <option value="durban">Durban</option>
@@ -202,11 +203,23 @@
 
         function getEventDateTimeValue(eventObj) {
             var date = parseLocalDate(eventObj.date);
-            if (eventObj.time && /^\d{2}:\d{2}$/.test(eventObj.time)) {
-                var parts = eventObj.time.split(':').map(Number);
+            var start = eventObj.startTime || eventObj.time;
+            if (start && /^\d{2}:\d{2}$/.test(start)) {
+                var parts = start.split(':').map(Number);
                 date.setHours(parts[0], parts[1], 0, 0);
             }
             return date.getTime();
+        }
+
+        function formatEventTimeRange(eventObj) {
+            var start = eventObj.startTime || eventObj.time || '';
+            var end = eventObj.endTime || '';
+
+            if (start && end) {
+                return start + ' - ' + end;
+            }
+
+            return start || end;
         }
 
         function normalizeBranchKey(val) {
@@ -381,6 +394,7 @@
                 }).forEach(function (e) {
                     var d = parseLocalDate(e.date);
                     var branchKey = getEventBranch(e);
+                    var timeRange = formatEventTimeRange(e);
                     var item = document.createElement('div');
                     item.className = 'cal-event-item';
                     item.innerHTML =
@@ -392,7 +406,7 @@
                             '<strong>' + escHtml(e.name) + '</strong>' +
                             '<span class="cal-event-branch"><span class="cal-event-branch-dot" style="background:' + BRANCH_CONFIG[branchKey].color + '"></span>' + escHtml(BRANCH_CONFIG[branchKey].label) + '</span>' +
                             (e.desc ? '<span class="cal-event-desc">' + escHtml(e.desc) + '</span>' : '') +
-                            (e.time ? '<span class="cal-event-time">Time: ' + escHtml(e.time) + '</span>' : '') +
+                            (timeRange ? '<span class="cal-event-time">Time: ' + escHtml(timeRange) + '</span>' : '') +
                         '</div>';
                     item.style.borderLeft = '4px solid ' + BRANCH_CONFIG[branchKey].color;
                     item.querySelector('.cal-event-badge').style.background = BRANCH_CONFIG[branchKey].color;
@@ -418,13 +432,14 @@
             } else {
                 eventsOnDay.forEach(function (e) {
                     var branchKey = getEventBranch(e);
+                    var timeRange = formatEventTimeRange(e);
                     var item = document.createElement('div');
                     item.className = 'day-modal-event';
                     item.innerHTML =
                         '<strong>' + escHtml(e.name) + '</strong>' +
                         '<span class="cal-event-branch"><span class="cal-event-branch-dot" style="background:' + BRANCH_CONFIG[branchKey].color + '"></span>' + escHtml(BRANCH_CONFIG[branchKey].label) + '</span>' +
                         (e.desc ? '<span class="cal-event-desc">' + escHtml(e.desc) + '</span>' : '') +
-                        (e.time ? '<span class="cal-event-time">Time: ' + escHtml(e.time) + '</span>' : '');
+                        (timeRange ? '<span class="cal-event-time">Time: ' + escHtml(timeRange) + '</span>' : '');
                     item.style.borderLeft = '4px solid ' + BRANCH_CONFIG[branchKey].color;
                     body.appendChild(item);
                 });
@@ -451,6 +466,7 @@
             editableEvents.slice().sort(function (a, b) { return getEventDateTimeValue(a) - getEventDateTimeValue(b); })
                 .forEach(function (e) {
                     var branchKey = getEventBranch(e);
+                    var timeRange = formatEventTimeRange(e);
                     var row = document.createElement('div');
                     row.className = 'edit-event-row';
                     row.innerHTML =
@@ -458,7 +474,7 @@
                             '<strong>' + escHtml(e.name) + '</strong>' +
                             '<span class="cal-event-branch"><span class="cal-event-branch-dot" style="background:' + BRANCH_CONFIG[branchKey].color + '"></span>' + escHtml(BRANCH_CONFIG[branchKey].label) + '</span>' +
                             (e.desc ? '<span class="edit-event-desc-line">' + escHtml(e.desc) + '</span>' : '') +
-                            '<span class="edit-event-meta">' + escHtml(e.date) + (e.time ? ' • ' + escHtml(e.time) : '') + '</span>' +
+                            '<span class="edit-event-meta">' + escHtml(e.date) + (timeRange ? ' • ' + escHtml(timeRange) : '') + '</span>' +
                         '</div>' +
                         '<div class="edit-event-actions">' +
                             '<button class="btn-edit-event" data-id="' + e.id + '">Edit</button>' +
@@ -479,7 +495,8 @@
                         '<div class="edit-inline-form">' +
                             '<input type="text" class="edit-inline-name" value="' + escHtml(eventObj.name || '') + '" placeholder="Event name" />' +
                             '<input type="date" class="edit-inline-date" value="' + escHtml(eventObj.date || '') + '" />' +
-                            '<input type="time" class="edit-inline-time" value="' + escHtml(eventObj.time || '') + '" />' +
+                            '<input type="time" class="edit-inline-start-time" value="' + escHtml(eventObj.startTime || eventObj.time || '') + '" />' +
+                            '<input type="time" class="edit-inline-end-time" value="' + escHtml(eventObj.endTime || '') + '" />' +
                             '<input type="text" class="edit-inline-desc" value="' + escHtml(eventObj.desc || '') + '" placeholder="Description" />' +
                         '</div>' +
                         '<div class="edit-event-actions">' +
@@ -491,7 +508,8 @@
                     row.querySelector('.btn-edit-save').addEventListener('click', function () {
                         var newName = row.querySelector('.edit-inline-name').value.trim();
                         var newDate = row.querySelector('.edit-inline-date').value;
-                        var newTime = row.querySelector('.edit-inline-time').value;
+                        var newStartTime = row.querySelector('.edit-inline-start-time').value;
+                        var newEndTime = row.querySelector('.edit-inline-end-time').value;
                         var newDesc = row.querySelector('.edit-inline-desc').value.trim();
 
                         if (!newName || !newDate) {
@@ -501,7 +519,9 @@
                         db.collection('events').doc(String(id)).update({
                             name: newName,
                             date: newDate,
-                            time: newTime || '',
+                            startTime: newStartTime || '',
+                            endTime: newEndTime || '',
+                            time: '',
                             desc: newDesc,
                             branch: currentAdminBranch
                         });
@@ -602,7 +622,8 @@
             e.preventDefault();
             var name = document.getElementById('new-event-name').value.trim();
             var date = document.getElementById('new-event-date').value;
-            var time = document.getElementById('new-event-time').value;
+            var startTime = document.getElementById('new-event-start-time').value;
+            var endTime = document.getElementById('new-event-end-time').value;
             var desc = document.getElementById('new-event-desc').value.trim();
             if (!name || !date) return;
             var newId = Date.now().toString();
@@ -611,12 +632,15 @@
                 name: name,
                 branch: currentAdminBranch,
                 date: date,
-                time: time || '',
+                startTime: startTime || '',
+                endTime: endTime || '',
+                time: '',
                 desc: desc
             });
             document.getElementById('new-event-name').value = '';
             document.getElementById('new-event-date').value = '';
-            document.getElementById('new-event-time').value = '';
+            document.getElementById('new-event-start-time').value = '';
+            document.getElementById('new-event-end-time').value = '';
             document.getElementById('new-event-desc').value = '';
         });
 
