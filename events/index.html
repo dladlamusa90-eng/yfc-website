@@ -103,17 +103,7 @@
         <div class="pw-modal-overlay" id="pw-modal" role="dialog" aria-modal="true" aria-labelledby="pw-modal-title">
             <div class="pw-modal-box">
                 <h2 id="pw-modal-title">Admin Access</h2>
-                <p>Enter the admin code to manage events.</p>
-                <select id="pw-branch" aria-label="Select branch">
-                    <option value="eastrand">Eastrand</option>
-                    <option value="durban">Durban</option>
-                    <option value="pretoria">Pretoria</option>
-                    <option value="soweto">Soweto</option>
-                    <option value="potchefstroom">Potchefstroom</option>
-                    <option value="gqeberha">Gqeberha</option>
-                    <option value="polokwane">Polokwane</option>
-                    <option value="witbank" selected>Witbank</option>
-                </select>
+                <p>Enter your branch admin code to manage events.</p>
                 <input type="password" id="pw-input" placeholder="Enter code" autocomplete="off" />
                 <p class="pw-error-msg" id="pw-error">Incorrect code. Please try again.</p>
                 <div class="pw-modal-actions">
@@ -237,6 +227,20 @@
 
         function getEventBranch(eventObj) {
             return normalizeBranchKey(eventObj && (eventObj.branch || eventObj.name));
+        }
+
+        function resolveBranchFromCode(inputCode) {
+            var code = String(inputCode || '').trim();
+            var keys = Object.keys(BRANCH_CONFIG);
+
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                if (BRANCH_CONFIG[key].code === code) {
+                    return key;
+                }
+            }
+
+            return null;
         }
 
         function renderBranchLegend() {
@@ -567,8 +571,8 @@
 
         function tryEnter() {
             var val = document.getElementById('pw-input').value;
-            var selectedBranch = normalizeBranchKey(document.getElementById('pw-branch').value);
-            var selectedConfig = BRANCH_CONFIG[selectedBranch];
+            var selectedBranch = resolveBranchFromCode(val);
+            var selectedConfig = selectedBranch ? BRANCH_CONFIG[selectedBranch] : null;
             if (selectedConfig && val === selectedConfig.code) {
                 currentAdminBranch = selectedBranch;
                 document.getElementById('pw-modal').classList.remove('active');
