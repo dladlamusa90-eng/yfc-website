@@ -377,7 +377,7 @@
                         '<div class="cal-event-info">' +
                             '<strong>' + escHtml(e.name) + '</strong>' +
                             '<span class="cal-event-branch"><span class="cal-event-branch-dot" style="background:' + BRANCH_CONFIG[branchKey].color + '"></span>' + escHtml(BRANCH_CONFIG[branchKey].label) + '</span>' +
-                            (e.desc ? '<span>' + escHtml(e.desc) + '</span>' : '') +
+                            (e.desc ? '<span class="cal-event-desc">' + escHtml(e.desc) + '</span>' : '') +
                         '</div>';
                     item.style.borderLeft = '4px solid ' + BRANCH_CONFIG[branchKey].color;
                     item.querySelector('.cal-event-badge').style.background = BRANCH_CONFIG[branchKey].color;

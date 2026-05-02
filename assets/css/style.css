@@ -3592,6 +3592,11 @@ p {
     color: #777;
 }
 
+.cal-event-desc {
+    display: block;
+    margin-top: 0.22rem;
+}
+
 .cal-event-branch {
     display: inline-flex;
     align-items: center;
