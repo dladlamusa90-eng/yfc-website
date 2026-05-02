@@ -994,6 +994,55 @@ p {
     margin-top: 0.4rem;
 }
 
+.programs-hero {
+    background:
+        radial-gradient(circle at 12% 15%, rgba(239, 71, 35, 0.15), transparent 33%),
+        radial-gradient(circle at 88% 4%, rgba(252, 190, 92, 0.16), transparent 27%),
+        linear-gradient(180deg, #fffdf8 0%, #fff6ef 100%);
+}
+
+.programs-heading {
+    justify-items: center;
+    text-align: center;
+    margin: 0 auto 1.8rem;
+}
+
+.programs-heading h1 {
+    max-width: none;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+}
+
+.programs-intro {
+    margin: 0;
+    max-width: 70ch;
+    color: #5b667a;
+}
+
+.programs-group-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem;
+}
+
+.programs-group-card {
+    align-content: start;
+}
+
+.programs-group-card h3 {
+    margin: 0;
+}
+
+.programs-list-clean {
+    margin: 0;
+    padding-left: 1rem;
+    display: grid;
+    gap: 0.46rem;
+}
+
+.programs-list-clean li {
+    color: #4a5569;
+}
+
 .membership-form {
     margin-top: 1.2rem;
     display: grid;
@@ -1046,6 +1095,363 @@ p {
 .gallery-intro {
     margin-bottom: 1.2rem;
     max-width: 66ch;
+}
+
+/* ── Giving Page ── */
+.giving-hero {
+    padding: 5rem 0 5rem;
+    background:
+        radial-gradient(circle at 10% 20%, rgba(239, 71, 35, 0.12), transparent 40%),
+        linear-gradient(180deg, #fffdf8 0%, #fff6ef 100%);
+}
+
+.giving-hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.5rem;
+    align-items: center;
+}
+
+.giving-hero-text {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+    text-align: center;
+    justify-items: center;
+    max-width: 700px;
+    margin: 0 auto 3rem;
+}
+
+.giving-hero-kicker {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 0;
+}
+
+.giving-hero-text h1 {
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin: 0;
+}
+
+.giving-hero-desc {
+    color: #5b667a;
+    line-height: 1.7;
+    margin: 0;
+    max-width: 56ch;
+}
+
+.giving-backabuddy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background-color: #ef4723;
+    color: #ffffff !important;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.88rem 1.8rem;
+    border-radius: 100px;
+    text-decoration: none;
+    justify-self: center;
+    transition: background-color 0.2s, transform 0.15s;
+}
+
+.giving-backabuddy-btn:hover {
+    background-color: #d63a17;
+    transform: translateY(-2px);
+}
+
+.giving-hero-img-wrap {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.giving-hero-img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    max-height: 580px;
+    border-radius: 0;
+}
+
+.giving-hero-caption {
+    font-size: 0.8rem;
+    color: #7a8599;
+    text-align: center;
+    margin: 0;
+    padding: 0.6rem 0 1.4rem;
+}
+
+.giving-hero-caption a {
+    color: var(--color-accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.giving-hero-caption a:hover {
+    text-decoration: underline;
+}
+
+/* Details */
+.giving-details-section {
+    padding: 5rem 0;
+    background: linear-gradient(180deg, #fffdf8 0%, #fff6ef 100%);
+}
+
+.giving-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.giving-bank-card,
+.giving-message-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 2.2rem 2rem;
+}
+
+.giving-card-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 0 0 0.5rem;
+}
+
+.giving-bank-card h2,
+.giving-message-card h2 {
+    font-size: 1.45rem;
+    margin: 0 0 1.4rem;
+}
+
+.giving-bank-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0;
+}
+
+.giving-bank-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--color-border);
+    gap: 1rem;
+}
+
+.giving-bank-list li:last-child {
+    border-bottom: none;
+}
+
+.giving-bank-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #5b667a;
+}
+
+.giving-bank-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1f2734;
+    text-align: right;
+}
+
+.giving-bank-value--highlight {
+    font-size: 1.3rem;
+    color: var(--color-accent);
+}
+
+.giving-message-card p {
+    color: #4a5569;
+    line-height: 1.7;
+    margin: 0 0 0.9rem;
+}
+
+.giving-message-card p:last-child {
+    margin: 0;
+}
+
+/* Needs */
+.giving-needs-section {
+    padding: 5rem 0;
+    background: #ffffff;
+}
+
+.giving-needs-heading {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 3rem;
+}
+
+.giving-needs-heading h2 {
+    margin: 0.3rem 0 0.7rem;
+}
+
+.giving-needs-sub {
+    color: #5b667a;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.giving-needs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.giving-need-card {
+    background: linear-gradient(160deg, #fffcf9, #fff6ef);
+    border: 1px solid #f0ddd0;
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.8rem;
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.giving-need-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(239,71,35,0.1);
+}
+
+.giving-need-icon {
+    width: 52px;
+    height: 52px;
+    background: rgba(239,71,35,0.1);
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    color: var(--color-accent);
+    margin-bottom: 0.4rem;
+}
+
+.giving-need-card h3 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.giving-need-card p {
+    color: #5b667a;
+    font-size: 0.92rem;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Contact */
+.giving-contact-section {
+    padding: 5rem 0 6rem;
+    background: linear-gradient(160deg, #0f0804 0%, #1a0d07 50%, #0f0804 100%);
+}
+
+.giving-contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.giving-contact-text .section-label {
+    color: rgba(255,255,255,0.5);
+}
+
+.giving-contact-text h2 {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    color: #ffffff;
+    margin: 0.3rem 0 1rem;
+}
+
+.giving-contact-text p {
+    color: rgba(255,255,255,0.65);
+    line-height: 1.75;
+    margin: 0 0 1.6rem;
+}
+
+.giving-email-display {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 1rem 1.4rem;
+    color: rgba(255,255,255,0.5);
+}
+
+.giving-email-btn {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: color 0.2s;
+}
+
+.giving-email-btn:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+}
+
+.giving-cta-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius-lg);
+    padding: 2.4rem 2rem;
+    display: grid;
+    gap: 0.7rem;
+}
+
+.giving-cta-card h3 {
+    color: #ffffff;
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.giving-cta-card p {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.92rem;
+    line-height: 1.65;
+    margin: 0;
+}
+
+.giving-cta-compose {
+    display: inline-block;
+    margin-top: 0.5rem;
+    background: var(--color-accent);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 0.72rem 1.5rem;
+    border-radius: 100px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.giving-cta-compose:hover {
+    background: #d63a17;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .giving-details-grid,
+    .giving-needs-grid,
+    .giving-contact-inner {
+        grid-template-columns: 1fr;
+    }
+
+    .giving-hero {
+        padding: 3rem 0 0;
+    }
 }
 
 /* ── Merchandise Page ── */
@@ -2745,6 +3151,7 @@ p {
 
     .content-grid,
     .daily-juice-layout,
+    .programs-group-grid,
     .ministry-layout,
     .ministry-grid,
     .form-grid {
