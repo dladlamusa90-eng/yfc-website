@@ -479,6 +479,16 @@ document.addEventListener("DOMContentLoaded", () => {
             albumHero.style.backgroundRepeat = "no-repeat";
         }
 
+        window.albumStaticTotal = albumPhotos.length;
+        window.albumFirebaseCount = 0;
+
+        const updateAlbumCount = () => {
+            if (albumCount) {
+                const total = window.albumStaticTotal + window.albumFirebaseCount;
+                albumCount.textContent = `${total} photos`;
+            }
+        };
+
         const batchSize = 9;
         let renderedCount = 0;
 
@@ -514,9 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
             albumGrid.appendChild(fragment);
             renderedCount = endIndex;
 
-            if (albumCount) {
-                albumCount.textContent = `${renderedCount} / ${albumPhotos.length} photos`;
-            }
+            updateAlbumCount();
 
             if (loadMoreButton && renderedCount >= albumPhotos.length) {
                 loadMoreButton.hidden = true;

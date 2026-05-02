@@ -210,6 +210,11 @@
                     });
 
                     Array.from(grid.querySelectorAll('.fb-photo')).forEach(function (el) { el.remove(); });
+                    window.albumFirebaseCount = docs.length;
+                    if (typeof window.albumStaticTotal !== 'undefined') {
+                        var countEl = document.getElementById('album-photo-count');
+                        if (countEl) { countEl.textContent = (window.albumStaticTotal + docs.length) + ' photos'; }
+                    }
                     if (docs.length === 0) { return; }
                     var frag = document.createDocumentFragment();
                     docs.forEach(function (doc) {
