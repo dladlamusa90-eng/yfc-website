@@ -3597,6 +3597,14 @@ p {
     margin-top: 0.22rem;
 }
 
+.cal-event-time {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #4f5d73;
+}
+
 .cal-event-branch {
     display: inline-flex;
     align-items: center;
@@ -3927,6 +3935,7 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.7rem;
     padding: 0.85rem 1rem;
     background: #fff;
     border-radius: 12px;
@@ -3945,6 +3954,77 @@ p {
 .edit-event-row-info span {
     font-size: 0.8rem;
     color: #888;
+}
+
+.edit-event-desc-line {
+    display: block;
+    margin-top: 0.22rem;
+    color: #666;
+}
+
+.edit-event-meta {
+    display: block;
+    margin-top: 0.2rem;
+    color: #6e7a8f;
+}
+
+.edit-event-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-shrink: 0;
+}
+
+.btn-edit-event,
+.btn-edit-save,
+.btn-edit-cancel {
+    border-radius: 8px;
+    padding: 0.3rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: inherit;
+    font-weight: 600;
+    border: 1.5px solid transparent;
+}
+
+.btn-edit-event {
+    background: rgba(56, 103, 214, 0.08);
+    border-color: #3867d6;
+    color: #3867d6;
+}
+
+.btn-edit-save {
+    background: rgba(15, 118, 110, 0.1);
+    border-color: #0f766e;
+    color: #0f766e;
+}
+
+.btn-edit-cancel {
+    background: rgba(107, 114, 128, 0.08);
+    border-color: #6b7280;
+    color: #4b5563;
+}
+
+.edit-inline-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+    flex: 1;
+}
+
+.edit-inline-form input {
+    width: 100%;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    padding: 0.45rem 0.62rem;
+    font-size: 0.82rem;
+    font-family: inherit;
+    background: #fff;
+}
+
+.edit-inline-name,
+.edit-inline-desc {
+    grid-column: span 2;
 }
 
 .btn-delete-event {
@@ -4004,6 +4084,25 @@ p {
     .add-event-form button {
         width: 100%;
         min-width: unset;
+    }
+
+    .edit-event-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .edit-event-actions {
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .edit-inline-form {
+        grid-template-columns: 1fr;
+    }
+
+    .edit-inline-name,
+    .edit-inline-desc {
+        grid-column: span 1;
     }
 }
 
