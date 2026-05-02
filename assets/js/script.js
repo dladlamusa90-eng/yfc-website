@@ -298,6 +298,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const albumCategoryLabel = document.querySelector("#album-category-label");
     const albumTitle = document.querySelector("#album-title");
     const albumDescription = document.querySelector("#album-description");
+    const albumYearFilter = document.querySelector("#album-year-filter");
+    const albumMonthFilter = document.querySelector("#album-month-filter");
 
     if (albumGrid) {
         const category = (window.location.hash.slice(1)) || "atmosphere";
@@ -310,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let lightboxNextButton = null;
         let currentLightboxIndex = -1;
 
-        const getAlbumItems = () => Array.from(albumGrid.querySelectorAll(".album-item"));
+        const getAlbumItems = () => Array.from(albumGrid.querySelectorAll(".album-item:not([hidden])"));
 
         const getCardImageSource = (card) => {
             const image = card.querySelector(".album-image");
@@ -471,12 +473,97 @@ document.addEventListener("DOMContentLoaded", () => {
         const updateAlbumCount = () => {
             if (albumCount) {
                 const total = window.albumStaticTotal + window.albumFirebaseCount;
-                albumCount.textContent = `${total} photos`;
+                const visible = albumGrid.querySelectorAll('.album-item:not([hidden])').length;
+                albumCount.textContent = `${visible} / ${total} photos`;
             }
+        };
+
+        const updateYearFilterOptions = () => {
+            if (!albumYearFilter) {
+                return;
+            }
+
+            const previouslySelectedYear = albumYearFilter.value || "all";
+            const yearSet = new Set();
+
+            albumGrid.querySelectorAll(".album-item[data-year]").forEach((card) => {
+                const cardYear = card.dataset.year;
+                if (cardYear) {
+                    yearSet.add(cardYear);
+                }
+            });
+
+            const sortedYears = Array.from(yearSet).sort((a, b) => Number(b) - Number(a));
+            albumYearFilter.innerHTML = '<option value="all">All years</option>';
+
+            sortedYears.forEach((year) => {
+                const option = document.createElement("option");
+                option.value = year;
+                option.textContent = year;
+                albumYearFilter.appendChild(option);
+            });
+
+            albumYearFilter.value = sortedYears.includes(previouslySelectedYear) || previouslySelectedYear === "all"
+                ? previouslySelectedYear
+                : "all";
         };
 
         const batchSize = window.matchMedia("(max-width: 768px)").matches ? 8 : 12;
         let renderedCount = 0;
+        let renderingAllForFilter = false;
+
+        const ensureAllStaticRendered = () => {
+            if (renderingAllForFilter || renderedCount >= albumPhotos.length) {
+                return;
+            }
+
+            renderingAllForFilter = true;
+            while (renderedCount < albumPhotos.length) {
+                renderBatch();
+            }
+            renderingAllForFilter = false;
+        };
+
+        const applyAlbumFilters = () => {
+            const selectedYear = albumYearFilter ? albumYearFilter.value : "all";
+            const selectedMonth = albumMonthFilter ? albumMonthFilter.value : "all";
+            const filterIsActive = selectedYear !== "all" || selectedMonth !== "all";
+
+            if (filterIsActive && !renderingAllForFilter) {
+                ensureAllStaticRendered();
+            }
+
+            albumGrid.querySelectorAll(".album-item").forEach((card) => {
+                const cardYear = card.dataset.year || "";
+                const cardMonth = card.dataset.month || "";
+                const matchesYear = selectedYear === "all" || cardYear === selectedYear;
+                const matchesMonth = selectedMonth === "all" || cardMonth === selectedMonth;
+                card.hidden = !(matchesYear && matchesMonth);
+            });
+
+            if (loadMoreWrap) {
+                loadMoreWrap.hidden = filterIsActive || renderedCount >= albumPhotos.length;
+            }
+
+            updateAlbumCount();
+        };
+
+        const getStaticPhotoDateParts = (index) => {
+            // Group static album photos into month buckets for simple month/year filtering.
+            const photoDate = new Date();
+            photoDate.setDate(1);
+            photoDate.setMonth(photoDate.getMonth() - Math.floor(index / 8));
+
+            return {
+                year: String(photoDate.getFullYear()),
+                month: String(photoDate.getMonth() + 1)
+            };
+        };
+
+        window.refreshAlbumFilters = () => {
+            updateYearFilterOptions();
+            applyAlbumFilters();
+        };
 
         const supportsIntersectionObserver = "IntersectionObserver" in window;
         let lazyImageObserver = null;
@@ -515,6 +602,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.setAttribute("aria-label", `${selectedAlbum.label} photo ${index + 1}`);
                 card.setAttribute("role", "button");
                 card.tabIndex = 0;
+                const dateParts = getStaticPhotoDateParts(index);
+                card.setAttribute("data-year", dateParts.year);
+                card.setAttribute("data-month", dateParts.month);
 
                 const image = document.createElement("img");
                 image.className = "album-image";
@@ -547,7 +637,8 @@ document.addEventListener("DOMContentLoaded", () => {
             albumGrid.appendChild(fragment);
             renderedCount = endIndex;
 
-            updateAlbumCount();
+            updateYearFilterOptions();
+            applyAlbumFilters();
 
             if (loadMoreButton && renderedCount >= albumPhotos.length) {
                 loadMoreButton.hidden = true;
@@ -559,6 +650,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         renderBatch();
         ensureLightbox();
+
+        if (albumYearFilter) {
+            albumYearFilter.addEventListener("change", applyAlbumFilters);
+        }
+
+        if (albumMonthFilter) {
+            albumMonthFilter.addEventListener("change", applyAlbumFilters);
+        }
 
         albumGrid.addEventListener("click", (event) => {
             const card = event.target.closest(".album-item");
