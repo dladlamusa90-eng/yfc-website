@@ -303,6 +303,143 @@ document.addEventListener("DOMContentLoaded", () => {
         const category = (window.location.hash.slice(1)) || "atmosphere";
         const selectedAlbum = albumConfig[category] || albumConfig.atmosphere;
         const albumPhotos = selectedAlbum.photos;
+        let lightbox = null;
+        let lightboxImage = null;
+        let lightboxCaption = null;
+        let lightboxPrevButton = null;
+        let lightboxNextButton = null;
+        let currentLightboxIndex = -1;
+
+        const getAlbumItems = () => Array.from(albumGrid.querySelectorAll(".album-item"));
+
+        const getCardImageSource = (card) => {
+            const image = card.querySelector(".album-image");
+            if (!image) {
+                return "";
+            }
+
+            return image.dataset.src || image.currentSrc || image.src || "";
+        };
+
+        const getCardImageCaption = (card) => {
+            const image = card.querySelector(".album-image");
+            return image ? image.alt : "";
+        };
+
+        const updateLightboxSlide = () => {
+            const items = getAlbumItems();
+            if (!lightboxImage || !lightboxCaption || items.length === 0) {
+                return;
+            }
+
+            if (currentLightboxIndex < 0) {
+                currentLightboxIndex = 0;
+            }
+
+            if (currentLightboxIndex > items.length - 1) {
+                currentLightboxIndex = items.length - 1;
+            }
+
+            const activeCard = items[currentLightboxIndex];
+            const source = getCardImageSource(activeCard);
+            const caption = getCardImageCaption(activeCard);
+
+            lightboxImage.src = source;
+            lightboxImage.alt = caption;
+            lightboxCaption.textContent = caption;
+        };
+
+        const closeLightbox = () => {
+            if (!lightbox) {
+                return;
+            }
+
+            lightbox.hidden = true;
+            document.body.style.overflow = "";
+            currentLightboxIndex = -1;
+        };
+
+        const openLightboxAt = (index) => {
+            const items = getAlbumItems();
+            if (!lightbox || !lightboxImage || items.length === 0 || index < 0 || index >= items.length) {
+                return;
+            }
+
+            currentLightboxIndex = index;
+            updateLightboxSlide();
+            lightbox.hidden = false;
+            document.body.style.overflow = "hidden";
+        };
+
+        const moveLightbox = (step) => {
+            const items = getAlbumItems();
+            if (items.length === 0) {
+                return;
+            }
+
+            currentLightboxIndex = (currentLightboxIndex + step + items.length) % items.length;
+            updateLightboxSlide();
+        };
+
+        const ensureLightbox = () => {
+            if (lightbox) {
+                return;
+            }
+
+            lightbox = document.createElement("div");
+            lightbox.className = "album-lightbox";
+            lightbox.hidden = true;
+            lightbox.innerHTML = `
+                <button type="button" class="album-lb-close" aria-label="Close photo viewer">&times;</button>
+                <button type="button" class="album-lb-prev" aria-label="Previous photo">&#8249;</button>
+                <div class="album-lb-img-wrap">
+                    <img class="album-lb-img" src="" alt="">
+                    <p class="album-lb-caption"></p>
+                </div>
+                <button type="button" class="album-lb-next" aria-label="Next photo">&#8250;</button>
+            `;
+
+            lightboxImage = lightbox.querySelector(".album-lb-img");
+            lightboxCaption = lightbox.querySelector(".album-lb-caption");
+            lightboxPrevButton = lightbox.querySelector(".album-lb-prev");
+            lightboxNextButton = lightbox.querySelector(".album-lb-next");
+
+            const closeButton = lightbox.querySelector(".album-lb-close");
+
+            if (closeButton) {
+                closeButton.addEventListener("click", closeLightbox);
+            }
+
+            if (lightboxPrevButton) {
+                lightboxPrevButton.addEventListener("click", () => moveLightbox(-1));
+            }
+
+            if (lightboxNextButton) {
+                lightboxNextButton.addEventListener("click", () => moveLightbox(1));
+            }
+
+            lightbox.addEventListener("click", (event) => {
+                if (event.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (!lightbox || lightbox.hidden) {
+                    return;
+                }
+
+                if (event.key === "Escape") {
+                    closeLightbox();
+                } else if (event.key === "ArrowLeft") {
+                    moveLightbox(-1);
+                } else if (event.key === "ArrowRight") {
+                    moveLightbox(1);
+                }
+            });
+
+            document.body.appendChild(lightbox);
+        };
 
         if (albumCategoryLabel) {
             albumCategoryLabel.textContent = selectedAlbum.label;
@@ -376,6 +513,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const card = document.createElement("div");
                 card.className = "album-item";
                 card.setAttribute("aria-label", `${selectedAlbum.label} photo ${index + 1}`);
+                card.setAttribute("role", "button");
+                card.tabIndex = 0;
 
                 const image = document.createElement("img");
                 image.className = "album-image";
@@ -419,6 +558,32 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         renderBatch();
+        ensureLightbox();
+
+        albumGrid.addEventListener("click", (event) => {
+            const card = event.target.closest(".album-item");
+            if (!card || !albumGrid.contains(card)) {
+                return;
+            }
+
+            const items = getAlbumItems();
+            openLightboxAt(items.indexOf(card));
+        });
+
+        albumGrid.addEventListener("keydown", (event) => {
+            if (event.key !== "Enter" && event.key !== " ") {
+                return;
+            }
+
+            const card = event.target.closest(".album-item");
+            if (!card || !albumGrid.contains(card)) {
+                return;
+            }
+
+            event.preventDefault();
+            const items = getAlbumItems();
+            openLightboxAt(items.indexOf(card));
+        });
 
         if (loadMoreButton) {
             loadMoreButton.addEventListener("click", renderBatch);

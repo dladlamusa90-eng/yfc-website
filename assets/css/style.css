@@ -2608,6 +2608,7 @@ p {
     position: relative;
     overflow: hidden;
     aspect-ratio: 1 / 1;
+    cursor: pointer;
     border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: #1b120c;
