@@ -2,83 +2,71 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add("is-ready");
 
     const homeHeroPhotos = [
-        "assets/images/home 1.jpg",
-        "assets/images/home 2.jpg",
-        "assets/images/home 3.jpg",
-        "assets/images/home 4.jpg",
-        "assets/images/home 5.jpg",
-        "assets/images/home 7.jpg",
-        "assets/images/home 8.jpg",
-        "assets/images/home 9.jpg",
-        "assets/images/home 10.jpg",
-        "assets/images/home 11.jpg",
-        "assets/images/home 12.jpg"
+        "assets/images/home 1.webp",
+        "assets/images/home 2.webp",
+        "assets/images/home 3.webp",
+        "assets/images/home 4.webp",
+        "assets/images/home 5.webp",
+        "assets/images/home 7.webp",
+        "assets/images/home 8.webp",
+        "assets/images/home 9.webp",
+        "assets/images/home 10.webp",
+        "assets/images/home 11.webp",
+        "assets/images/home 12.webp"
     ];
 
     const atmospherePhotos = [
-        "assets/images/atmosphere 1.jpg",
-        "assets/images/atmosphere 2.jpg",
-        "assets/images/atmosphere 3.jpg",
-        "assets/images/atmosphere 4.jpg",
-        "assets/images/atmosphere 5.jpg",
-        "assets/images/atmosphere 6.jpg",
-        "assets/images/atmosphere 7.jpg",
-        "assets/images/atmosphere 8.jpg",
-        "assets/images/atmosphere 9.jpg",
-        "assets/images/atmosphere 10.jpg",
-        "assets/images/atmosphere 11.jpg",
-        "assets/images/atmosphere 12.jpg",
-        "assets/images/atmosphere 13.jpg",
-        "assets/images/atmosphere 14.jpg",
-        "assets/images/atmosphere 15.jpg",
-        "assets/images/atmosphere 16.jpg",
-        "assets/images/atmosphere 17.jpg",
-        "assets/images/atmosphere 18.jpg",
-        "assets/images/atmosphere 19.jpg",
-        "assets/images/atmosphere 20.jpg",
-        "assets/images/atmosphere 21.jpg",
-        "assets/images/atmosphere 22.jpg",
-        "assets/images/atmosphere 23.jpg",
-        "assets/images/atmosphere 24.jpg",
-        "assets/images/atmosphere 25.jpg",
-        "assets/images/atmosphere 26.jpg",
-        "assets/images/atmosphere 27.jpg",
-        "assets/images/atmosphere 28.jpg",
-        "assets/images/atmosphere 29.jpg",
-        "assets/images/atmosphere 30.jpg",
-        "assets/images/atmosphere 31.jpg",
-        "assets/images/atmosphere 32.jpg",
-        "assets/images/atmosphere 33.jpg",
-        "assets/images/atmosphere 34.jpg",
-        "assets/images/atmosphere 35.jpg"
+        "assets/images/atmosphere 1.webp",
+        "assets/images/atmosphere 2.webp",
+        "assets/images/atmosphere 3.webp",
+        "assets/images/atmosphere 4.webp",
+        "assets/images/atmosphere 5.webp",
+        "assets/images/atmosphere 6.webp",
+        "assets/images/atmosphere 7.webp",
+        "assets/images/atmosphere 8.webp",
+        "assets/images/atmosphere 9.webp",
+        "assets/images/atmosphere 10.webp",
+        "assets/images/atmosphere 11.webp",
+        "assets/images/atmosphere 12.webp",
+        "assets/images/atmosphere 13.webp",
+        "assets/images/atmosphere 14.webp",
+        "assets/images/atmosphere 15.webp",
+        "assets/images/atmosphere 16.webp",
+        "assets/images/atmosphere 17.webp",
+        "assets/images/atmosphere 18.webp",
+        "assets/images/atmosphere 19.webp",
+        "assets/images/atmosphere 20.webp",
+        "assets/images/atmosphere 21.webp",
+        "assets/images/atmosphere 22.webp",
+        "assets/images/atmosphere 23.webp",
+        "assets/images/atmosphere 24.webp",
+        "assets/images/atmosphere 25.webp",
+        "assets/images/atmosphere 26.webp",
+        "assets/images/atmosphere 27.webp",
+        "assets/images/atmosphere 28.webp",
+        "assets/images/atmosphere 29.webp",
+        "assets/images/atmosphere 30.webp",
+        "assets/images/atmosphere 31.webp",
+        "assets/images/atmosphere 32.webp",
+        "assets/images/atmosphere 33.webp",
+        "assets/images/atmosphere 34.webp",
+        "assets/images/atmosphere 35.webp"
     ];
 
-    const outreachPhotos = Array.from({ length: 43 }, (_, index) => `assets/images/outreach ${index + 1}.jpg`);
-    const jrtPhotos = Array.from({ length: 15 }, (_, index) => `assets/images/jrt ${index + 1}.JPG`);
-    const tourPhotos = Array.from({ length: 18 }, (_, index) => `assets/images/tour ${index + 1}.jpg`);
-    const leadershipPhotos = Array.from({ length: 4 }, (_, index) => `assets/images/leadership ${index + 1}.jpg`);
-    const yfcwUppercasePhotoNumbers = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 22, 23, 24, 25, 26, 27]);
-    const yfcwPhotos = Array.from({ length: 30 }, (_, index) => {
-        const photoNumber = index + 1;
-        const extension = yfcwUppercasePhotoNumbers.has(photoNumber) ? "JPG" : "jpg";
+    const outreachPhotos = Array.from({ length: 43 }, (_, index) => `assets/images/outreach ${index + 1}.webp`);
+    const jrtPhotos = Array.from({ length: 15 }, (_, index) => `assets/images/jrt ${index + 1}.webp`);
+    const tourPhotos = Array.from({ length: 18 }, (_, index) => `assets/images/tour ${index + 1}.webp`);
+    const leadershipPhotos = Array.from({ length: 4 }, (_, index) => `assets/images/leadership ${index + 1}.webp`);
+    const yfcwPhotos = Array.from({ length: 30 }, (_, index) => `assets/images/yfcw (${index + 1}).webp`);
+    const morePhotos = Array.from({ length: 52 }, (_, index) => `assets/images/other 1 (${index + 1}).webp`);
 
-        return `assets/images/yfcw (${photoNumber}).${extension}`;
-    });
-    const moreUppercasePhotoNumbers = new Set([2, 3, 4, 5, 6, 7, 8, 15, 46, 49, 50, 52]);
-    const morePhotos = Array.from({ length: 52 }, (_, index) => {
-        const photoNumber = index + 1;
-        const extension = moreUppercasePhotoNumbers.has(photoNumber) ? "JPG" : "jpg";
-
-        return `assets/images/other 1 (${photoNumber}).${extension}`;
-    });
-
-    const defaultAlbumPhoto = "assets/images/home.jpg";
+    const defaultAlbumPhoto = "assets/images/home.webp";
     const albumConfig = {
         outreach: {
             label: "Outreach",
             title: "Outreach Album",
             description: "Outreach moments that reflect compassion, service, and faith in action.",
-            banner: "assets/images/outreach 33.jpg",
+            banner: "assets/images/outreach 33.webp",
             photos: outreachPhotos
         },
         jrt: {
@@ -109,14 +97,14 @@ document.addEventListener("DOMContentLoaded", () => {
             label: "Leadership",
             title: "Leadership Album",
             description: "Raising young leaders through mentorship, training, and purpose-driven growth.",
-            banner: "assets/images/leadership 1.jpg",
+            banner: "assets/images/leadership 1.webp",
             photos: leadershipPhotos
         },
         yfcw: {
             label: "Youth For Christ Worship (YFCW)",
             title: "Youth For Christ Worship (YFCW) Album",
             description: "Powerful moments of worship, praise, and spiritual encounter with YFC youth.",
-            banner: "assets/images/yfcw (1).JPG",
+            banner: "assets/images/yfcw (1).webp",
             photos: yfcwPhotos
         },
         biblestudy: {
@@ -135,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
             label: "And More",
             title: "More Moments Album",
             description: "More meaningful moments and highlights from Youth For Christ.",
-            banner: "assets/images/other 1 (1).jpg",
+            banner: "assets/images/other 1 (1).webp",
             photos: morePhotos
         }
     };
