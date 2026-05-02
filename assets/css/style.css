@@ -83,6 +83,10 @@ main {
     min-height: 100vh;
 }
 
+.contact-page main {
+    min-height: auto;
+}
+
 body.nav-open {
     overflow: hidden;
 }
@@ -635,6 +639,42 @@ p {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.home-spotify-section {
+    padding: 0.5rem 0 0.9rem;
+}
+
+.home-spotify-card {
+    width: min(100%, 720px);
+    margin: 0 auto;
+    padding: 0.95rem;
+    border-radius: 20px;
+    border: 1px solid rgba(27, 43, 68, 0.12);
+    background:
+        linear-gradient(165deg, rgba(255, 255, 255, 0.97), rgba(255, 247, 238, 0.96));
+    box-shadow: 0 16px 34px rgba(18, 28, 44, 0.09);
+}
+
+.home-spotify-kicker {
+    margin: 0 0 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: #9a581f;
+}
+
+.home-spotify-card h3 {
+    margin: 0 0 0.7rem;
+    font-size: 1.02rem;
+}
+
+.home-spotify-frame {
+    display: block;
+    width: 100%;
+    height: 152px;
+    border: 0;
 }
 
 .branches-section {
@@ -1533,15 +1573,15 @@ p {
 }
 
 .ct-body {
-    padding: 3.5rem 0 5rem;
-    background: #f5f4f2;
+    padding: 3.5rem 0 2.2rem;
+    background: transparent;
 }
 
 .ct-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.2rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 0;
 }
 
 .ct-card {
@@ -2664,6 +2704,11 @@ p {
     .hero-section {
         min-height: calc(100vh - 78px);
         padding: 4.5rem 0;
+    }
+
+    .home-spotify-card {
+        padding: 0.75rem;
+        border-radius: 16px;
     }
 
     .hero-content h1 {
