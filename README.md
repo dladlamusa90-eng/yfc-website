@@ -1,4 +1,4 @@
-# Youth For Christ International (YFC RSA)
+# Youth For Christ International (YFC)
 
 Static ministry website for evangelism, discipleship, and mobilization.
 
