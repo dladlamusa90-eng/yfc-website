@@ -508,8 +508,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 : "all";
         };
 
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-        const batchSize = isMobile ? 6 : 8;
+        const batchSize = 6;
         let renderedCount = 0;
         let renderingAllForFilter = false;
         let filterDebounceTimer = null;
@@ -634,9 +633,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }, { rootMargin: "0px 0px -200px 0px" });
         }
 
-        const renderBatch = (silent = false) => {
+        const renderBatch = (silent = false, count = batchSize) => {
             const fragment = document.createDocumentFragment();
-            const endIndex = Math.min(renderedCount + batchSize, albumPhotos.length);
+            const endIndex = Math.min(renderedCount + count, albumPhotos.length);
 
             for (let index = renderedCount; index < endIndex; index += 1) {
                 const photoPath = albumPhotos[index];
@@ -697,7 +696,25 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
-        renderBatch();
+        // Expose static-render API so atmosphere-album.html can coordinate the
+        // unified "6 total initially" limit across Firebase + static photos.
+        window._renderStaticBatch = (count) => renderBatch(false, count != null ? count : batchSize);
+        window._staticRemaining   = () => albumPhotos.length - renderedCount;
+
+        // Deferred init: wait up to 800 ms for Firebase to signal how many slots
+        // it already used, then render the remainder as static photos.
+        let _staticInitDone = false;
+        window._initStaticAlbum = (fbSlotsUsed) => {
+            if (_staticInitDone) return;
+            _staticInitDone = true;
+            const slots = Math.max(0, batchSize - (fbSlotsUsed || 0));
+            if (slots > 0 && albumPhotos.length > 0) {
+                renderBatch(false, slots);
+            }
+        };
+        // Fallback: if Firebase never calls in, render static on its own.
+        setTimeout(() => window._initStaticAlbum(0), 800);
+
         ensureLightbox();
 
         if (albumYearFilter) {
@@ -733,8 +750,13 @@ document.addEventListener("DOMContentLoaded", () => {
             openLightboxAt(items.indexOf(card));
         });
 
-        if (loadMoreButton) {
-            loadMoreButton.addEventListener("click", renderBatch);
+        // Load More for static: only fires when Firebase coordinator is absent.
+        if (loadMoreButton && !loadMoreButton._fbHandlerActive) {
+            loadMoreButton.addEventListener("click", () => {
+                if (!loadMoreButton._fbHandlerActive) {
+                    renderBatch();
+                }
+            });
         }
     }
 

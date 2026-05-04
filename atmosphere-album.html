@@ -268,9 +268,11 @@
                         return card;
                     }
 
-                    function renderFbBatch() {
-                        var end  = Math.min(fbShown + FB_BATCH, docs.length);
-                        var frag = document.createDocumentFragment();
+                    function renderFbBatch(slots) {
+                        // slots = how many Firebase photos to render this call
+                        var count = (slots != null) ? slots : Math.min(FB_BATCH, docs.length - fbShown);
+                        var end   = Math.min(fbShown + count, docs.length);
+                        var frag  = document.createDocumentFragment();
                         for (var i = fbShown; i < end; i++) {
                             frag.appendChild(buildFbCard(docs[i]));
                         }
@@ -283,15 +285,14 @@
                         }
                         fbShown = end;
 
-                        // Keep the Load More button visible if either Firebase
-                        // or static photos still have unseen items.
+                        // Show/hide Load More based on both pools
                         var loadWrap = document.querySelector('.album-load-wrap');
                         if (loadWrap) {
-                            var staticDone = typeof window.albumStaticRendered !== 'undefined' &&
-                                            typeof window.albumStaticTotal !== 'undefined' &&
-                                            window.albumStaticRendered >= window.albumStaticTotal;
-                            var fbDone = fbShown >= docs.length;
-                            loadWrap.hidden = staticDone && fbDone;
+                            var fbDone     = fbShown >= docs.length;
+                            var staticDone = (typeof window._staticRemaining === 'function')
+                                            ? window._staticRemaining() <= 0
+                                            : true;
+                            loadWrap.hidden = fbDone && staticDone;
                         }
 
                         if (typeof window.refreshAlbumFilters === 'function') {
@@ -300,19 +301,41 @@
                         if (isAdmin) { attachDeleteBtns(); }
                     }
 
-                    // Patch the existing Load More button to also load Firebase batches.
+                    // Unified Load More: show exactly 6 total from Firebase then static.
                     var loadMoreBtn = document.getElementById('album-load-more');
-                    if (loadMoreBtn) {
-                        var origOnClick = loadMoreBtn._fbPatchApplied ? null : loadMoreBtn.onclick;
-                        if (!loadMoreBtn._fbPatchApplied) {
-                            loadMoreBtn._fbPatchApplied = true;
-                            loadMoreBtn.addEventListener('click', function () {
-                                if (fbShown < docs.length) { renderFbBatch(); }
-                            });
-                        }
+                    if (loadMoreBtn && !loadMoreBtn._fbHandlerActive) {
+                        loadMoreBtn._fbHandlerActive = true;
+                        loadMoreBtn.addEventListener('click', function () {
+                            var toShow = 6;
+                            // Fill from Firebase first
+                            if (fbShown < docs.length) {
+                                var fbToShow = Math.min(toShow, docs.length - fbShown);
+                                renderFbBatch(fbToShow);
+                                toShow -= fbToShow;
+                            }
+                            // Fill remainder from static
+                            if (toShow > 0 && typeof window._renderStaticBatch === 'function') {
+                                window._renderStaticBatch(toShow);
+                            }
+                            // Update Load More visibility
+                            var loadWrap = document.querySelector('.album-load-wrap');
+                            if (loadWrap) {
+                                var fbDone     = fbShown >= docs.length;
+                                var staticDone = (typeof window._staticRemaining === 'function')
+                                                ? window._staticRemaining() <= 0
+                                                : true;
+                                loadWrap.hidden = fbDone && staticDone;
+                            }
+                        });
                     }
 
-                    renderFbBatch();
+                    // Render initial Firebase batch (up to 6), then tell script.js
+                    // how many slots are used so it fills the rest with static photos.
+                    var initialFbCount = Math.min(FB_BATCH, docs.length);
+                    renderFbBatch(initialFbCount);
+                    if (typeof window._initStaticAlbum === 'function') {
+                        window._initStaticAlbum(initialFbCount);
+                    }
                 }, function (err) { console.error('Firebase:', err); });
         }
 
