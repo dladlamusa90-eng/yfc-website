@@ -237,34 +237,82 @@
                         if (countEl) { countEl.textContent = (window.albumStaticTotal + docs.length) + ' photos'; }
                     }
                     if (docs.length === 0) { return; }
-                    var frag = document.createDocumentFragment();
-                    docs.forEach(function (doc) {
+
+                    var FB_BATCH = 6;
+                    var fbShown  = 0;
+
+                    function buildFbCard(doc) {
                         var d = doc.data();
                         var uploadedMillis = d.uploadedAt && d.uploadedAt.toMillis ? d.uploadedAt.toMillis() : null;
-                        var uploadedDate = uploadedMillis ? new Date(uploadedMillis) : null;
+                        var uploadedDate   = uploadedMillis ? new Date(uploadedMillis) : null;
                         var card = document.createElement('div');
                         card.className = 'album-item fb-photo';
                         card.setAttribute('data-doc-id', doc.id);
                         if (uploadedDate) {
-                            card.setAttribute('data-year', String(uploadedDate.getFullYear()));
+                            card.setAttribute('data-year',  String(uploadedDate.getFullYear()));
                             card.setAttribute('data-month', String(uploadedDate.getMonth() + 1));
                         }
                         var img = document.createElement('img');
-                        img.className = 'album-image';
-                        img.src = d.imageData || d.url;
-                        img.alt = d.caption || currentCategory;
-                        img.loading = 'lazy'; img.decoding = 'async';
-                        img.width = 1200; img.height = 900;
+                        img.className  = 'album-image';
+                        img.src        = d.imageData || d.url;
+                        img.alt        = d.caption || currentCategory;
+                        img.loading    = 'lazy';
+                        img.decoding   = 'async';
+                        img.width      = 400;
+                        img.height     = 400;
                         var badge = document.createElement('span');
-                        badge.className = 'album-index'; badge.textContent = 'New';
-                        card.appendChild(img); card.appendChild(badge);
-                        frag.appendChild(card);
-                    });
-                    grid.insertBefore(frag, grid.firstChild);
-                    if (typeof window.refreshAlbumFilters === 'function') {
-                        window.refreshAlbumFilters();
+                        badge.className  = 'album-index';
+                        badge.textContent = 'New';
+                        card.appendChild(img);
+                        card.appendChild(badge);
+                        return card;
                     }
-                    if (isAdmin) { attachDeleteBtns(); }
+
+                    function renderFbBatch() {
+                        var end  = Math.min(fbShown + FB_BATCH, docs.length);
+                        var frag = document.createDocumentFragment();
+                        for (var i = fbShown; i < end; i++) {
+                            frag.appendChild(buildFbCard(docs[i]));
+                        }
+                        // Firebase photos sit at the top of the grid
+                        var firstNonFb = grid.querySelector(':not(.fb-photo)');
+                        if (firstNonFb) {
+                            grid.insertBefore(frag, firstNonFb);
+                        } else {
+                            grid.insertBefore(frag, grid.firstChild);
+                        }
+                        fbShown = end;
+
+                        // Keep the Load More button visible if either Firebase
+                        // or static photos still have unseen items.
+                        var loadWrap = document.querySelector('.album-load-wrap');
+                        if (loadWrap) {
+                            var staticDone = typeof window.albumStaticRendered !== 'undefined' &&
+                                            typeof window.albumStaticTotal !== 'undefined' &&
+                                            window.albumStaticRendered >= window.albumStaticTotal;
+                            var fbDone = fbShown >= docs.length;
+                            loadWrap.hidden = staticDone && fbDone;
+                        }
+
+                        if (typeof window.refreshAlbumFilters === 'function') {
+                            window.refreshAlbumFilters();
+                        }
+                        if (isAdmin) { attachDeleteBtns(); }
+                    }
+
+                    // Patch the existing Load More button to also load Firebase batches.
+                    var loadMoreBtn = document.getElementById('album-load-more');
+                    if (loadMoreBtn) {
+                        var origOnClick = loadMoreBtn._fbPatchApplied ? null : loadMoreBtn.onclick;
+                        if (!loadMoreBtn._fbPatchApplied) {
+                            loadMoreBtn._fbPatchApplied = true;
+                            loadMoreBtn.addEventListener('click', function () {
+                                if (fbShown < docs.length) { renderFbBatch(); }
+                            });
+                        }
+                    }
+
+                    renderFbBatch();
                 }, function (err) { console.error('Firebase:', err); });
         }
 
