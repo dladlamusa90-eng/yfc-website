@@ -360,7 +360,7 @@
 
                         ctx.drawImage(img, 0, 0, tw, th);
 
-                        // Convert to JPEG for faster mobile upload while keeping quality high.
+                        // Convert to WebP for smaller file sizes and faster loads.
                         canvas.toBlob(function (blob) {
                             if (!blob) {
                                 resolve(file);
@@ -368,10 +368,10 @@
                             }
                             resolve(new File(
                                 [blob],
-                                file.name.replace(/\.[^.]+$/, '') + '.jpg',
-                                { type: 'image/jpeg', lastModified: Date.now() }
+                                file.name.replace(/\.[^.]+$/, '') + '.webp',
+                                { type: 'image/webp', lastModified: Date.now() }
                             ));
-                        }, 'image/jpeg', quality);
+                        }, 'image/webp', quality);
                     };
                     img.onerror = function () { resolve(file); };
                     img.src = ev.target.result;
