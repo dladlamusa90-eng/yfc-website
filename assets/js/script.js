@@ -508,9 +508,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 : "all";
         };
 
-        const batchSize = window.matchMedia("(max-width: 768px)").matches ? 8 : 12;
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        const batchSize = isMobile ? 6 : 8;
         let renderedCount = 0;
         let renderingAllForFilter = false;
+        let filterDebounceTimer = null;
+        const PLACEHOLDER_SRC = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3C/svg%3E";
+
+        const scheduleIdleRender = (fn) => {
+            if ("requestIdleCallback" in window) {
+                requestIdleCallback(fn, { timeout: 400 });
+            } else {
+                setTimeout(fn, 0);
+            }
+        };
 
         const ensureAllStaticRendered = () => {
             if (renderingAllForFilter || renderedCount >= albumPhotos.length) {
@@ -518,10 +529,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             renderingAllForFilter = true;
-            while (renderedCount < albumPhotos.length) {
-                renderBatch();
-            }
-            renderingAllForFilter = false;
+            const renderNext = () => {
+                if (renderedCount < albumPhotos.length) {
+                    renderBatch(true);
+                    scheduleIdleRender(renderNext);
+                } else {
+                    renderingAllForFilter = false;
+                    updateYearFilterOptions();
+                    applyAlbumFilters();
+                }
+            };
+            scheduleIdleRender(renderNext);
         };
 
         const applyAlbumFilters = () => {
@@ -548,6 +566,11 @@ document.addEventListener("DOMContentLoaded", () => {
             updateAlbumCount();
         };
 
+        const debouncedApplyFilters = () => {
+            clearTimeout(filterDebounceTimer);
+            filterDebounceTimer = setTimeout(applyAlbumFilters, 120);
+        };
+
         const getStaticPhotoDateParts = (index) => {
             // Group static album photos into month buckets for simple month/year filtering.
             const photoDate = new Date();
@@ -568,6 +591,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const supportsIntersectionObserver = "IntersectionObserver" in window;
         let lazyImageObserver = null;
 
+        let virtualUnloadObserver = null;
+
         if (supportsIntersectionObserver) {
             lazyImageObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach((entry) => {
@@ -586,11 +611,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     observer.unobserve(image);
                 });
             }, {
-                rootMargin: "250px 0px"
+                rootMargin: "150px 0px"
             });
+
+            // Virtual unloading: reclaim memory for images scrolled far above viewport.
+            virtualUnloadObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        return;
+                    }
+                    if (entry.boundingClientRect.bottom < -900) {
+                        const image = entry.target.querySelector(".album-image");
+                        if (image && image.src && !image.dataset.src && !image.src.startsWith("data:")) {
+                            image.dataset.src = image.src;
+                            image.src = PLACEHOLDER_SRC;
+                            if (lazyImageObserver) {
+                                lazyImageObserver.observe(image);
+                            }
+                        }
+                    }
+                });
+            }, { rootMargin: "0px 0px -200px 0px" });
         }
 
-        const renderBatch = () => {
+        const renderBatch = (silent = false) => {
             const fragment = document.createDocumentFragment();
             const endIndex = Math.min(renderedCount + batchSize, albumPhotos.length);
 
@@ -613,14 +657,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 image.loading = shouldPrioritize ? "eager" : "lazy";
                 image.decoding = "async";
                 image.fetchPriority = shouldPrioritize ? "high" : "low";
-                image.width = 1200;
-                image.height = 900;
+                image.width = 400;
+                image.height = 400;
 
                 if (shouldPrioritize || !lazyImageObserver) {
                     image.src = photoPath;
                 } else {
-                    // Keep far-off images deferred until close to the viewport.
-                    image.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3C/svg%3E";
+                    image.src = PLACEHOLDER_SRC;
                     image.dataset.src = photoPath;
                     lazyImageObserver.observe(image);
                 }
@@ -632,13 +675,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.appendChild(image);
                 card.appendChild(badge);
                 fragment.appendChild(card);
+
+                if (virtualUnloadObserver) {
+                    virtualUnloadObserver.observe(card);
+                }
             }
 
             albumGrid.appendChild(fragment);
             renderedCount = endIndex;
 
-            updateYearFilterOptions();
-            applyAlbumFilters();
+            if (!silent) {
+                updateYearFilterOptions();
+                applyAlbumFilters();
+            }
 
             if (loadMoreButton && renderedCount >= albumPhotos.length) {
                 loadMoreButton.hidden = true;
@@ -652,11 +701,11 @@ document.addEventListener("DOMContentLoaded", () => {
         ensureLightbox();
 
         if (albumYearFilter) {
-            albumYearFilter.addEventListener("change", applyAlbumFilters);
+            albumYearFilter.addEventListener("change", debouncedApplyFilters);
         }
 
         if (albumMonthFilter) {
-            albumMonthFilter.addEventListener("change", applyAlbumFilters);
+            albumMonthFilter.addEventListener("change", debouncedApplyFilters);
         }
 
         albumGrid.addEventListener("click", (event) => {
