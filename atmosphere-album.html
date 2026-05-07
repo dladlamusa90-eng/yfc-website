@@ -254,19 +254,6 @@
 
         // Load and live-sync banner for this branch for all users.
         var heroEl = document.getElementById('album-hero');
-        db.collection('banners').doc(currentBranch).onSnapshot(function (snap) {
-            if (!snap.exists || !snap.data()) { return; }
-            var bdata = snap.data();
-            if (bdata.imageData) {
-                applyBanner(bdata.imageData);
-            } else if (bdata.galleryDocId) {
-                db.collection('gallery').doc(bdata.galleryDocId).get().then(function (gdoc) {
-                    if (!gdoc.exists) { return; }
-                    var src = (gdoc.data().imageData || gdoc.data().url);
-                    if (src) { applyBanner(src); }
-                }).catch(function () {});
-            }
-        }, function () {});
 
         var BANNER_GRADIENT = 'linear-gradient(160deg, rgba(19,11,6,0.65) 0%, rgba(42,20,9,0.68) 55%, rgba(19,11,6,0.72) 100%)';
 
@@ -278,6 +265,23 @@
             heroEl.style.backgroundRepeat = 'no-repeat';
             heroEl.classList.add('has-banner');
         }
+
+        function loadBannerFromDoc(docId) {
+            db.collection('banners').doc(docId).onSnapshot(function (snap) {
+                if (!snap.exists || !snap.data()) { return; }
+                var bdata = snap.data();
+                if (bdata.imageData) {
+                    applyBanner(bdata.imageData);
+                } else if (bdata.galleryDocId) {
+                    db.collection('gallery').doc(bdata.galleryDocId).get().then(function (gdoc) {
+                        if (!gdoc.exists) { return; }
+                        var src = (gdoc.data().imageData || gdoc.data().url);
+                        if (src) { applyBanner(src); }
+                    }).catch(function () {});
+                }
+            }, function () {});
+        }
+
         var branchOptions = ['eastrand', 'durban', 'pretoria', 'soweto', 'potchefstroom', 'gqeberha', 'polokwane', 'witbank'];
         var searchParams = new URLSearchParams(window.location.search);
         var rawHash = window.location.hash.slice(1);
@@ -290,6 +294,10 @@
         if (branchOptions.indexOf(currentBranch) === -1) {
             currentBranch = 'witbank';
         }
+
+        // Banner doc key: branch_category (per album) or branch (for category chooser)
+        var bannerDocId = currentCategory ? (currentBranch + '_' + currentCategory) : currentBranch;
+        loadBannerFromDoc(bannerDocId);
 
         // Inject Firebase-uploaded photos at the top of the existing #album-grid
         var grid = document.getElementById('album-grid');
@@ -551,9 +559,10 @@
             btnChangeBanner.textContent = 'Saving...';
             btnChangeBanner.disabled = true;
             try {
-                await db.collection('banners').doc(currentBranch).set({
+                await db.collection('banners').doc(bannerDocId).set({
                     galleryDocId: docId,
                     branch: currentBranch,
+                    category: currentCategory || null,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 applyBanner(src);
