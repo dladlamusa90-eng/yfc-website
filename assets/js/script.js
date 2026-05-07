@@ -284,19 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.classList.add("is-active");
 
             const filter = btn.dataset.filter;
-
-            if (filter !== "all") {
-                window.location.href = `atmosphere-album.html#${filter}`;
-                return;
-            }
-
-            for (const item of galleryItems) {
-                if (filter === "all" || item.dataset.category === filter) {
-                    item.style.display = "";
-                } else {
-                    item.style.display = "none";
-                }
-            }
+            window.location.href = `atmosphere-album.html#branch=${filter}`;
         });
     }
 
