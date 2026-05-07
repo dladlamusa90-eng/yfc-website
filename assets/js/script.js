@@ -328,18 +328,21 @@ document.addEventListener("DOMContentLoaded", () => {
         let lightboxNextButton = null;
         let currentLightboxIndex = -1;
 
-        // Populate branch switcher
+        // Populate branch switcher dropdown
         const branchSwitcher = document.getElementById("branch-switcher");
         if (branchSwitcher) {
             Object.entries(branchConfig).forEach(([key, cfg]) => {
-                const btn = document.createElement("a");
-                btn.className = "branch-switch-btn" + (key === branchKey ? " is-active" : "");
-                // Keep category context when switching branches
-                btn.href = category
-                    ? `atmosphere-album.html#branch=${key}&category=${category}`
-                    : `atmosphere-album.html#branch=${key}`;
-                btn.textContent = cfg.label;
-                branchSwitcher.appendChild(btn);
+                const opt = document.createElement("option");
+                opt.value = key;
+                opt.textContent = cfg.label;
+                if (key === branchKey) { opt.selected = true; }
+                branchSwitcher.appendChild(opt);
+            });
+            branchSwitcher.addEventListener("change", () => {
+                const dest = category
+                    ? `atmosphere-album.html#branch=${branchSwitcher.value}&category=${category}`
+                    : `atmosphere-album.html#branch=${branchSwitcher.value}`;
+                window.location.href = dest;
             });
         }
 
