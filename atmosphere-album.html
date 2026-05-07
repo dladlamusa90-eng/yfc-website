@@ -412,9 +412,12 @@
                         });
                     }
 
-                    // Render initial Firebase batch (up to 6), then tell script.js
-                    // how many slots are used so it fills the rest with static photos.
-                    var initialFbCount = Math.min(FB_BATCH, docs.length);
+                    // Render all photos immediately for small albums to avoid
+                    // showing a higher count while only 6 are visible.
+                    // Larger albums still start in 6-photo batches.
+                    var initialFbCount = docs.length <= 8
+                        ? docs.length
+                        : Math.min(FB_BATCH, docs.length);
                     renderFbBatch(initialFbCount);
                     if (typeof window._initStaticAlbum === 'function') {
                         window._initStaticAlbum(initialFbCount);
