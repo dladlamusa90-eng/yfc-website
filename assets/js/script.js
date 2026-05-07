@@ -128,6 +128,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    const branchConfig = {
+        eastrand: { label: "Eastrand" },
+        durban: { label: "Durban" },
+        pretoria: { label: "Pretoria" },
+        soweto: { label: "Soweto" },
+        potchefstroom: { label: "Potchefstroom" },
+        gqeberha: { label: "Gqeberha" },
+        polokwane: { label: "Polokwane" },
+        witbank: { label: "Witbank" }
+    };
+
+    const branchAlbumCategories = ["outreach", "jrt", "tours", "atmosphere", "leadership", "yfcw", "more"];
+
     const navToggle = document.querySelector(".nav-toggle");
     const siteNav = document.querySelector(".site-nav");
     const navLinks = document.querySelectorAll(".site-nav a");
@@ -273,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const filter = btn.dataset.filter;
 
             if (filter !== "all") {
-                window.location.href = `atmosphere-album.html#${filter}`;
+                window.location.href = `atmosphere-album.html#branch=${filter}`;
                 return;
             }
 
@@ -302,15 +315,70 @@ document.addEventListener("DOMContentLoaded", () => {
     const albumMonthFilter = document.querySelector("#album-month-filter");
 
     if (albumGrid) {
-        const category = (window.location.hash.slice(1)) || "atmosphere";
-        const selectedAlbum = albumConfig[category] || albumConfig.atmosphere;
-        const albumPhotos = selectedAlbum.photos;
+        const rawHash = window.location.hash.slice(1);
+        const hashParams = new URLSearchParams(rawHash);
+        const branchKey = (hashParams.get("branch") || "witbank").toLowerCase();
+        const selectedBranch = branchConfig[branchKey] || branchConfig.witbank;
+        let category = (hashParams.get("category") || "").toLowerCase();
+        if (!category && rawHash && rawHash.indexOf("=") === -1) {
+            // Backward compatibility for old links like #outreach.
+            category = rawHash.toLowerCase();
+        }
+        const selectedAlbum = albumConfig[category] || null;
+        const isWitbankBranch = branchKey === "witbank";
+        const albumPhotos = selectedAlbum ? (isWitbankBranch ? selectedAlbum.photos : []) : [];
         let lightbox = null;
         let lightboxImage = null;
         let lightboxCaption = null;
         let lightboxPrevButton = null;
         let lightboxNextButton = null;
         let currentLightboxIndex = -1;
+
+        const renderBranchCategoryChooser = () => {
+            albumGrid.innerHTML = "";
+
+            const chooser = document.createElement("div");
+            chooser.className = "gallery-grid";
+
+            branchAlbumCategories.forEach((key) => {
+                const cfg = albumConfig[key];
+                if (!cfg) {
+                    return;
+                }
+
+                const card = document.createElement("a");
+                card.className = "gallery-item gallery-item-link";
+                card.href = `atmosphere-album.html#branch=${branchKey}&category=${key}`;
+                card.setAttribute("aria-label", `Open ${cfg.label} album for ${selectedBranch.label}`);
+
+                const thumb = document.createElement("div");
+                const bgClass = `${key}-bg`;
+                thumb.className = `gallery-thumb ${bgClass}`;
+
+                const overlay = document.createElement("div");
+                overlay.className = "gallery-overlay";
+                overlay.innerHTML = `
+                    <span class="gallery-cat-label">${cfg.label}</span>
+                    <p class="gallery-caption">${selectedBranch.label} branch category</p>
+                    <span class="gallery-open-album">Open album</span>
+                `;
+
+                thumb.appendChild(overlay);
+                card.appendChild(thumb);
+                chooser.appendChild(card);
+            });
+
+            albumGrid.appendChild(chooser);
+            if (loadMoreWrap) {
+                loadMoreWrap.hidden = true;
+            }
+            if (albumYearFilter) {
+                albumYearFilter.parentElement.style.display = "none";
+            }
+            if (albumCount) {
+                albumCount.textContent = `${branchAlbumCategories.length} categories`;
+            }
+        };
 
         const getAlbumItems = () => Array.from(albumGrid.querySelectorAll(".album-item:not([hidden])"));
 
@@ -443,20 +511,40 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.appendChild(lightbox);
         };
 
+        if (!selectedAlbum) {
+            if (albumCategoryLabel) {
+                albumCategoryLabel.textContent = `${selectedBranch.label} Branch`;
+            }
+            if (albumTitle) {
+                albumTitle.textContent = `${selectedBranch.label} Categories`;
+            }
+            if (albumDescription) {
+                albumDescription.textContent = "Choose a category to view this branch's album photos.";
+            }
+            if (document.title) {
+                document.title = `${selectedBranch.label} Albums | Youth For Christ International`;
+            }
+
+            renderBranchCategoryChooser();
+            return;
+        }
+
         if (albumCategoryLabel) {
-            albumCategoryLabel.textContent = selectedAlbum.label;
+            albumCategoryLabel.textContent = `${selectedBranch.label} • ${selectedAlbum.label}`;
         }
 
         if (albumTitle) {
-            albumTitle.textContent = selectedAlbum.title;
+            albumTitle.textContent = `${selectedBranch.label} ${selectedAlbum.title}`;
         }
 
         if (albumDescription) {
-            albumDescription.textContent = selectedAlbum.description;
+            albumDescription.textContent = isWitbankBranch
+                ? selectedAlbum.description
+                : `No uploaded photos yet for ${selectedBranch.label} in ${selectedAlbum.label}.`;
         }
 
         if (document.title) {
-            document.title = `${selectedAlbum.title} | Youth For Christ International`;
+            document.title = `${selectedBranch.label} ${selectedAlbum.title} | Youth For Christ International`;
         }
 
         if (albumHero && albumPhotos.length > 0) {
@@ -469,6 +557,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         window.albumStaticTotal = albumPhotos.length;
         window.albumFirebaseCount = 0;
+
+        if (albumPhotos.length === 0 && loadMoreWrap) {
+            loadMoreWrap.hidden = true;
+        }
 
         const updateAlbumCount = () => {
             if (albumCount) {

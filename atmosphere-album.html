@@ -170,6 +170,17 @@
                     <button type="button" class="album-admin-close" id="albumAdminClose" aria-label="Close">&times;</button>
                 </div>
                 <div class="album-upload-form">
+                    <label class="album-upload-label" for="uploadBranch">Branch</label>
+                    <select id="uploadBranch" class="album-upload-select">
+                        <option value="eastrand">Eastrand</option>
+                        <option value="durban">Durban</option>
+                        <option value="pretoria">Pretoria</option>
+                        <option value="soweto">Soweto</option>
+                        <option value="potchefstroom">Potchefstroom</option>
+                        <option value="gqeberha">Gqeberha</option>
+                        <option value="polokwane">Polokwane</option>
+                        <option value="witbank" selected>Witbank</option>
+                    </select>
                     <label class="album-upload-label" for="uploadCategory">Category</label>
                     <select id="uploadCategory" class="album-upload-select">
                         <option value="outreach">Outreach</option>
@@ -209,17 +220,34 @@
         var db      = firebase.firestore();
         var storage = firebase.storage();
         var isAdmin = false;
-        var currentCategory = (window.location.hash.slice(1)) || 'atmosphere';
+        var branchOptions = ['eastrand', 'durban', 'pretoria', 'soweto', 'potchefstroom', 'gqeberha', 'polokwane', 'witbank'];
+        var rawHash = window.location.hash.slice(1);
+        var hashParams = new URLSearchParams(rawHash);
+        var currentCategory = (hashParams.get('category') || '').toLowerCase();
+        if (!currentCategory && rawHash && rawHash.indexOf('=') === -1) {
+            currentCategory = rawHash.toLowerCase();
+        }
+        var currentBranch = (hashParams.get('branch') || 'witbank').toLowerCase();
+        if (branchOptions.indexOf(currentBranch) === -1) {
+            currentBranch = 'witbank';
+        }
 
         // Inject Firebase-uploaded photos at the top of the existing #album-grid
         var grid = document.getElementById('album-grid');
-        if (grid) {
+        if (grid && currentCategory) {
             db.collection('gallery')
                 .where('category', '==', currentCategory)
                 .onSnapshot(function (snap) {
                     var docs = [];
                     snap.forEach(function (doc) {
-                        docs.push(doc);
+                        var data = doc.data() || {};
+                        var docBranch = (data.branch || '').toLowerCase();
+                        var shouldInclude = currentBranch === 'witbank'
+                            ? (!docBranch || docBranch === 'witbank')
+                            : (docBranch === currentBranch);
+                        if (shouldInclude) {
+                            docs.push(doc);
+                        }
                     });
 
                     docs.sort(function (a, b) {
@@ -236,7 +264,16 @@
                         var countEl = document.getElementById('album-photo-count');
                         if (countEl) { countEl.textContent = (window.albumStaticTotal + docs.length) + ' photos'; }
                     }
-                    if (docs.length === 0) { return; }
+                    if (docs.length === 0) {
+                        if (typeof window._initStaticAlbum === 'function') {
+                            window._initStaticAlbum(0);
+                        }
+                        var emptyLoadWrap = document.querySelector('.album-load-wrap');
+                        if (emptyLoadWrap && typeof window._staticRemaining === 'function' && window._staticRemaining() <= 0) {
+                            emptyLoadWrap.hidden = true;
+                        }
+                        return;
+                    }
 
                     var FB_BATCH = 6;
                     var fbShown  = 0;
@@ -385,7 +422,9 @@
                 isAdmin = true; pwModal.style.display = 'none'; adminPanel.style.display = 'block';
                 btnOpen.textContent = 'Close Upload Panel';
                 var sel = document.getElementById('uploadCategory');
+                var branchSel = document.getElementById('uploadBranch');
                 if (sel && currentCategory) { sel.value = currentCategory; }
+                if (branchSel && currentBranch) { branchSel.value = currentBranch; }
                 attachDeleteBtns();
             } else {
                 pwError.style.display = 'block'; pwInput.value = ''; pwInput.focus();
@@ -488,6 +527,7 @@
             if (isUploading) { return; }
 
             var files    = Array.from(document.getElementById('uploadFiles').files || []);
+            var branch   = document.getElementById('uploadBranch').value;
             var category = document.getElementById('uploadCategory').value;
             var caption  = document.getElementById('uploadCaption').value.trim();
             if (!files || files.length === 0) { alert('Please choose at least one photo.'); return; }
@@ -534,6 +574,7 @@
                         st.textContent = 'Saving...';
                         await db.collection('gallery').add({
                             imageData: dataUrl,
+                            branch: branch,
                             category: category,
                             caption: caption,
                             uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
