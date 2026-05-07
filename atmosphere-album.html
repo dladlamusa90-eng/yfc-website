@@ -64,7 +64,6 @@
                 <div class="album-hero-actions">
                     <button class="btn-album-admin" id="btnAdminOpen" type="button">Admin Upload</button>
                     <button class="btn-change-banner" id="btnChangeBanner" type="button" style="display:none" aria-label="Change hero banner image">&#128247; Change Banner</button>
-                    <input type="file" id="bannerFileInput" accept="image/*" style="display:none">
                 </div>
             </div>
         </section>
@@ -155,7 +154,17 @@
 
     <script src="assets/js/script.js?v=20260501"></script>
 
-    <!-- Admin password modal -->
+    <!-- Banner picker modal -->
+    <div class="banner-picker-modal" id="bannerPickerModal" role="dialog" aria-modal="true" aria-label="Choose banner photo" style="display:none">
+        <div class="banner-picker-box">
+            <div class="banner-picker-header">
+                <h3>Choose a Banner Photo</h3>
+                <button type="button" class="banner-picker-close" id="bannerPickerClose" aria-label="Close">&times;</button>
+            </div>
+            <p class="banner-picker-hint">Select any uploaded photo from this branch to use as the album banner.</p>
+            <div class="banner-picker-grid" id="bannerPickerGrid"></div>
+        </div>
+    </div>
     <div class="pw-modal" id="albumPwModal" role="dialog" aria-modal="true" aria-label="Admin login" style="display:none">
         <div class="pw-modal-box">
             <h3>Admin Access</h3>
@@ -482,36 +491,70 @@
         document.getElementById('albumAdminClose').addEventListener('click', closeUploadPanel);
         doneBtn.addEventListener('click', closeUploadPanel);
 
-        // Change Banner
+        // Change Banner — opens photo picker
         var btnChangeBanner = document.getElementById('btnChangeBanner');
-        var bannerFileInput = document.getElementById('bannerFileInput');
-        btnChangeBanner.addEventListener('click', function () { bannerFileInput.click(); });
-        bannerFileInput.addEventListener('change', async function () {
-            var file = bannerFileInput.files && bannerFileInput.files[0];
-            if (!file) { return; }
-            bannerFileInput.value = '';
-            btnChangeBanner.textContent = 'Saving...';
-            btnChangeBanner.disabled = true;
-            try {
-                var webpFile = await compressImage(file, 1600, 0.78);
-                var dataUrl = await fileToDataUrl(webpFile);
-                await db.collection('banners').doc(currentBranch).set({
-                    imageData: dataUrl,
-                    branch: currentBranch,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        var bannerPickerModal = document.getElementById('bannerPickerModal');
+        var bannerPickerGrid = document.getElementById('bannerPickerGrid');
+
+        btnChangeBanner.addEventListener('click', function () {
+            bannerPickerGrid.innerHTML = '<p class="banner-picker-loading">Loading photos…</p>';
+            bannerPickerModal.style.display = 'flex';
+
+            db.collection('gallery')
+                .where('branch', '==', currentBranch)
+                .get()
+                .then(function (snap) {
+                    bannerPickerGrid.innerHTML = '';
+                    if (snap.empty) {
+                        bannerPickerGrid.innerHTML = '<p class="banner-picker-empty">No uploaded photos found for this branch yet.</p>';
+                        return;
+                    }
+                    snap.forEach(function (doc) {
+                        var data = doc.data();
+                        var src = data.imageData || data.url;
+                        if (!src) { return; }
+                        var img = document.createElement('img');
+                        img.className = 'banner-picker-thumb';
+                        img.src = src;
+                        img.alt = data.caption || 'Photo';
+                        img.loading = 'lazy';
+                        img.addEventListener('click', async function () {
+                            bannerPickerModal.style.display = 'none';
+                            btnChangeBanner.textContent = 'Saving…';
+                            btnChangeBanner.disabled = true;
+                            try {
+                                await db.collection('banners').doc(currentBranch).set({
+                                    imageData: src,
+                                    branch: currentBranch,
+                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                                applyBanner(src);
+                                btnChangeBanner.textContent = '\u2713 Banner Updated';
+                                setTimeout(function () {
+                                    btnChangeBanner.textContent = '\uD83D\uDCF7 Change Banner';
+                                    btnChangeBanner.disabled = false;
+                                }, 2500);
+                            } catch (err) {
+                                alert('Could not save banner.');
+                                console.error(err);
+                                btnChangeBanner.textContent = '\uD83D\uDCF7 Change Banner';
+                                btnChangeBanner.disabled = false;
+                            }
+                        });
+                        bannerPickerGrid.appendChild(img);
+                    });
+                })
+                .catch(function (err) {
+                    bannerPickerGrid.innerHTML = '<p class="banner-picker-empty">Could not load photos.</p>';
+                    console.error(err);
                 });
-                applyBanner(dataUrl);
-                btnChangeBanner.textContent = '\u2713 Banner Updated';
-                setTimeout(function () {
-                    btnChangeBanner.textContent = '\uD83D\uDCF7 Change Banner';
-                    btnChangeBanner.disabled = false;
-                }, 2500);
-            } catch (err) {
-                alert('Could not save banner. Please try again.');
-                console.error(err);
-                btnChangeBanner.textContent = '\uD83D\uDCF7 Change Banner';
-                btnChangeBanner.disabled = false;
-            }
+        });
+
+        document.getElementById('bannerPickerClose').addEventListener('click', function () {
+            bannerPickerModal.style.display = 'none';
+        });
+        bannerPickerModal.addEventListener('click', function (e) {
+            if (e.target === bannerPickerModal) { bannerPickerModal.style.display = 'none'; }
         });
 
         function compressImage(file, maxSide, quality) {

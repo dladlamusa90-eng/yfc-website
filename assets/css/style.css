@@ -2997,6 +2997,102 @@ p {
     color: #ffffff;
 }
 
+/* Banner picker modal */
+.banner-picker-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.78);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.banner-picker-box {
+    background: #1a0f09;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    width: min(100%, 760px);
+    max-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.banner-picker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.4rem 0.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+}
+
+.banner-picker-header h3 {
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.banner-picker-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    transition: color 150ms ease, background 150ms ease;
+}
+
+.banner-picker-close:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.banner-picker-hint {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.84rem;
+    margin: 0.6rem 1.4rem 0.8rem;
+    flex-shrink: 0;
+}
+
+.banner-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+    padding: 0 1.4rem 1.4rem;
+    overflow-y: auto;
+}
+
+.banner-picker-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.banner-picker-thumb:hover {
+    border-color: var(--color-gold);
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(239, 71, 35, 0.4);
+}
+
+.banner-picker-loading,
+.banner-picker-empty {
+    grid-column: 1 / -1;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.9rem;
+    padding: 1.5rem 0;
+    text-align: center;
+}
+
 .album-hero .section-heading {
     position: relative;
     z-index: 1;
