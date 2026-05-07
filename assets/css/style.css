@@ -3438,17 +3438,33 @@ p {
 }
 .album-photo-delete:hover { background: #dc2626; }
 
-/* Admin panel */
+/* Admin panel popup */
 .album-admin-panel {
-    background: #1a0f09;
-    border-bottom: 1px solid rgba(239, 71, 35, 0.25);
-    padding: 1.5rem 0;
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.74);
+    backdrop-filter: blur(2px);
 }
+
+.album-admin-panel .container {
+    width: min(100%, 860px);
+    margin: 0;
+    max-height: calc(100vh - 3rem);
+}
+
 .album-admin-inner {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-md);
     padding: 1.4rem 1.6rem;
+    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.45);
+    max-height: calc(100vh - 3rem);
+    overflow-y: auto;
 }
 .album-admin-header {
     display: flex;

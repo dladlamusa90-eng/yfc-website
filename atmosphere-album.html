@@ -449,8 +449,12 @@
         var doneBtn = document.getElementById('btnUploadDone');
         var isUploading = false;
 
+        function openUploadPanel() {
+            adminPanel.style.display = 'flex';
+        }
+
         btnOpen.addEventListener('click', function () {
-            if (isAdmin) { adminPanel.style.display = adminPanel.style.display === 'none' ? 'block' : 'none'; return; }
+            if (isAdmin) { openUploadPanel(); return; }
             pwInput.value = ''; pwError.style.display = 'none';
             pwModal.style.display = 'flex';
             setTimeout(function () { pwInput.focus(); }, 50);
@@ -462,8 +466,7 @@
         function checkPw() {
             var expectedCode = BRANCH_CODES[currentBranch] || '';
             if (pwInput.value === expectedCode) {
-                isAdmin = true; pwModal.style.display = 'none'; adminPanel.style.display = 'block';
-                btnOpen.textContent = 'Close Upload Panel';
+                isAdmin = true; pwModal.style.display = 'none'; openUploadPanel();
                 var sel = document.getElementById('uploadCategory');
                 var branchSel = document.getElementById('uploadBranch');
                 if (sel && currentCategory) { sel.value = currentCategory; }
@@ -479,7 +482,6 @@
         }
         function closeUploadPanel() {
             adminPanel.style.display = 'none';
-            btnOpen.textContent = 'Admin Upload';
             uploadActions.style.display = 'none';
             uploadList.innerHTML = '';
             document.getElementById('uploadFiles').value = '';
@@ -490,6 +492,14 @@
 
         document.getElementById('albumAdminClose').addEventListener('click', closeUploadPanel);
         doneBtn.addEventListener('click', closeUploadPanel);
+        adminPanel.addEventListener('click', function (e) {
+            if (e.target === adminPanel) { closeUploadPanel(); }
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && adminPanel.style.display !== 'none') {
+                closeUploadPanel();
+            }
+        });
 
         // Change Banner — opens photo picker
         var btnChangeBanner = document.getElementById('btnChangeBanner');
