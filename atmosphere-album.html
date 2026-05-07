@@ -152,7 +152,7 @@
     <div class="pw-modal" id="albumPwModal" role="dialog" aria-modal="true" aria-label="Admin login" style="display:none">
         <div class="pw-modal-box">
             <h3>Admin Access</h3>
-            <p>Enter the admin password to upload photos.</p>
+            <p>Enter your branch admin code to upload photos.</p>
             <input type="password" id="albumPwInput" placeholder="Password" autocomplete="current-password">
             <p class="pw-error" id="albumPwError" style="display:none">Incorrect password.</p>
             <div class="pw-modal-actions">
@@ -208,7 +208,16 @@
 
     <script>
     (function () {
-        var ADMIN_CODE = 'Musa@990302';
+        var BRANCH_CODES = {
+            eastrand:      'East@123',
+            durban:        'Durban@123',
+            pretoria:      'Pta@123',
+            soweto:        'Soweto@123',
+            potchefstroom: 'Potch@123',
+            gqeberha:      'Gqe@123',
+            polokwane:     'Polo@123',
+            witbank:       'Musa@990302'
+        };
         var firebaseConfig = {
             apiKey: "AIzaSyBhdh8bLPksi2B9Z0bNvufjvDHFibFg_zY",
             authDomain: "yfc-website-d5529.firebaseapp.com",
@@ -419,13 +428,17 @@
         document.getElementById('albumPwCancel').addEventListener('click', function () { pwModal.style.display = 'none'; });
 
         function checkPw() {
-            if (pwInput.value === ADMIN_CODE) {
+            var expectedCode = BRANCH_CODES[currentBranch] || '';
+            if (pwInput.value === expectedCode) {
                 isAdmin = true; pwModal.style.display = 'none'; adminPanel.style.display = 'block';
                 btnOpen.textContent = 'Close Upload Panel';
                 var sel = document.getElementById('uploadCategory');
                 var branchSel = document.getElementById('uploadBranch');
                 if (sel && currentCategory) { sel.value = currentCategory; }
-                if (branchSel && currentBranch) { branchSel.value = currentBranch; }
+                if (branchSel) {
+                    branchSel.value = currentBranch;
+                    branchSel.disabled = true;
+                }
                 attachDeleteBtns();
             } else {
                 pwError.style.display = 'block'; pwInput.value = ''; pwInput.focus();
@@ -438,6 +451,8 @@
             uploadList.innerHTML = '';
             document.getElementById('uploadFiles').value = '';
             document.getElementById('uploadCaption').value = '';
+            var branchSel = document.getElementById('uploadBranch');
+            if (branchSel) { branchSel.disabled = false; }
         }
 
         document.getElementById('albumAdminClose').addEventListener('click', closeUploadPanel);
