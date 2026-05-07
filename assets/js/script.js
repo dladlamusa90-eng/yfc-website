@@ -288,6 +288,84 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Life in YFC slideshow preview (Witbank highlights)
+    const previewImage = document.querySelector("#life-preview-image");
+    const previewCaption = document.querySelector("#life-preview-caption");
+    const previewDots = document.querySelector("#life-preview-dots");
+    const previewPrev = document.querySelector("#life-preview-prev");
+    const previewNext = document.querySelector("#life-preview-next");
+
+    if (previewImage && previewCaption && previewDots && previewPrev && previewNext) {
+        const lifeSlides = [
+            { src: albumConfig.outreach.photos[2], caption: "Outreach moments from Witbank branch." },
+            { src: albumConfig.jrt.photos[1], caption: "Jesus Roundtable discussions with the Witbank family." },
+            { src: albumConfig.tours.photos[2], caption: "Witbank tours and travel memories in ministry." },
+            { src: albumConfig.atmosphere.photos[4], caption: "Atmosphere of Faith worship nights in Witbank." },
+            { src: albumConfig.yfcw.photos[0], caption: "Youth For Christ Worship praise moments in Witbank." }
+        ].filter((slide) => typeof slide.src === "string" && slide.src.length > 0);
+
+        let activeSlide = 0;
+        let sliderTimer = null;
+
+        const renderSlide = () => {
+            const slide = lifeSlides[activeSlide];
+            if (!slide) {
+                return;
+            }
+            previewImage.src = slide.src;
+            previewImage.alt = slide.caption;
+            previewCaption.textContent = slide.caption;
+
+            const dots = Array.from(previewDots.querySelectorAll(".life-preview-dot"));
+            dots.forEach((dot, index) => {
+                dot.classList.toggle("is-active", index === activeSlide);
+            });
+        };
+
+        const stopAutoPlay = () => {
+            if (sliderTimer) {
+                window.clearInterval(sliderTimer);
+                sliderTimer = null;
+            }
+        };
+
+        const startAutoPlay = () => {
+            stopAutoPlay();
+            sliderTimer = window.setInterval(() => {
+                activeSlide = (activeSlide + 1) % lifeSlides.length;
+                renderSlide();
+            }, 4200);
+        };
+
+        lifeSlides.forEach((_, index) => {
+            const dot = document.createElement("button");
+            dot.type = "button";
+            dot.className = "life-preview-dot" + (index === 0 ? " is-active" : "");
+            dot.setAttribute("aria-label", `Show preview slide ${index + 1}`);
+            dot.addEventListener("click", () => {
+                activeSlide = index;
+                renderSlide();
+                startAutoPlay();
+            });
+            previewDots.appendChild(dot);
+        });
+
+        previewPrev.addEventListener("click", () => {
+            activeSlide = (activeSlide - 1 + lifeSlides.length) % lifeSlides.length;
+            renderSlide();
+            startAutoPlay();
+        });
+
+        previewNext.addEventListener("click", () => {
+            activeSlide = (activeSlide + 1) % lifeSlides.length;
+            renderSlide();
+            startAutoPlay();
+        });
+
+        renderSlide();
+        startAutoPlay();
+    }
+
 
 
     // Album page renderer in batches to keep initial page load fast.
