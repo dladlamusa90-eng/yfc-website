@@ -2637,6 +2637,11 @@ p {
     gap: 0.65rem;
 }
 
+/* Category chooser cards rendered inside album-grid must span the full width */
+.album-grid > .gallery-grid {
+    grid-column: 1 / -1;
+}
+
 .album-item {
     position: relative;
     overflow: hidden;
