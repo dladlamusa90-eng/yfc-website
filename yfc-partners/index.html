@@ -426,7 +426,7 @@
         });
 
         function tryEnter() {
-            var val = document.getElementById('pw-input').value;
+            var val = document.getElementById('pw-input').value.trim();
             if (val === ADMIN_CODE) {
                 document.getElementById('pw-modal').classList.remove('active');
                 document.getElementById('edit-panel').classList.add('active');
