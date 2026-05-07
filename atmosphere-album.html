@@ -470,17 +470,26 @@
 
                         ctx.drawImage(img, 0, 0, tw, th);
 
-                        // Convert to WebP for smaller file sizes and faster loads.
+                        // Convert to WebP. Fall back to JPEG if the browser
+                        // doesn't support WebP encoding (very rare).
                         canvas.toBlob(function (blob) {
-                            if (!blob) {
-                                resolve(file);
+                            if (blob) {
+                                resolve(new File(
+                                    [blob],
+                                    file.name.replace(/\.[^.]+$/, '') + '.webp',
+                                    { type: 'image/webp', lastModified: Date.now() }
+                                ));
                                 return;
                             }
-                            resolve(new File(
-                                [blob],
-                                file.name.replace(/\.[^.]+$/, '') + '.webp',
-                                { type: 'image/webp', lastModified: Date.now() }
-                            ));
+                            // WebP not supported — fall back to JPEG
+                            canvas.toBlob(function (jpegBlob) {
+                                if (!jpegBlob) { resolve(file); return; }
+                                resolve(new File(
+                                    [jpegBlob],
+                                    file.name.replace(/\.[^.]+$/, '') + '.jpg',
+                                    { type: 'image/jpeg', lastModified: Date.now() }
+                                ));
+                            }, 'image/jpeg', quality);
                         }, 'image/webp', quality);
                     };
                     img.onerror = function () { resolve(file); };
