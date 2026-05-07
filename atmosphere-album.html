@@ -268,11 +268,14 @@
             }
         }, function () {});
 
+        var BANNER_GRADIENT = 'linear-gradient(160deg, rgba(19,11,6,0.65) 0%, rgba(42,20,9,0.68) 55%, rgba(19,11,6,0.72) 100%)';
+
         function applyBanner(dataUrl) {
             if (!heroEl) { return; }
-            heroEl.style.backgroundImage = 'url(' + dataUrl + ')';
+            heroEl.style.backgroundImage = BANNER_GRADIENT + ', url(' + dataUrl + ')';
             heroEl.style.backgroundSize = 'cover';
             heroEl.style.backgroundPosition = 'center';
+            heroEl.style.backgroundRepeat = 'no-repeat';
             heroEl.classList.add('has-banner');
         }
         var branchOptions = ['eastrand', 'durban', 'pretoria', 'soweto', 'potchefstroom', 'gqeberha', 'polokwane', 'witbank'];

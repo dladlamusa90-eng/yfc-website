@@ -562,7 +562,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.title = `${selectedBranch.label} ${selectedAlbum.title} | Youth For Christ International`;
         }
 
-        if (albumHero && albumPhotos.length > 0) {
+        if (albumHero && albumPhotos.length > 0 && !albumHero.classList.contains('has-banner')) {
             const bannerPhoto = selectedAlbum.banner || albumPhotos[0];
             albumHero.style.backgroundImage = `linear-gradient(160deg, rgba(19, 11, 6, 0.65) 0%, rgba(42, 20, 9, 0.68) 55%, rgba(19, 11, 6, 0.72) 100%), url("${bannerPhoto}")`;
             albumHero.style.backgroundSize = "cover";
