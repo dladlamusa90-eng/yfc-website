@@ -549,7 +549,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (albumTitle) {
-            albumTitle.textContent = `${selectedBranch.label} ${selectedAlbum.title}`;
+            albumTitle.textContent = selectedAlbum.title;
         }
 
         if (albumDescription) {
@@ -557,7 +557,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (document.title) {
-            document.title = `${selectedBranch.label} ${selectedAlbum.title} | Youth For Christ International`;
+            document.title = `${selectedAlbum.title} | Youth For Christ International`;
         }
 
         if (albumHero && !albumHero.classList.contains('has-banner')) {
