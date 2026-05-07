@@ -275,13 +275,14 @@
             heroEl.classList.add('has-banner');
         }
         var branchOptions = ['eastrand', 'durban', 'pretoria', 'soweto', 'potchefstroom', 'gqeberha', 'polokwane', 'witbank'];
+        var searchParams = new URLSearchParams(window.location.search);
         var rawHash = window.location.hash.slice(1);
         var hashParams = new URLSearchParams(rawHash);
-        var currentCategory = (hashParams.get('category') || '').toLowerCase();
+        var currentCategory = (searchParams.get('category') || hashParams.get('category') || '').toLowerCase();
         if (!currentCategory && rawHash && rawHash.indexOf('=') === -1) {
             currentCategory = rawHash.toLowerCase();
         }
-        var currentBranch = (hashParams.get('branch') || 'witbank').toLowerCase();
+        var currentBranch = (searchParams.get('branch') || hashParams.get('branch') || 'witbank').toLowerCase();
         if (branchOptions.indexOf(currentBranch) === -1) {
             currentBranch = 'witbank';
         }

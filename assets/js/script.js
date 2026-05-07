@@ -309,11 +309,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const albumMonthFilter = document.querySelector("#album-month-filter");
 
     if (albumGrid) {
+        // Support both ?branch=x&category=y (new) and #branch=x&category=y (old)
+        const searchParams = new URLSearchParams(window.location.search);
         const rawHash = window.location.hash.slice(1);
         const hashParams = new URLSearchParams(rawHash);
-        const branchKey = (hashParams.get("branch") || "witbank").toLowerCase();
+        const branchKey = (searchParams.get("branch") || hashParams.get("branch") || "witbank").toLowerCase();
         const selectedBranch = branchConfig[branchKey] || branchConfig.witbank;
-        let category = (hashParams.get("category") || "").toLowerCase();
+        let category = (searchParams.get("category") || hashParams.get("category") || "").toLowerCase();
         if (!category && rawHash && rawHash.indexOf("=") === -1) {
             // Backward compatibility for old links like #outreach.
             category = rawHash.toLowerCase();
@@ -339,11 +341,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 branchSwitcher.appendChild(opt);
             });
             branchSwitcher.addEventListener("change", () => {
+                const newBranch = branchSwitcher.value;
                 const dest = category
-                    ? `atmosphere-album.html#branch=${branchSwitcher.value}&category=${category}`
-                    : `atmosphere-album.html#branch=${branchSwitcher.value}`;
+                    ? `atmosphere-album.html?branch=${newBranch}&category=${category}`
+                    : `atmosphere-album.html?branch=${newBranch}`;
                 window.location.href = dest;
-                window.location.reload();
             });
         }
 
@@ -361,7 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const card = document.createElement("a");
                 card.className = "gallery-item gallery-item-link";
-                card.href = `atmosphere-album.html#branch=${branchKey}&category=${key}`;
+                card.href = `atmosphere-album.html?branch=${branchKey}&category=${key}`;
                 card.setAttribute("aria-label", `Open ${cfg.label} album for ${selectedBranch.label}`);
 
                 const thumb = document.createElement("div");
