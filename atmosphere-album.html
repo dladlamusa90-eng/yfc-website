@@ -412,12 +412,9 @@
                         });
                     }
 
-                    // Render all photos immediately for small albums to avoid
-                    // showing a higher count while only 6 are visible.
-                    // Larger albums still start in 6-photo batches.
-                    var initialFbCount = docs.length <= 8
-                        ? docs.length
-                        : Math.min(FB_BATCH, docs.length);
+                    // Keep initial loading consistent across all branches:
+                    // always render up to 6 photos first, then use Load More.
+                    var initialFbCount = Math.min(FB_BATCH, docs.length);
                     renderFbBatch(initialFbCount);
                     if (typeof window._initStaticAlbum === 'function') {
                         window._initStaticAlbum(initialFbCount);
