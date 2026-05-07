@@ -343,6 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     ? `atmosphere-album.html#branch=${branchSwitcher.value}&category=${category}`
                     : `atmosphere-album.html#branch=${branchSwitcher.value}`;
                 window.location.href = dest;
+                window.location.reload();
             });
         }
 
