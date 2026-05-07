@@ -192,82 +192,83 @@
 
         <section class="gallery-section" aria-labelledby="gallery-heading">
             <div class="container">
-                <div class="section-heading life-stage-heading">
+                <div class="section-heading gallery-section-heading">
                     <p class="section-label">Life in YFC</p>
                     <h2 id="gallery-heading">Moments that Matter</h2>
                     <p class="gallery-desc">A glimpse into the vibrant life of Youth For Christ — from community outreach to nights of worship and beyond.</p>
                 </div>
-                <div class="life-stage-branches gallery-filters" role="group" aria-label="Filter gallery by branch">
-                    <button type="button" class="gallery-filter" data-filter="eastrand">Eastrand</button>
-                    <button type="button" class="gallery-filter" data-filter="durban">Durban</button>
-                    <button type="button" class="gallery-filter" data-filter="pretoria">Pretoria</button>
-                    <button type="button" class="gallery-filter" data-filter="soweto">Soweto</button>
-                    <button type="button" class="gallery-filter" data-filter="potchefstroom">Potchefstroom</button>
-                    <button type="button" class="gallery-filter" data-filter="gqeberha">Gqeberha</button>
-                    <button type="button" class="gallery-filter" data-filter="polokwane">Polokwane</button>
-                    <button type="button" class="gallery-filter is-active" data-filter="witbank">Witbank</button>
+                <div class="gallery-filters" role="group" aria-label="Filter gallery by category">
+                    <button type="button" class="gallery-filter is-active" data-filter="all">All</button>
+                    <button type="button" class="gallery-filter" data-filter="outreach">Outreach</button>
+                    <button type="button" class="gallery-filter" data-filter="jrt">Jesus Roundtable</button>
+                    <button type="button" class="gallery-filter" data-filter="tours">Tours</button>
+                    <button type="button" class="gallery-filter" data-filter="atmosphere">Atmosphere of Faith</button>
+                    <button type="button" class="gallery-filter" data-filter="leadership">Leadership</button>
+                    <button type="button" class="gallery-filter" data-filter="yfcw">Youth For Christ Worship (YFCW)</button>
                 </div>
-
-                <div class="life-stage-shell" aria-label="Witbank albums preview">
-                    <aside class="life-stage-rail" aria-label="Witbank quick category links">
-                        <a class="life-rail-link" href="atmosphere-album.html#branch=witbank&category=outreach">Outreach</a>
-                        <a class="life-rail-link" href="atmosphere-album.html#branch=witbank&category=jrt">Jesus Roundtable</a>
-                        <a class="life-rail-link" href="atmosphere-album.html#branch=witbank&category=tours">Tours</a>
-                        <a class="life-rail-link" href="atmosphere-album.html#branch=witbank&category=atmosphere">Atmosphere of Faith</a>
-                        <a class="life-rail-link" href="atmosphere-album.html#branch=witbank&category=leadership">Leadership</a>
-                        <a class="life-rail-link" href="atmosphere-album.html#branch=witbank&category=yfcw">YFC Worship</a>
-                        <a class="life-rail-link" href="atmosphere-album.html#branch=witbank&category=more">And More</a>
-                    </aside>
-
-                    <article class="life-cinema-card">
-                        <div class="life-cinema-frame">
-                            <img id="life-preview-image" class="life-preview-image" src="assets/images/outreach 1.webp" alt="Witbank outreach moment" loading="lazy">
-                            <div class="life-cinema-overlay">
-                                <span class="life-cinema-badge">Witbank Live Preview</span>
-                                <div class="life-preview-controls" aria-label="Slideshow controls">
-                                    <button type="button" class="life-preview-nav" id="life-preview-prev" aria-label="Previous preview photo">&#10094;</button>
-                                    <button type="button" class="life-preview-nav" id="life-preview-next" aria-label="Next preview photo">&#10095;</button>
-                                </div>
+                <div class="gallery-grid">
+                    <a class="gallery-item gallery-item-link" data-category="outreach" href="atmosphere-album.html#branch=witbank&category=outreach" aria-label="Open Outreach album">
+                        <div class="gallery-thumb outreach-bg">
+                            <div class="gallery-overlay">
+                                <span class="gallery-cat-label">Outreach</span>
+                                <p class="gallery-caption">Taking the Gospel to the streets and communities</p>
+                                <span class="gallery-open-album">Open album</span>
                             </div>
                         </div>
-                        <div class="life-preview-meta">
-                            <div class="life-preview-meta-top">
-                                <p id="life-preview-caption" class="life-preview-caption">Outreach moments from Witbank branch.</p>
-                                <span id="life-preview-counter" class="life-preview-counter">01 / 05</span>
+                    </a>
+                    <a class="gallery-item gallery-item-link" data-category="jrt" href="atmosphere-album.html#branch=witbank&category=jrt" aria-label="Open Jesus Roundtable album">
+                        <div class="gallery-thumb jrt-bg">
+                            <div class="gallery-overlay">
+                                <span class="gallery-cat-label">Jesus Roundtable</span>
+                                <p class="gallery-caption">Deep conversations around faith and life</p>
+                                <span class="gallery-open-album">Open album</span>
                             </div>
-                            <div id="life-preview-dots" class="life-preview-dots" aria-label="Slideshow positions"></div>
                         </div>
-                    </article>
-                </div>
-
-                <div class="life-filmstrip" aria-label="Witbank album categories">
-                    <a class="life-film-card" href="atmosphere-album.html#branch=witbank&category=outreach" aria-label="Open Outreach album">
-                        <img src="assets/images/outreach 12.webp" alt="Outreach album preview" loading="lazy">
-                        <span class="life-film-label">Outreach</span>
                     </a>
-                    <a class="life-film-card" href="atmosphere-album.html#branch=witbank&category=jrt" aria-label="Open Jesus Roundtable album">
-                        <img src="assets/images/jrt 4.webp" alt="Jesus Roundtable album preview" loading="lazy">
-                        <span class="life-film-label">Jesus Roundtable</span>
+                    <a class="gallery-item gallery-item-link" data-category="tours" href="atmosphere-album.html#branch=witbank&category=tours" aria-label="Open Tours album">
+                        <div class="gallery-thumb tours-bg">
+                            <div class="gallery-overlay">
+                                <span class="gallery-cat-label">Tours</span>
+                                <p class="gallery-caption">Adventures and trips that strengthen community</p>
+                                <span class="gallery-open-album">Open album</span>
+                            </div>
+                        </div>
                     </a>
-                    <a class="life-film-card" href="atmosphere-album.html#branch=witbank&category=tours" aria-label="Open Tours album">
-                        <img src="assets/images/tour 7.webp" alt="Tours album preview" loading="lazy">
-                        <span class="life-film-label">Tours</span>
+                    <a class="gallery-item gallery-item-link" data-category="atmosphere" href="atmosphere-album.html#branch=witbank&category=atmosphere" aria-label="Open Atmosphere of Faith album">
+                        <div class="gallery-thumb atmosphere-bg">
+                            <div class="gallery-overlay">
+                                <span class="gallery-cat-label">Atmosphere of Faith</span>
+                                <p class="gallery-caption">Nights of worship and encounters with God</p>
+                                <span class="gallery-open-album">Open album</span>
+                            </div>
+                        </div>
                     </a>
-                    <a class="life-film-card" href="atmosphere-album.html#branch=witbank&category=atmosphere" aria-label="Open Atmosphere of Faith album">
-                        <img src="assets/images/atmosphere 8.webp" alt="Atmosphere of Faith album preview" loading="lazy">
-                        <span class="life-film-label">Atmosphere of Faith</span>
+                    <a class="gallery-item gallery-item-link" data-category="leadership" href="atmosphere-album.html#branch=witbank&category=leadership" aria-label="Open Leadership album">
+                        <div class="gallery-thumb leadership-bg">
+                            <div class="gallery-overlay">
+                                <span class="gallery-cat-label">Leadership</span>
+                                <p class="gallery-caption">Raising the next generation of leaders</p>
+                                <span class="gallery-open-album">Open album</span>
+                            </div>
+                        </div>
                     </a>
-                    <a class="life-film-card" href="atmosphere-album.html#branch=witbank&category=leadership" aria-label="Open Leadership album">
-                        <img src="assets/images/leadership 1.webp" alt="Leadership album preview" loading="lazy">
-                        <span class="life-film-label">Leadership</span>
+                    <a class="gallery-item gallery-item-link" data-category="yfcw" href="atmosphere-album.html#branch=witbank&category=yfcw" aria-label="Open YFCW album">
+                        <div class="gallery-thumb yfcw-bg">
+                            <div class="gallery-overlay">
+                                <span class="gallery-cat-label">Youth For Christ Worship</span>
+                                <p class="gallery-caption">Lifted voices and hearts turned to God</p>
+                                <span class="gallery-open-album">Open album</span>
+                            </div>
+                        </div>
                     </a>
-                    <a class="life-film-card" href="atmosphere-album.html#branch=witbank&category=yfcw" aria-label="Open YFCW album">
-                        <img src="assets/images/yfcw (9).webp" alt="Youth For Christ Worship album preview" loading="lazy">
-                        <span class="life-film-label">YFC Worship</span>
-                    </a>
-                    <a class="life-film-card" href="atmosphere-album.html#branch=witbank&category=more" aria-label="See all albums">
-                        <img src="assets/images/other 1 (8).webp" alt="More moments album preview" loading="lazy">
-                        <span class="life-film-label">And More</span>
+                    <a class="gallery-item gallery-item-link" data-category="more" href="atmosphere-album.html#branch=witbank&category=more" aria-label="See all albums">
+                        <div class="gallery-thumb more-bg">
+                            <div class="gallery-overlay">
+                                <span class="gallery-cat-label">And More</span>
+                                <p class="gallery-caption">Explore everything happening in YFC</p>
+                                <span class="gallery-open-album">View all</span>
+                            </div>
+                        </div>
                     </a>
                 </div>
             </div>

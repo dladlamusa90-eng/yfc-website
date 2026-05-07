@@ -284,92 +284,14 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.classList.add("is-active");
 
             const filter = btn.dataset.filter;
-            window.location.href = `atmosphere-album.html#branch=${filter}`;
-        });
-    }
-
-    // Life in YFC slideshow preview (Witbank highlights)
-    const previewImage = document.querySelector("#life-preview-image");
-    const previewCaption = document.querySelector("#life-preview-caption");
-    const previewCounter = document.querySelector("#life-preview-counter");
-    const previewDots = document.querySelector("#life-preview-dots");
-    const previewPrev = document.querySelector("#life-preview-prev");
-    const previewNext = document.querySelector("#life-preview-next");
-
-    if (previewImage && previewCaption && previewDots && previewPrev && previewNext) {
-        const lifeSlides = [
-            { src: albumConfig.outreach.photos[2], caption: "Outreach moments from Witbank branch." },
-            { src: albumConfig.jrt.photos[1], caption: "Jesus Roundtable discussions with the Witbank family." },
-            { src: albumConfig.tours.photos[2], caption: "Witbank tours and travel memories in ministry." },
-            { src: albumConfig.atmosphere.photos[4], caption: "Atmosphere of Faith worship nights in Witbank." },
-            { src: albumConfig.yfcw.photos[0], caption: "Youth For Christ Worship praise moments in Witbank." }
-        ].filter((slide) => typeof slide.src === "string" && slide.src.length > 0);
-
-        let activeSlide = 0;
-        let sliderTimer = null;
-
-        const renderSlide = () => {
-            const slide = lifeSlides[activeSlide];
-            if (!slide) {
-                return;
+            for (const item of galleryItems) {
+                if (filter === "all" || item.dataset.category === filter) {
+                    item.style.display = "";
+                } else {
+                    item.style.display = "none";
+                }
             }
-            previewImage.src = slide.src;
-            previewImage.alt = slide.caption;
-            previewCaption.textContent = slide.caption;
-            if (previewCounter) {
-                const current = String(activeSlide + 1).padStart(2, "0");
-                const total = String(lifeSlides.length).padStart(2, "0");
-                previewCounter.textContent = `${current} / ${total}`;
-            }
-
-            const dots = Array.from(previewDots.querySelectorAll(".life-preview-dot"));
-            dots.forEach((dot, index) => {
-                dot.classList.toggle("is-active", index === activeSlide);
-            });
-        };
-
-        const stopAutoPlay = () => {
-            if (sliderTimer) {
-                window.clearInterval(sliderTimer);
-                sliderTimer = null;
-            }
-        };
-
-        const startAutoPlay = () => {
-            stopAutoPlay();
-            sliderTimer = window.setInterval(() => {
-                activeSlide = (activeSlide + 1) % lifeSlides.length;
-                renderSlide();
-            }, 4200);
-        };
-
-        lifeSlides.forEach((_, index) => {
-            const dot = document.createElement("button");
-            dot.type = "button";
-            dot.className = "life-preview-dot" + (index === 0 ? " is-active" : "");
-            dot.setAttribute("aria-label", `Show preview slide ${index + 1}`);
-            dot.addEventListener("click", () => {
-                activeSlide = index;
-                renderSlide();
-                startAutoPlay();
-            });
-            previewDots.appendChild(dot);
         });
-
-        previewPrev.addEventListener("click", () => {
-            activeSlide = (activeSlide - 1 + lifeSlides.length) % lifeSlides.length;
-            renderSlide();
-            startAutoPlay();
-        });
-
-        previewNext.addEventListener("click", () => {
-            activeSlide = (activeSlide + 1) % lifeSlides.length;
-            renderSlide();
-            startAutoPlay();
-        });
-
-        renderSlide();
-        startAutoPlay();
     }
 
 
