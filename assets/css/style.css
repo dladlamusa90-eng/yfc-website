@@ -2501,6 +2501,179 @@ p {
     box-shadow: 0 20px 32px rgba(0, 0, 0, 0.38);
 }
 
+/* Distinct immersive redesign for Life in YFC */
+.gallery-section {
+    background:
+        radial-gradient(circle at 78% 22%, rgba(239, 71, 35, 0.15), transparent 35%),
+        radial-gradient(circle at 10% 72%, rgba(255, 180, 120, 0.1), transparent 33%),
+        linear-gradient(170deg, #0a0705 0%, #140a06 62%, #0a0705 100%);
+}
+
+.life-stage-heading {
+    width: min(100%, 980px);
+    margin: 0 auto 1rem;
+    text-align: left;
+    justify-items: start;
+}
+
+.life-stage-heading h2 {
+    font-size: clamp(2.3rem, 6vw, 4rem);
+    line-height: 0.98;
+    max-width: 8ch;
+}
+
+.life-stage-heading .gallery-desc {
+    max-width: 56ch;
+    color: rgba(255, 255, 255, 0.68);
+}
+
+.life-stage-branches {
+    margin-bottom: 1.2rem;
+    padding: 0.15rem 0.15rem 0.45rem;
+}
+
+.life-stage-branches.gallery-filters {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    gap: 0.45rem;
+}
+
+.life-stage-branches .gallery-filter {
+    min-height: 34px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.22);
+}
+
+.life-stage-shell {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.life-stage-rail {
+    display: grid;
+    gap: 0.55rem;
+    align-content: start;
+    padding: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.life-rail-link {
+    display: block;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 0.58rem 0.65rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.life-rail-link:hover {
+    color: #ffffff;
+    border-color: rgba(239, 71, 35, 0.45);
+    background: rgba(239, 71, 35, 0.12);
+    transform: translateX(2px);
+}
+
+.life-cinema-card {
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.38);
+}
+
+.life-cinema-frame {
+    position: relative;
+    aspect-ratio: 21 / 9;
+    overflow: hidden;
+}
+
+.life-cinema-overlay {
+    position: absolute;
+    inset: 0;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.76) 8%, rgba(0, 0, 0, 0.05) 58%, transparent 100%);
+}
+
+.life-cinema-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 0.7rem;
+    border-radius: 999px;
+    background: rgba(8, 8, 8, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.life-filmstrip {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(160px, 1fr));
+    gap: 0.65rem;
+    overflow-x: auto;
+    padding-bottom: 0.3rem;
+    scrollbar-width: thin;
+}
+
+.life-film-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    min-height: 180px;
+    text-decoration: none;
+    background: #1a130d;
+    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.life-film-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.life-film-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.84) 6%, rgba(0, 0, 0, 0.2) 52%, transparent 100%);
+}
+
+.life-film-label {
+    position: absolute;
+    left: 0.65rem;
+    bottom: 0.62rem;
+    z-index: 1;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.life-film-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(239, 71, 35, 0.55);
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.34);
+}
+
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -3567,22 +3740,30 @@ p {
         font-size: 0.98rem;
     }
 
-    .life-minimal-layout {
-        grid-template-columns: 1fr;
-        gap: 0.8rem;
+    .life-stage-heading h2 {
+        font-size: clamp(2rem, 11vw, 2.7rem);
     }
 
-    .life-nav-panel {
-        padding: 1rem;
+    .life-stage-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .life-stage-rail {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.45rem;
+    }
+
+    .life-cinema-frame {
+        aspect-ratio: 4 / 3;
+    }
+
+    .life-filmstrip {
+        grid-template-columns: repeat(7, minmax(130px, 1fr));
     }
 
     .life-preview-nav {
         width: 36px;
         height: 36px;
-    }
-
-    .life-categories-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .gallery-grid {
@@ -3603,6 +3784,22 @@ p {
 }
 
 @media (max-width: 768px) {
+    .life-stage-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .life-stage-rail {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .life-cinema-frame {
+        aspect-ratio: 16 / 10;
+    }
+
+    .life-filmstrip {
+        grid-template-columns: repeat(7, minmax(150px, 1fr));
+    }
+
     .album-tabs {
         gap: 0.35rem;
     }
