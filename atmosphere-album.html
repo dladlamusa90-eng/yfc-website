@@ -362,12 +362,21 @@
                         for (var i = fbShown; i < end; i++) {
                             frag.appendChild(buildFbCard(docs[i]));
                         }
-                        // Firebase photos sit at the top of the grid
-                        var firstNonFb = grid.querySelector(':not(.fb-photo)');
+                        // Firebase photos sit at the top of the grid.
+                        // Use direct children only; querying descendants can
+                        // accidentally return nested <img> nodes and break insertion.
+                        var firstNonFb = null;
+                        Array.from(grid.children).some(function (child) {
+                            if (!child.classList || !child.classList.contains('fb-photo')) {
+                                firstNonFb = child;
+                                return true;
+                            }
+                            return false;
+                        });
                         if (firstNonFb) {
                             grid.insertBefore(frag, firstNonFb);
                         } else {
-                            grid.insertBefore(frag, grid.firstChild);
+                            grid.appendChild(frag);
                         }
                         fbShown = end;
 
