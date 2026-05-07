@@ -104,7 +104,10 @@
             <div class="pw-modal-box">
                 <h2 id="pw-modal-title">Admin Access</h2>
                 <p>Enter your branch admin code to manage events.</p>
-                <input type="password" id="pw-input" placeholder="Enter code" autocomplete="off" />
+                <div class="pw-input-wrap">
+                    <input type="password" id="pw-input" placeholder="Enter code" autocomplete="off" />
+                    <button type="button" class="pw-toggle-btn" id="pw-toggle" aria-label="Show password" tabindex="-1">&#128065;</button>
+                </div>
                 <p class="pw-error-msg" id="pw-error">Incorrect code. Please try again.</p>
                 <div class="pw-modal-actions">
                     <button class="pw-btn-cancel" id="pw-cancel">Cancel</button>
@@ -650,6 +653,15 @@
         document.getElementById('pw-submit').addEventListener('click', tryEnter);
         document.getElementById('pw-input').addEventListener('keydown', function (e) {
             if (e.key === 'Enter') tryEnter();
+        });
+
+        // Eye toggle for events password
+        document.getElementById('pw-toggle').addEventListener('click', function () {
+            var inp = document.getElementById('pw-input');
+            var show = inp.type === 'password';
+            inp.type = show ? 'text' : 'password';
+            this.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+            this.style.opacity = show ? '1' : '0.55';
         });
 
         document.getElementById('close-edit').addEventListener('click', function () {

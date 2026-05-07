@@ -173,7 +173,10 @@
         <div class="pw-modal-box">
             <h3>Admin Access</h3>
             <p>Enter your branch admin code to upload photos.</p>
-            <input type="password" id="albumPwInput" placeholder="Password" autocomplete="current-password">
+            <div class="pw-input-wrap">
+                <input type="password" id="albumPwInput" placeholder="Password" autocomplete="current-password">
+                <button type="button" class="pw-toggle-btn" id="albumPwToggle" aria-label="Show password" tabindex="-1">&#128065;</button>
+            </div>
             <p class="pw-error" id="albumPwError" style="display:none">Incorrect password.</p>
             <div class="pw-modal-actions">
                 <button type="button" class="button" id="albumPwSubmit">Unlock</button>
@@ -474,6 +477,14 @@
         var uploadActions = document.getElementById('albumUploadActions');
         var doneBtn = document.getElementById('btnUploadDone');
         var isUploading = false;
+
+        // Eye toggle for album password
+        document.getElementById('albumPwToggle').addEventListener('click', function () {
+            var show = pwInput.type === 'password';
+            pwInput.type = show ? 'text' : 'password';
+            this.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+            this.style.opacity = show ? '1' : '0.55';
+        });
 
         function openUploadPanel() {
             adminPanel.style.display = 'flex';
