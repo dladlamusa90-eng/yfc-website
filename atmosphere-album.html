@@ -523,19 +523,21 @@
             var attempts = [
                 { maxSide: 1280, quality: 0.72 },
                 { maxSide: 1080, quality: 0.66 },
-                { maxSide: 900, quality: 0.58 },
-                { maxSide: 750, quality: 0.5 }
+                { maxSide: 900,  quality: 0.58 },
+                { maxSide: 750,  quality: 0.5  }
             ];
 
-            var best = file;
-            for (var i = 0; i < attempts.length; i += 1) {
-                var attempt = attempts[i];
-                var compressed = await compressImage(file, attempt.maxSide, attempt.quality);
+            // Always produce at least one WebP conversion so we never
+            // fall back to returning the original (potentially non-WebP) file.
+            var best = await compressImage(file, attempts[0].maxSide, attempts[0].quality);
+
+            for (var i = 1; i < attempts.length; i += 1) {
+                var compressed = await compressImage(file, attempts[i].maxSide, attempts[i].quality);
                 if (compressed.size < best.size) {
                     best = compressed;
                 }
-                if (compressed.size <= 540 * 1024) {
-                    return compressed;
+                if (best.size <= 540 * 1024) {
+                    return best;
                 }
             }
             return best;
