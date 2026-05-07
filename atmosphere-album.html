@@ -61,7 +61,11 @@
                     <label class="branch-switcher-label" for="branch-select">Branch</label>
                     <select id="branch-switcher" class="branch-switcher-select" aria-label="Switch branch"></select>
                 </div>
-                <button class="btn-album-admin" id="btnAdminOpen" type="button">Admin Upload</button>
+                <div class="album-hero-actions">
+                    <button class="btn-album-admin" id="btnAdminOpen" type="button">Admin Upload</button>
+                    <button class="btn-change-banner" id="btnChangeBanner" type="button" style="display:none" aria-label="Change hero banner image">&#128247; Change Banner</button>
+                    <input type="file" id="bannerFileInput" accept="image/*" style="display:none">
+                </div>
             </div>
         </section>
 
@@ -233,6 +237,22 @@
         var db      = firebase.firestore();
         var storage = firebase.storage();
         var isAdmin = false;
+
+        // Load saved banner for this branch
+        var heroEl = document.getElementById('album-hero');
+        db.collection('banners').doc(currentBranch).get().then(function (snap) {
+            if (snap.exists && snap.data().imageData) {
+                applyBanner(snap.data().imageData);
+            }
+        }).catch(function () {});
+
+        function applyBanner(dataUrl) {
+            if (!heroEl) { return; }
+            heroEl.style.backgroundImage = 'url(' + dataUrl + ')';
+            heroEl.style.backgroundSize = 'cover';
+            heroEl.style.backgroundPosition = 'center';
+            heroEl.classList.add('has-banner');
+        }
         var branchOptions = ['eastrand', 'durban', 'pretoria', 'soweto', 'potchefstroom', 'gqeberha', 'polokwane', 'witbank'];
         var rawHash = window.location.hash.slice(1);
         var hashParams = new URLSearchParams(rawHash);
@@ -442,6 +462,7 @@
                     branchSel.value = currentBranch;
                     branchSel.disabled = true;
                 }
+                document.getElementById('btnChangeBanner').style.display = '';
                 attachDeleteBtns();
             } else {
                 pwError.style.display = 'block'; pwInput.value = ''; pwInput.focus();
@@ -460,6 +481,38 @@
 
         document.getElementById('albumAdminClose').addEventListener('click', closeUploadPanel);
         doneBtn.addEventListener('click', closeUploadPanel);
+
+        // Change Banner
+        var btnChangeBanner = document.getElementById('btnChangeBanner');
+        var bannerFileInput = document.getElementById('bannerFileInput');
+        btnChangeBanner.addEventListener('click', function () { bannerFileInput.click(); });
+        bannerFileInput.addEventListener('change', async function () {
+            var file = bannerFileInput.files && bannerFileInput.files[0];
+            if (!file) { return; }
+            bannerFileInput.value = '';
+            btnChangeBanner.textContent = 'Saving...';
+            btnChangeBanner.disabled = true;
+            try {
+                var webpFile = await compressImage(file, 1600, 0.78);
+                var dataUrl = await fileToDataUrl(webpFile);
+                await db.collection('banners').doc(currentBranch).set({
+                    imageData: dataUrl,
+                    branch: currentBranch,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                applyBanner(dataUrl);
+                btnChangeBanner.textContent = '\u2713 Banner Updated';
+                setTimeout(function () {
+                    btnChangeBanner.textContent = '\uD83D\uDCF7 Change Banner';
+                    btnChangeBanner.disabled = false;
+                }, 2500);
+            } catch (err) {
+                alert('Could not save banner. Please try again.');
+                console.error(err);
+                btnChangeBanner.textContent = '\uD83D\uDCF7 Change Banner';
+                btnChangeBanner.disabled = false;
+            }
+        });
 
         function compressImage(file, maxSide, quality) {
             return new Promise(function (resolve) {
