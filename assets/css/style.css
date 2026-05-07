@@ -2204,14 +2204,17 @@ p {
 
 /* ── Gallery Section ── */
 .gallery-section {
-    background: #100b06;
+    background:
+        radial-gradient(circle at 18% 18%, rgba(239, 71, 35, 0.12), transparent 36%),
+        radial-gradient(circle at 84% 10%, rgba(255, 186, 125, 0.1), transparent 34%),
+        #0f0a06;
 }
 
 .gallery-section-heading {
-    width: min(100%, 700px);
-    text-align: center;
-    justify-items: center;
-    margin: 0 auto 2rem;
+    width: min(100%, 940px);
+    text-align: left;
+    justify-items: start;
+    margin: 0 auto 1.4rem;
 }
 
 .gallery-section-heading h2 {
@@ -2227,26 +2230,64 @@ p {
 }
 
 .gallery-desc {
-    color: rgba(255, 255, 255, 0.55);
-    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 1rem;
     max-width: 54ch;
-    text-align: center;
-    margin: 0.25rem auto 0;
+    text-align: left;
+    margin: 0.25rem 0 0;
 }
 
-.life-showcase {
+.gallery-filters {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.3rem;
+    scrollbar-width: thin;
+}
+
+.gallery-filter {
+    min-height: 36px;
+    padding: 0.38rem 0.95rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+
+.gallery-filter:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.28);
+}
+
+.gallery-filter.is-active {
+    background: var(--color-gold);
+    color: #ffffff;
+    border-color: var(--color-gold);
+    box-shadow: 0 4px 16px rgba(239, 71, 35, 0.45);
+}
+
+.life-minimal-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    gap: 1rem;
-    margin-bottom: 2rem;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: 1.15rem;
+    margin-bottom: 1.2rem;
 }
 
 .life-preview-card {
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(239, 71, 35, 0.08));
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 22px;
+    border-radius: 24px;
     overflow: hidden;
-    box-shadow: 0 26px 54px rgba(0, 0, 0, 0.32);
+    box-shadow: 0 20px 46px rgba(0, 0, 0, 0.36);
 }
 
 .life-preview-frame {
@@ -2260,12 +2301,13 @@ p {
     height: 100%;
     object-fit: cover;
     display: block;
-    transform: scale(1.02);
-    transition: transform 520ms ease;
+    transform: scale(1.01);
+    transition: transform 520ms ease, filter 520ms ease;
 }
 
 .life-preview-card:hover .life-preview-image {
-    transform: scale(1.06);
+    transform: scale(1.04);
+    filter: saturate(1.06);
 }
 
 .life-preview-overlay {
@@ -2274,8 +2316,8 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    padding: 1rem;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.08) 60%, transparent 100%);
+    padding: 1.1rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.1) 60%, transparent 100%);
 }
 
 .life-preview-badge {
@@ -2284,12 +2326,12 @@ p {
     min-height: 30px;
     padding: 0 0.75rem;
     border-radius: 999px;
-    font-size: 0.74rem;
+    font-size: 0.7rem;
     font-weight: 800;
     letter-spacing: 0.09em;
     text-transform: uppercase;
     color: #ffffff;
-    background: rgba(239, 71, 35, 0.9);
+    background: rgba(239, 71, 35, 0.86);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -2318,13 +2360,27 @@ p {
 .life-preview-meta {
     display: grid;
     gap: 0.7rem;
-    padding: 0.9rem 1rem 1rem;
+    padding: 0.95rem 1.05rem 1.05rem;
+}
+
+.life-preview-meta-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.6rem;
 }
 
 .life-preview-caption {
     margin: 0;
     color: rgba(255, 255, 255, 0.88);
-    font-size: 0.95rem;
+    font-size: 0.92rem;
+}
+
+.life-preview-counter {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
 }
 
 .life-preview-dots {
@@ -2348,77 +2404,101 @@ p {
     transform: scale(1.2);
 }
 
-.life-showcase-panel {
-    background: linear-gradient(150deg, rgba(255, 255, 255, 0.03), rgba(15, 10, 6, 0.78));
+.life-nav-panel {
+    background: rgba(255, 255, 255, 0.025);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 22px;
-    padding: 1.15rem;
+    border-radius: 24px;
+    padding: 1.25rem;
     display: grid;
     align-content: center;
-    gap: 0.75rem;
+    gap: 0.9rem;
+    backdrop-filter: blur(3px);
 }
 
-.life-panel-kicker {
+.life-nav-kicker {
     margin: 0;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 800;
-    letter-spacing: 0.11em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.62);
+    color: rgba(255, 255, 255, 0.58);
 }
 
-.life-showcase-panel h3 {
+.life-nav-panel h3 {
     margin: 0;
     color: #ffffff;
-    font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+    font-size: clamp(1.35rem, 2.3vw, 1.85rem);
     line-height: 1.2;
 }
 
-.life-showcase-panel p {
+.life-nav-panel p {
     margin: 0;
-    color: rgba(255, 255, 255, 0.68);
+    color: rgba(255, 255, 255, 0.66);
 }
 
-.life-panel-actions {
+.life-nav-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.6rem;
     margin-top: 0.25rem;
 }
 
-.gallery-filters {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 2.4rem;
+.life-categories-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0.8rem;
 }
 
-.gallery-filter {
-    min-height: 38px;
-    padding: 0.45rem 1.15rem;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 999px;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);
+.life-category-card {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    min-height: 176px;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #1a130d;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+    grid-column: span 3;
 }
 
-.gallery-filter:hover {
-    background: rgba(255, 255, 255, 0.07);
+.life-category-card:nth-child(1),
+.life-category-card:nth-child(2),
+.life-category-card:nth-child(4),
+.life-category-card:nth-child(6),
+.life-category-card:nth-child(7) {
+    grid-column: span 4;
+}
+
+.life-category-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.life-category-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.82) 5%, rgba(0, 0, 0, 0.16) 55%, transparent 100%);
+}
+
+.life-category-name {
+    position: absolute;
+    left: 0.8rem;
+    bottom: 0.7rem;
+    z-index: 1;
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.28);
-    transform: translateY(0);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
 }
 
-.gallery-filter.is-active {
-    background: var(--color-gold);
-    color: #ffffff;
-    border-color: var(--color-gold);
-    box-shadow: 0 4px 16px rgba(239, 71, 35, 0.45);
+.life-category-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(239, 71, 35, 0.45);
+    box-shadow: 0 20px 32px rgba(0, 0, 0, 0.38);
 }
 
 .gallery-grid {
@@ -3487,18 +3567,22 @@ p {
         font-size: 0.98rem;
     }
 
-    .life-showcase {
+    .life-minimal-layout {
         grid-template-columns: 1fr;
         gap: 0.8rem;
     }
 
-    .life-showcase-panel {
+    .life-nav-panel {
         padding: 1rem;
     }
 
     .life-preview-nav {
         width: 36px;
         height: 36px;
+    }
+
+    .life-categories-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .gallery-grid {

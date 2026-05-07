@@ -291,6 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Life in YFC slideshow preview (Witbank highlights)
     const previewImage = document.querySelector("#life-preview-image");
     const previewCaption = document.querySelector("#life-preview-caption");
+    const previewCounter = document.querySelector("#life-preview-counter");
     const previewDots = document.querySelector("#life-preview-dots");
     const previewPrev = document.querySelector("#life-preview-prev");
     const previewNext = document.querySelector("#life-preview-next");
@@ -315,6 +316,11 @@ document.addEventListener("DOMContentLoaded", () => {
             previewImage.src = slide.src;
             previewImage.alt = slide.caption;
             previewCaption.textContent = slide.caption;
+            if (previewCounter) {
+                const current = String(activeSlide + 1).padStart(2, "0");
+                const total = String(lifeSlides.length).padStart(2, "0");
+                previewCounter.textContent = `${current} / ${total}`;
+            }
 
             const dots = Array.from(previewDots.querySelectorAll(".life-preview-dot"));
             dots.forEach((dot, index) => {
