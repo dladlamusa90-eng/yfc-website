@@ -286,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const filter = btn.dataset.filter;
 
             if (filter !== "all") {
-                window.location.href = `atmosphere-album.html#branch=${filter}`;
+                window.location.href = `atmosphere-album.html#${filter}`;
                 return;
             }
 
