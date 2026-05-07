@@ -531,13 +531,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 albumCategoryLabel.textContent = `${selectedBranch.label} Branch`;
             }
             if (albumTitle) {
-                albumTitle.textContent = `${selectedBranch.label} Categories`;
+                albumTitle.textContent = 'Albums';
             }
             if (albumDescription) {
                 albumDescription.textContent = "Choose a category to view this branch's album photos.";
             }
             if (document.title) {
-                document.title = `${selectedBranch.label} Albums | Youth For Christ International`;
+                document.title = `Albums | Youth For Christ International`;
             }
 
             renderBranchCategoryChooser();
