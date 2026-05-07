@@ -505,6 +505,8 @@
             document.getElementById('uploadCaption').value = '';
             var branchSel = document.getElementById('uploadBranch');
             if (branchSel) { branchSel.disabled = false; }
+            isAdmin = false;
+            document.getElementById('btnChangeBanner').style.display = 'none';
         }
 
         document.getElementById('albumAdminClose').addEventListener('click', closeUploadPanel);
@@ -593,6 +595,7 @@
                 setTimeout(function () {
                     btnChangeBanner.textContent = '\uD83D\uDCF7 Change Banner';
                     btnChangeBanner.disabled = false;
+                    closeUploadPanel();
                 }, 2500);
             } catch (err) {
                 alert('Could not save banner.');
