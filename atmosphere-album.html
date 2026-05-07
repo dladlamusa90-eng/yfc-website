@@ -323,6 +323,9 @@
 
                     var FB_BATCH = 6;
                     var fbShown  = 0;
+                    window._fbRemaining = function () {
+                        return Math.max(0, docs.length - fbShown);
+                    };
 
                     function buildFbCard(doc) {
                         var d = doc.data();
@@ -388,6 +391,7 @@
                     var loadMoreBtn = document.getElementById('album-load-more');
                     if (loadMoreBtn && !loadMoreBtn._fbHandlerActive) {
                         loadMoreBtn._fbHandlerActive = true;
+                        loadMoreBtn.hidden = false;
                         loadMoreBtn.addEventListener('click', function () {
                             var toShow = 6;
                             // Fill from Firebase first

@@ -570,8 +570,8 @@ document.addEventListener("DOMContentLoaded", () => {
         window.albumStaticTotal = albumPhotos.length;
         window.albumFirebaseCount = 0;
 
-        if (albumPhotos.length === 0 && loadMoreWrap) {
-            loadMoreWrap.hidden = true;
+        if (typeof window._fbRemaining !== "function") {
+            window._fbRemaining = () => 0;
         }
 
         const updateAlbumCount = () => {
@@ -663,7 +663,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (loadMoreWrap) {
-                loadMoreWrap.hidden = filterIsActive || renderedCount >= albumPhotos.length;
+                const fbRemaining = window._fbRemaining();
+                const staticRemaining = albumPhotos.length - renderedCount;
+                loadMoreWrap.hidden = filterIsActive || (staticRemaining <= 0 && fbRemaining <= 0);
             }
 
             updateAlbumCount();
@@ -792,10 +794,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 applyAlbumFilters();
             }
 
-            if (loadMoreButton && renderedCount >= albumPhotos.length) {
-                loadMoreButton.hidden = true;
+            if (loadMoreButton) {
+                const fbRemaining = window._fbRemaining();
+                const staticRemaining = albumPhotos.length - renderedCount;
+                const hasMore = staticRemaining > 0 || fbRemaining > 0;
+                loadMoreButton.hidden = !hasMore;
                 if (loadMoreWrap) {
-                    loadMoreWrap.hidden = true;
+                    loadMoreWrap.hidden = !hasMore;
                 }
             }
         };
