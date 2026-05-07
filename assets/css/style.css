@@ -4468,29 +4468,35 @@ p {
 
 .pw-toggle-btn {
     position: absolute;
-    right: 0.75rem;
+    right: 0.6rem;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #999;
+    color: #aaa;
     transition: color 0.2s;
+    outline: none;
 }
 
-.pw-toggle-btn:hover {
-    color: #444;
+.pw-toggle-btn:hover,
+.pw-toggle-btn:focus-visible {
+    color: #555;
 }
 
 .pw-toggle-btn svg {
     width: 18px;
     height: 18px;
-    display: block;
+    flex-shrink: 0;
     pointer-events: none;
+    overflow: visible;
 }
 
 .pw-modal-actions {
