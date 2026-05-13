@@ -150,15 +150,24 @@
                     </select>
                     <label for="new-event-desc">Description</label>
                     <input type="text" id="new-event-desc" placeholder="Description (optional)" />
-                    <div style="margin:0.5em 0 0.2em 0;display:flex;align-items:center;gap:0.5em;">
-                        <input type="checkbox" id="add-link-toggle" style="width:auto;" />
-                        <label for="add-link-toggle" style="margin:0;">Add link</label>
-                    </div>
-                    <div id="add-link-fields" style="display:none;">
+                    <div id="add-link-desktop-fields">
                         <label for="new-event-link">Link</label>
                         <input type="url" id="new-event-link" placeholder="Link (optional, e.g. WhatsApp/Maps)" />
                         <label for="new-event-link-desc">Link description</label>
                         <input type="text" id="new-event-link-desc" placeholder="Link description (e.g. Join WhatsApp group, View location)" />
+                    </div>
+                    <div id="add-link-mobile-fields" style="display:none;">
+                        <button type="button" id="add-link-menu-btn" style="margin:0.7em 0 0.2em 0;width:100%;border-radius:8px;border:1.5px solid #ddd;padding:0.65rem 0.9rem;font-size:0.95rem;background:#fff;">Add link</button>
+                        <div id="add-link-menu" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:1000;background:#fff;border-top-left-radius:18px;border-top-right-radius:18px;box-shadow:0 -2px 16px rgba(0,0,0,0.08);padding:1.2em 1em 1.5em 1em;max-width:480px;margin:auto;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.7em;">
+                                <span style="font-weight:600;font-size:1.1em;">Add Link</span>
+                                <button type="button" id="close-link-menu" style="background:none;border:none;font-size:1.5em;line-height:1;">&times;</button>
+                            </div>
+                            <label for="new-event-link-mobile">Link</label>
+                            <input type="url" id="new-event-link-mobile" placeholder="Link (optional, e.g. WhatsApp/Maps)" style="width:100%;margin-bottom:0.7em;" />
+                            <label for="new-event-link-desc-mobile">Link description</label>
+                            <input type="text" id="new-event-link-desc-mobile" placeholder="Link description (e.g. Join WhatsApp group, View location)" style="width:100%;" />
+                        </div>
                     </div>
                     <button type="submit">Add Event</button>
                 </form>
@@ -561,60 +570,151 @@
                     var row = btn.closest('.edit-event-row');
                     if (!eventObj || !row) return;
 
-                    row.innerHTML =
-                        '<form class="edit-inline-form" onsubmit="return false;">' +
-                            '<label style="font-size:0.82em;margin-bottom:2px;">Event name</label>' +
-                            '<input type="text" class="edit-inline-name" value="' + escHtml(eventObj.name || '') + '" placeholder="Event name" required />' +
-                            '<label style="font-size:0.82em;margin-bottom:2px;">Date</label>' +
-                            '<input type="date" class="edit-inline-date" value="' + escHtml(eventObj.date || '') + '" required />' +
-                            '<label style="font-size:0.82em;margin-bottom:2px;">Start time</label>' +
-                            '<input type="time" class="edit-inline-start-time" value="' + escHtml(eventObj.startTime || eventObj.time || '') + '" placeholder="Start time" />' +
-                            '<label style="font-size:0.82em;margin-bottom:2px;">End time</label>' +
-                            '<input type="time" class="edit-inline-end-time" value="' + escHtml(eventObj.endTime || '') + '" placeholder="End time" />' +
-                            '<label style="font-size:0.82em;margin-bottom:2px;">Description</label>' +
-                            '<input type="text" class="edit-inline-desc" value="' + escHtml(eventObj.desc || '') + '" placeholder="Description" />' +
-                            '<div style="margin:0.5em 0 0.2em 0;display:flex;align-items:center;gap:0.5em;">' +
-                                '<input type="checkbox" class="edit-link-toggle" id="edit-link-toggle-' + id + '" style="width:auto;" ' + (eventObj.link ? 'checked' : '') + ' />' +
-                                '<label for="edit-link-toggle-' + id + '" style="margin:0;">Add link</label>' +
-                            '</div>' +
-                            '<div class="edit-link-fields" style="' + (eventObj.link ? '' : 'display:none;') + '">' +
-                                '<label style="font-size:0.82em;margin-bottom:2px;">Link</label>' +
-                                '<input type="url" class="edit-inline-link" value="' + escHtml(eventObj.link || '') + '" placeholder="Link (optional)" />' +
-                                '<label style="font-size:0.82em;margin-bottom:2px;">Link description</label>' +
-                                '<input type="text" class="edit-inline-link-desc" value="' + escHtml(eventObj.linkDesc || '') + '" placeholder="e.g. Join WhatsApp group, View location" />' +
-                            '</div>' +
-                            '<div class="edit-event-actions">' +
-                                '<button class="btn-edit-save" type="submit">Save</button>' +
-                                '<button class="btn-edit-cancel" type="button">Cancel</button>' +
-                            '</div>' +
-                        '</form>';
-                    // Toggle link fields visibility
-                    var linkToggle = row.querySelector('.edit-link-toggle');
-                    var linkFields = row.querySelector('.edit-link-fields');
-                    linkToggle.addEventListener('change', function() {
-                        if (linkToggle.checked) {
-                            linkFields.style.display = '';
-                        } else {
-                            linkFields.style.display = 'none';
-                            row.querySelector('.edit-inline-link').value = '';
-                            row.querySelector('.edit-inline-link-desc').value = '';
-                        }
-                    });
+                    function isMobile() { return window.innerWidth <= 600; }
+                    var formHtml = '';
+                    if (isMobile()) {
+                        formHtml =
+                            '<form class="edit-inline-form" onsubmit="return false;">' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">Event name</label>' +
+                                '<input type="text" class="edit-inline-name" value="' + escHtml(eventObj.name || '') + '" placeholder="Event name" required />' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">Date</label>' +
+                                '<input type="date" class="edit-inline-date" value="' + escHtml(eventObj.date || '') + '" required />' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">Start time</label>' +
+                                '<input type="time" class="edit-inline-start-time" value="' + escHtml(eventObj.startTime || eventObj.time || '') + '" placeholder="Start time" />' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">End time</label>' +
+                                '<input type="time" class="edit-inline-end-time" value="' + escHtml(eventObj.endTime || '') + '" placeholder="End time" />' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">Description</label>' +
+                                '<textarea class="edit-inline-desc" placeholder="Description" rows="2" style="resize:vertical;width:100%;border-radius:8px;border:1.5px solid #ddd;padding:0.45rem 0.62rem;font-size:0.82rem;">' + escHtml(eventObj.desc || '') + '</textarea>' +
+                                '<button type="button" class="edit-link-menu-btn" style="margin:0.7em 0 0.2em 0;width:100%;border-radius:8px;border:1.5px solid #ddd;padding:0.65rem 0.9rem;font-size:0.95rem;background:#fff;">Add link</button>' +
+                                '<div class="edit-link-menu" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:1000;background:#fff;border-top-left-radius:18px;border-top-right-radius:18px;box-shadow:0 -2px 16px rgba(0,0,0,0.08);padding:1.2em 1em 1.5em 1em;max-width:480px;margin:auto;">' +
+                                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.7em;">' +
+                                        '<span style="font-weight:600;font-size:1.1em;">Add Link</span>' +
+                                        '<button type="button" class="close-edit-link-menu" style="background:none;border:none;font-size:1.5em;line-height:1;">&times;</button>' +
+                                    '</div>' +
+                                    '<label style="font-size:0.82em;margin-bottom:2px;">Link</label>' +
+                                    '<input type="url" class="edit-inline-link" value="' + escHtml(eventObj.link || '') + '" placeholder="Link (optional)" style="width:100%;margin-bottom:0.7em;" />' +
+                                    '<label style="font-size:0.82em;margin-bottom:2px;">Link description</label>' +
+                                    '<input type="text" class="edit-inline-link-desc" value="' + escHtml(eventObj.linkDesc || '') + '" placeholder="e.g. Join WhatsApp group, View location" style="width:100%;" />' +
+                                '</div>' +
+                                '<div class="edit-event-actions">' +
+                                    '<button class="btn-edit-save" type="submit">Save</button>' +
+                                    '<button class="btn-edit-cancel" type="button">Cancel</button>' +
+                                '</div>' +
+                            '</form>';
+                        row.innerHTML = formHtml;
+                        // Add link menu logic for mobile
+                        var linkMenuBtn = row.querySelector('.edit-link-menu-btn');
+                        var linkMenu = row.querySelector('.edit-link-menu');
+                        var closeLinkMenuBtn = row.querySelector('.close-edit-link-menu');
+                        linkMenuBtn.addEventListener('click', function() {
+                            linkMenu.style.display = '';
+                            document.body.style.overflow = 'hidden';
+                        });
+                        closeLinkMenuBtn.addEventListener('click', function() {
+                            linkMenu.style.display = 'none';
+                            document.body.style.overflow = '';
+                        });
+                    } else {
+                        formHtml =
+                            '<form class="edit-inline-form" onsubmit="return false;">' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">Event name</label>' +
+                                '<input type="text" class="edit-inline-name" value="' + escHtml(eventObj.name || '') + '" placeholder="Event name" required />' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">Date</label>' +
+                                '<input type="date" class="edit-inline-date" value="' + escHtml(eventObj.date || '') + '" required />' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">Start time</label>' +
+                                '<input type="time" class="edit-inline-start-time" value="' + escHtml(eventObj.startTime || eventObj.time || '') + '" placeholder="Start time" />' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">End time</label>' +
+                                '<input type="time" class="edit-inline-end-time" value="' + escHtml(eventObj.endTime || '') + '" placeholder="End time" />' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">Description</label>' +
+                                '<input type="text" class="edit-inline-desc" value="' + escHtml(eventObj.desc || '') + '" placeholder="Description" />' +
+                                '<div style="margin:0.5em 0 0.2em 0;display:flex;align-items:center;gap:0.5em;">' +
+                                    '<input type="checkbox" class="edit-link-toggle" id="edit-link-toggle-' + id + '" style="width:auto;" ' + (eventObj.link ? 'checked' : '') + ' />' +
+                                    '<label for="edit-link-toggle-' + id + '" style="margin:0;">Add link</label>' +
+                                '</div>' +
+                                '<div class="edit-link-fields" style="' + (eventObj.link ? '' : 'display:none;') + '">' +
+                                    '<label style="font-size:0.82em;margin-bottom:2px;">Link</label>' +
+                                    '<input type="url" class="edit-inline-link" value="' + escHtml(eventObj.link || '') + '" placeholder="Link (optional)" />' +
+                                    '<label style="font-size:0.82em;margin-bottom:2px;">Link description</label>' +
+                                    '<input type="text" class="edit-inline-link-desc" value="' + escHtml(eventObj.linkDesc || '') + '" placeholder="e.g. Join WhatsApp group, View location" />' +
+                                '</div>' +
+                                '<div class="edit-event-actions">' +
+                                    '<button class="btn-edit-save" type="submit">Save</button>' +
+                                    '<button class="btn-edit-cancel" type="button">Cancel</button>' +
+                                '</div>' +
+                            '</form>';
+                        row.innerHTML = formHtml;
+                        // Toggle link fields visibility for desktop/tablet
+                        var linkToggle = row.querySelector('.edit-link-toggle');
+                        var linkFields = row.querySelector('.edit-link-fields');
+                        linkToggle.addEventListener('change', function() {
+                            if (linkToggle.checked) {
+                                linkFields.style.display = '';
+                            } else {
+                                linkFields.style.display = 'none';
+                                row.querySelector('.edit-inline-link').value = '';
+                                row.querySelector('.edit-inline-link-desc').value = '';
+                            }
+                        });
+                    }
 (function() {
-    // Add link toggle for add event form
-    var addLinkToggle = document.getElementById('add-link-toggle');
-    var addLinkFields = document.getElementById('add-link-fields');
-    if (addLinkToggle && addLinkFields) {
-        addLinkToggle.addEventListener('change', function() {
-            if (addLinkToggle.checked) {
-                addLinkFields.style.display = '';
-            } else {
-                addLinkFields.style.display = 'none';
-                document.getElementById('new-event-link').value = '';
-                document.getElementById('new-event-link-desc').value = '';
-            }
-        });
+    // Mobile/desktop field switching for add event form
+    function isMobile() {
+        return window.innerWidth <= 600;
     }
+    function switchAddEventFields() {
+        var descInput = document.getElementById('new-event-desc');
+        var desktopFields = document.getElementById('add-link-desktop-fields');
+        var mobileFields = document.getElementById('add-link-mobile-fields');
+        if (isMobile()) {
+            // Swap to textarea for mobile
+            var textarea = document.createElement('textarea');
+            textarea.id = 'new-event-desc';
+            textarea.placeholder = 'Description (optional)';
+            textarea.rows = 2;
+            textarea.style.resize = 'vertical';
+            textarea.style.width = '100%';
+            textarea.style.borderRadius = '10px';
+            textarea.style.border = '1.5px solid #ddd';
+            textarea.style.padding = '0.65rem 0.9rem';
+            textarea.style.fontSize = '0.9rem';
+            textarea.value = descInput.value;
+            descInput.parentNode.replaceChild(textarea, descInput);
+            desktopFields.style.display = 'none';
+            mobileFields.style.display = '';
+        } else {
+            // Swap to input for desktop
+            if (descInput.tagName.toLowerCase() === 'textarea') {
+                var input = document.createElement('input');
+                input.type = 'text';
+                input.id = 'new-event-desc';
+                input.placeholder = 'Description (optional)';
+                input.value = descInput.value;
+                descInput.parentNode.replaceChild(input, descInput);
+            }
+            desktopFields.style.display = '';
+            mobileFields.style.display = 'none';
+        }
+    }
+    window.addEventListener('resize', switchAddEventFields);
+    document.addEventListener('DOMContentLoaded', switchAddEventFields);
+
+    // Add link menu for mobile
+    function setupMobileLinkMenu() {
+        var addLinkMenuBtn = document.getElementById('add-link-menu-btn');
+        var addLinkMenu = document.getElementById('add-link-menu');
+        var closeLinkMenuBtn = document.getElementById('close-link-menu');
+        if (addLinkMenuBtn && addLinkMenu && closeLinkMenuBtn) {
+            addLinkMenuBtn.addEventListener('click', function() {
+                addLinkMenu.style.display = '';
+                document.body.style.overflow = 'hidden';
+            });
+            closeLinkMenuBtn.addEventListener('click', function() {
+                addLinkMenu.style.display = 'none';
+                document.body.style.overflow = '';
+            });
+        }
+    }
+    document.addEventListener('DOMContentLoaded', setupMobileLinkMenu);
 })();
 
                     // Save on both button click and form submit
