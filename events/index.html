@@ -583,19 +583,18 @@
                             '<input type="time" class="edit-inline-end-time" value="' + escHtml(eventObj.endTime || '') + '" placeholder="End time" />' +
                             '<label style="font-size:0.82em;margin-bottom:2px;">Description</label>' +
                             (isMobile() ?
-                                '<textarea class="edit-inline-desc" placeholder="Description" rows="2" style="resize:vertical;width:100%;border-radius:8px;border:1.5px solid #ddd;padding:0.45rem 0.62rem;font-size:0.82rem;">' + escHtml(eventObj.desc || '') + '</textarea>'
-                                :
-                                '<input type="text" class="edit-inline-desc" value="' + escHtml(eventObj.desc || '') + '" placeholder="Description" />'
-                            ) +
-                            '<div class="edit-link-toggle-row" style="margin:0.5em 0 0.2em 0;display:flex;align-items:center;gap:0.5em;">' +
-                                '<input type="checkbox" class="edit-link-toggle" id="edit-link-toggle-' + id + '" style="width:auto;" ' + (eventObj.link ? 'checked' : '') + ' />' +
-                                '<label for="edit-link-toggle-' + id + '" style="margin:0;">Add link</label>' +
-                            '</div>' +
-                            '<div class="edit-link-fields" style="' + (eventObj.link ? '' : 'display:none;') + '">' +
-                                '<label style="font-size:0.82em;margin-bottom:2px;">Link</label>' +
-                                '<input type="url" class="edit-inline-link" value="' + escHtml(eventObj.link || '') + '" placeholder="Link (optional)" />' +
-                                '<label style="font-size:0.82em;margin-bottom:2px;">Link description</label>' +
-                                '<input type="text" class="edit-inline-link-desc" value="' + escHtml(eventObj.linkDesc || '') + '" placeholder="e.g. Join WhatsApp group, View location" />' +
+                                <label style="font-size:0.82em;margin-bottom:2px;">Branch</label>
+                                <select id="new-event-branch" class="edit-inline-branch" aria-label="Event branch" disabled>
+                                    <option value="eastrand">Eastrand</option>
+                                    <option value="durban">Durban</option>
+                                    <option value="pretoria">Pretoria</option>
+                                    <option value="soweto">Soweto</option>
+                                    <option value="potchefstroom">Potchefstroom</option>
+                                    <option value="gqeberha">Gqeberha</option>
+                                    <option value="polokwane">Polokwane</option>
+                                    <option value="witbank">Witbank</option>
+                                </select>
+                                <input type="text" id="new-event-desc" class="edit-inline-desc" placeholder="Description" />
                             '</div>' +
                             '<div class="edit-event-actions">' +
                                 '<button class="btn-edit-save" type="submit">Save</button>' +
