@@ -128,7 +128,7 @@
                     <h2>Manage Events <span class="edit-branch-chip" id="edit-branch-chip">Witbank</span></h2>
                     <button class="btn-close-edit" id="close-edit">Done</button>
                 </div>
-                <form class="edit-inline-form edit-event-row" id="add-event-form" novalidate style="border-radius:14px;border:2px solid #0f766e;padding:1.2em 1.5em 1.2em 1.5em;background:#fff;max-width:600px;margin:0 auto 1.5em auto;box-shadow:0 2px 8px 0 rgba(15,118,110,0.04);">
+                <form class="edit-inline-form edit-event-row" id="add-event-form" novalidate style="border-radius:14px;border:3px solid #e11d48;padding:1.2em 1.5em 1.2em 1.5em;background:#fffbe7;max-width:600px;margin:0 auto 1.5em auto;box-shadow:0 2px 8px 0 rgba(15,118,110,0.04);z-index:1000;">
                     <label style="font-size:0.82em;margin-bottom:2px;">Event name</label>
                     <input type="text" id="new-event-name" class="edit-inline-name" placeholder="Event name" required />
                     <label style="font-size:0.82em;margin-bottom:2px;">Date</label>
@@ -162,8 +162,11 @@
                     </div>
                     <div class="edit-event-actions" style="margin-top:0.7em;display:flex;gap:0.7em;">
                         <button type="submit" id="add-event-btn" class="btn-edit-save" style="min-width:120px;">Add Event</button>
+                        <button type="button" id="cancel-add-event-btn" class="btn-edit-cancel" style="min-width:120px;">Cancel</button>
                     </div>
                 </form>
+                <button id="show-add-event-btn" type="button" style="display:none;margin:0 auto 1.5em auto;min-width:180px;max-width:600px;display:block;background:#0f766e;color:#fff;font-weight:600;font-size:1.05em;padding:0.7em 0;border-radius:10px;border:none;box-shadow:0 2px 8px 0 rgba(15,118,110,0.04);">Add New Event</button>
+
                 <div class="edit-event-list" id="edit-event-list"></div>
             </div>
         </section>
@@ -908,7 +911,31 @@
         </div>
     </footer>
 
-    <script src="../assets/js/script.js?v=20260501"></script>
+        <script src="../assets/js/script.js?v=20260501"></script>
+        <script>
+        // Force Add Event form and Cancel button to always be visible and functional
+        document.addEventListener('DOMContentLoaded', function() {
+            var addEventForm = document.getElementById('add-event-form');
+            var showAddBtn = document.getElementById('show-add-event-btn');
+            if (addEventForm) addEventForm.style.display = 'block';
+            if (showAddBtn) showAddBtn.style.display = 'none';
+            document.body.addEventListener('click', function(e) {
+                if (e.target && e.target.id === 'cancel-add-event-btn') {
+                    if (addEventForm) addEventForm.style.display = 'block'; // Never hide
+                    if (showAddBtn) showAddBtn.style.display = 'none';
+                    document.getElementById('new-event-name').value = '';
+                    document.getElementById('new-event-date').value = '';
+                    document.getElementById('new-event-start-time').value = '';
+                    document.getElementById('new-event-end-time').value = '';
+                    document.getElementById('new-event-desc').value = '';
+                    document.getElementById('new-event-link').value = '';
+                    document.getElementById('new-event-link-desc').value = '';
+                    document.getElementById('add-link-toggle').checked = false;
+                    document.getElementById('add-link-fields').style.display = 'none';
+                }
+            });
+        });
+        </script>
 </body>
 </html>
 

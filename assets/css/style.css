@@ -1,8 +1,11 @@
-@media (max-width: 600px) {
-    .edit-link-toggle-row {
-        display: none !important;
-    }
+/* Force Cancel button in Add Event form to be always visible and prominent */
+
+
+/* Ensure Cancel button is never hidden by parent containers or media queries */
+#cancel-add-event-btn {
+    /* Use default button style */
 }
+
 @media (min-width: 601px) {
     .edit-link-toggle-row {
         display: flex !important;
