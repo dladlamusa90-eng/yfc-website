@@ -171,8 +171,6 @@
             </div>
         </section>
 
-    </main>
-
     <script>
     (function () {
         var BRANCH_CONFIG = {
@@ -568,11 +566,9 @@
                     var row = btn.closest('.edit-event-row');
                     if (!eventObj || !row) return;
 
-                    // Restore original: always show the toggle and link fields for desktop/tablet, and menu for mobile only
-                    function isMobile() { return window.innerWidth <= 600; }
-                    var formHtml = '';
-                    // Always use a toggle for both desktop and mobile
-                    formHtml =
+                    var linkChecked = eventObj.link ? 'checked' : '';
+                    var linkFieldsDisplay = eventObj.link ? '' : 'none';
+                    var formHtml =
                         '<form class="edit-inline-form" onsubmit="return false;">' +
                             '<label style="font-size:0.82em;margin-bottom:2px;">Event name</label>' +
                             '<input type="text" class="edit-inline-name" value="' + escHtml(eventObj.name || '') + '" placeholder="Event name" required />' +
@@ -583,29 +579,27 @@
                             '<label style="font-size:0.82em;margin-bottom:2px;">End time</label>' +
                             '<input type="time" class="edit-inline-end-time" value="' + escHtml(eventObj.endTime || '') + '" placeholder="End time" />' +
                             '<label style="font-size:0.82em;margin-bottom:2px;">Description</label>' +
-                            (isMobile() ?
-                                <label style="font-size:0.82em;margin-bottom:2px;">Branch</label>
-                                <select id="new-event-branch" class="edit-inline-branch" aria-label="Event branch" disabled>
-                                    <option value="eastrand">Eastrand</option>
-                                    <option value="durban">Durban</option>
-                                    <option value="pretoria">Pretoria</option>
-                                    <option value="soweto">Soweto</option>
-                                    <option value="potchefstroom">Potchefstroom</option>
-                                    <option value="gqeberha">Gqeberha</option>
-                                    <option value="polokwane">Polokwane</option>
-                                    <option value="witbank">Witbank</option>
-                                </select>
-                                <input type="text" id="new-event-desc" class="edit-inline-desc" placeholder="Description" />
+                            '<input type="text" class="edit-inline-desc" value="' + escHtml(eventObj.desc || '') + '" placeholder="Description" />' +
+                            '<div class="edit-link-toggle-row" style="margin:0.5em 0 0.2em 0;display:flex;align-items:center;gap:0.5em;">' +
+                                '<input type="checkbox" class="edit-link-toggle" style="width:auto;" ' + linkChecked + ' />' +
+                                '<label style="margin:0;">Add link</label>' +
+                            '</div>' +
+                            '<div class="edit-link-fields" style="display:' + linkFieldsDisplay + ';">' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">Link</label>' +
+                                '<input type="url" class="edit-inline-link" value="' + escHtml(eventObj.link || '') + '" placeholder="Link (optional)" />' +
+                                '<label style="font-size:0.82em;margin-bottom:2px;">Link description</label>' +
+                                '<input type="text" class="edit-inline-link-desc" value="' + escHtml(eventObj.linkDesc || '') + '" placeholder="e.g. Join WhatsApp group, View location" />' +
+                            '</div>' +
                             '<div class="edit-event-actions">' +
                                 '<button class="btn-edit-save" type="submit">Save</button>' +
                                 '<button class="btn-edit-cancel" type="button">Cancel</button>' +
                             '</div>' +
                         '</form>';
                     row.innerHTML = formHtml;
-                    // Toggle link fields visibility for all screens
+
                     var linkToggle = row.querySelector('.edit-link-toggle');
                     var linkFields = row.querySelector('.edit-link-fields');
-                    linkToggle.addEventListener('change', function() {
+                    linkToggle.addEventListener('change', function () {
                         if (linkToggle.checked) {
                             linkFields.style.display = '';
                         } else {
@@ -614,26 +608,7 @@
                             row.querySelector('.edit-inline-link-desc').value = '';
                         }
                     });
-(function() {
-    // (Description field for add event form is now always present as a textarea in the HTML)
-    document.addEventListener('DOMContentLoaded', function() {
-        var addLinkToggle = document.getElementById('add-link-toggle');
-        var addLinkFields = document.getElementById('add-link-fields');
-        if (addLinkToggle && addLinkFields) {
-            addLinkToggle.addEventListener('change', function() {
-                if (addLinkToggle.checked) {
-                    addLinkFields.style.display = '';
-                } else {
-                    addLinkFields.style.display = 'none';
-                    document.getElementById('new-event-link').value = '';
-                    document.getElementById('new-event-link-desc').value = '';
-                }
-            });
-        }
-    });
-})();
 
-                    // Save on both button click and form submit
                     var saveHandler = function () {
                         var newName = row.querySelector('.edit-inline-name').value.trim();
                         var newDate = row.querySelector('.edit-inline-date').value;
@@ -641,7 +616,7 @@
                         var newEndTime = row.querySelector('.edit-inline-end-time').value;
                         var newDesc = row.querySelector('.edit-inline-desc').value.trim();
                         var newLink = row.querySelector('.edit-inline-link').value.trim();
-                        var newLinkDesc = row.querySelector('.edit-inline-link-desc') ? row.querySelector('.edit-inline-link-desc').value.trim() : '';
+                        var newLinkDesc = row.querySelector('.edit-inline-link-desc').value.trim();
                         if (!newName || !newDate) {
                             return;
                         }
@@ -660,30 +635,6 @@
                     row.querySelector('.edit-inline-form').addEventListener('submit', saveHandler);
                     row.querySelector('.btn-edit-save').addEventListener('click', saveHandler);
                     row.querySelector('.btn-edit-cancel').addEventListener('click', renderEditList);
-                    row.querySelector('.btn-edit-cancel').addEventListener('click', renderEditList);
-                    row.querySelector('.btn-edit-save').addEventListener('click', function () {
-                        var newName = row.querySelector('.edit-inline-name').value.trim();
-                        var newDate = row.querySelector('.edit-inline-date').value;
-                        var newStartTime = row.querySelector('.edit-inline-start-time').value;
-                        var newEndTime = row.querySelector('.edit-inline-end-time').value;
-                        var newDesc = row.querySelector('.edit-inline-desc').value.trim();
-                        var newLink = row.querySelector('.edit-inline-link').value.trim();
-
-                        if (!newName || !newDate) {
-                            return;
-                        }
-
-                        db.collection('events').doc(String(id)).update({
-                            name: newName,
-                            date: newDate,
-                            startTime: newStartTime || '',
-                            endTime: newEndTime || '',
-                            time: '',
-                            desc: newDesc,
-                            link: newLink,
-                            branch: currentAdminBranch
-                        });
-                    });
                 });
             });
 
