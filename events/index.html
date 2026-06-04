@@ -341,10 +341,15 @@
                     });
                     batch.commit().then(function() {
                         setupRealtimeListener();
+                    }).catch(function() {
+                        setupRealtimeListener();
                     });
                 } else {
                     setupRealtimeListener();
                 }
+            }).catch(function() {
+                // Firestore unavailable — fall back to real-time listener which may use cache
+                setupRealtimeListener();
             });
         }
 
@@ -364,6 +369,9 @@
                     renderCalendar();
                     renderEditList();
                 }
+            }, function() {
+                // Snapshot error — render with whatever is already loaded
+                if (isInitialized) renderCalendar();
             });
         }
 
