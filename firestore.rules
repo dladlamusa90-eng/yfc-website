@@ -1,7 +1,23 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Branch events calendar (events/index.html)
     match /events/{eventId} {
+      allow read: if true;
+      allow write: if true;
+    }
+    // Global calendar (yfc-partners/index.html)
+    match /global-events/{eventId} {
+      allow read: if true;
+      allow write: if true;
+    }
+    // Photo albums (atmosphere-album.html)
+    match /gallery/{photoId} {
+      allow read: if true;
+      allow write: if true;
+    }
+    // Album hero banners (atmosphere-album.html)
+    match /banners/{bannerId} {
       allow read: if true;
       allow write: if true;
     }

@@ -4,19 +4,20 @@ Static ministry website for evangelism, discipleship, and mobilization.
 
 ## Project Structure
 
-- `index.html`
-- `about/index.html`
-- `programs/daily-juice.html`
-- `programs/bible-study.html`
-- `programs/leadership.html`
-- `programs/jrt.html`
-- `events/index.html`
-- `get-involved/membership.html`
-- `get-involved/merchandise.html`
-- `giving/index.html`
-- `contact/index.html`
-- `assets/css/style.css`
-- `assets/js/script.js`
+- `index.html` — home (hero, video programs, branches, gallery, CTA)
+- `about/index.html` — mission, vision, ministry snapshot
+- `yfc-culture/index.html` — YFC culture values
+- `programs/daily-juice.html` — all programs overview
+- `programs/bible-study.html`, `programs/leadership.html`, `programs/jrt.html`
+- `events/index.html` — branch events calendar (Firebase Firestore)
+- `yfc-partners/index.html` — global calendar (Firebase Firestore)
+- `atmosphere-album.html` — photo albums (static + Firebase gallery/banners)
+- `get-involved/membership.html`, `get-involved/merchandise.html`
+- `giving/index.html` — donation details
+- `contact/index.html`, `privacy-policy/index.html`
+- `assets/css/style.css` — single shared stylesheet
+- `assets/js/script.js` — shared nav/gallery/album logic
+- `firestore.rules` — Firestore security rules (deploy with `firebase deploy --only firestore:rules`)
 
 ## Local Preview
 

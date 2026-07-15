@@ -1,6 +1,87 @@
 document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add("is-ready");
 
+    // Scroll-reveal: progressive enhancement, skipped for reduced-motion users.
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!prefersReducedMotion && "IntersectionObserver" in window) {
+        const revealTargets = document.querySelectorAll(
+            ".media-card, .stat-item, .gallery-item, .branch-pill, .about-panel, " +
+            ".about-culture-card, .giving-need-card, .merch-product-card, " +
+            ".content-card, .ct-card, .home-spotify-card, .cta-content"
+        );
+
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("is-revealed");
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+
+        revealTargets.forEach((el, index) => {
+            el.classList.add("reveal-on-scroll");
+            el.style.transitionDelay = `${Math.min(index % 6, 4) * 60}ms`;
+            revealObserver.observe(el);
+        });
+    }
+
+    // Sticky header: deepen shadow once the page is scrolled.
+    const siteHeader = document.querySelector(".site-header");
+
+    if (siteHeader) {
+        const updateHeaderState = () => {
+            siteHeader.classList.toggle("is-scrolled", window.scrollY > 12);
+        };
+
+        window.addEventListener("scroll", updateHeaderState, { passive: true });
+        updateHeaderState();
+    }
+
+    // Stats: count up from zero when the strip scrolls into view.
+    const statNums = document.querySelectorAll(".stat-num");
+
+    if (statNums.length > 0 && !prefersReducedMotion && "IntersectionObserver" in window) {
+        const animateStat = (el) => {
+            const raw = el.textContent.trim();
+            const match = raw.match(/^(\d+)(.*)$/);
+
+            if (!match) {
+                return;
+            }
+
+            const target = Number(match[1]);
+            const suffix = match[2];
+            const duration = 1400;
+            const start = performance.now();
+
+            const tick = (now) => {
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.round(target * eased) + suffix;
+
+                if (progress < 1) {
+                    requestAnimationFrame(tick);
+                }
+            };
+
+            requestAnimationFrame(tick);
+        };
+
+        const statObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    animateStat(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.6 });
+
+        statNums.forEach((el) => statObserver.observe(el));
+    }
+
+
     const homeHeroPhotos = [
         "assets/images/home 1.webp",
         "assets/images/home 2.webp",
