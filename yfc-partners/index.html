@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css?v=20260716c">
+    <link rel="stylesheet" href="../assets/css/style.css?v=20260716d">
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -124,12 +124,17 @@
                     <h2>Manage Global Calendar</h2>
                     <button class="btn-close-edit" id="close-edit">Done</button>
                 </div>
-                <form class="add-event-form" id="add-event-form" novalidate>
-                    <input type="text" id="new-event-name" placeholder="Event name" required />
-                    <input type="date" id="new-event-date" required />
-                    <input type="time" id="new-event-start-time" aria-label="Event start time" />
-                    <input type="time" id="new-event-end-time" aria-label="Event end time" />
-                    <input type="text" id="new-event-desc" placeholder="Description (optional)" />
+                <form class="edit-inline-form edit-event-row add-event-card" id="add-event-form" novalidate>
+                    <label>Event name</label>
+                    <input type="text" id="new-event-name" class="edit-inline-name" placeholder="Event name" required />
+                    <label>Date</label>
+                    <input type="date" id="new-event-date" class="edit-inline-date" required />
+                    <label>Start time</label>
+                    <input type="time" id="new-event-start-time" class="edit-inline-start-time" placeholder="Start time" />
+                    <label>End time</label>
+                    <input type="time" id="new-event-end-time" class="edit-inline-end-time" placeholder="End time" />
+                    <label>Description</label>
+                    <input type="text" id="new-event-desc" class="edit-inline-desc" placeholder="Description" />
                     <div class="edit-link-toggle-row">
                         <input type="checkbox" class="edit-link-toggle" id="add-link-toggle" />
                         <label for="add-link-toggle">Add link</label>
@@ -140,7 +145,10 @@
                         <label>Link description</label>
                         <input type="text" class="edit-inline-link-desc" id="new-event-link-desc" placeholder="e.g. Join WhatsApp group, View location" />
                     </div>
-                    <button type="submit">Add Event</button>
+                    <div class="edit-event-actions">
+                        <button type="submit" id="add-event-btn" class="btn-edit-save">Add Event</button>
+                        <button type="button" id="cancel-add-event-btn" class="btn-edit-cancel">Cancel</button>
+                    </div>
                 </form>
                 <div class="edit-event-list" id="edit-event-list"></div>
             </div>
@@ -388,11 +396,16 @@
                     var linkChecked = eventObj.link ? 'checked' : '';
                     var linkFieldsDisplay = eventObj.link ? '' : 'none';
                     row.innerHTML =
-                        '<div class="edit-inline-form">' +
-                            '<input type="text" class="edit-inline-name" value="' + escHtml(eventObj.name || '') + '" placeholder="Event name" />' +
-                            '<input type="date" class="edit-inline-date" value="' + escHtml(eventObj.date || '') + '" />' +
-                            '<input type="time" class="edit-inline-start-time" value="' + escHtml(eventObj.startTime || eventObj.time || '') + '" />' +
-                            '<input type="time" class="edit-inline-end-time" value="' + escHtml(eventObj.endTime || '') + '" />' +
+                        '<form class="edit-inline-form" onsubmit="return false;">' +
+                            '<label>Event name</label>' +
+                            '<input type="text" class="edit-inline-name" value="' + escHtml(eventObj.name || '') + '" placeholder="Event name" required />' +
+                            '<label>Date</label>' +
+                            '<input type="date" class="edit-inline-date" value="' + escHtml(eventObj.date || '') + '" required />' +
+                            '<label>Start time</label>' +
+                            '<input type="time" class="edit-inline-start-time" value="' + escHtml(eventObj.startTime || eventObj.time || '') + '" placeholder="Start time" />' +
+                            '<label>End time</label>' +
+                            '<input type="time" class="edit-inline-end-time" value="' + escHtml(eventObj.endTime || '') + '" placeholder="End time" />' +
+                            '<label>Description</label>' +
                             '<input type="text" class="edit-inline-desc" value="' + escHtml(eventObj.desc || '') + '" placeholder="Description" />' +
                             '<div class="edit-link-toggle-row">' +
                                 '<input type="checkbox" class="edit-link-toggle" ' + linkChecked + ' />' +
@@ -404,11 +417,11 @@
                                 '<label>Link description</label>' +
                                 '<input type="text" class="edit-inline-link-desc" value="' + escHtml(eventObj.linkDesc || '') + '" placeholder="e.g. Join WhatsApp group, View location" />' +
                             '</div>' +
-                        '</div>' +
-                        '<div class="edit-event-actions">' +
-                            '<button class="btn-edit-save" type="button">Save</button>' +
-                            '<button class="btn-edit-cancel" type="button">Cancel</button>' +
-                        '</div>';
+                            '<div class="edit-event-actions">' +
+                                '<button class="btn-edit-save" type="submit">Save</button>' +
+                                '<button class="btn-edit-cancel" type="button">Cancel</button>' +
+                            '</div>' +
+                        '</form>';
                     var linkToggle = row.querySelector('.edit-link-toggle');
                     var linkFields = row.querySelector('.edit-link-fields');
                     linkToggle.addEventListener('change', function () {
@@ -420,8 +433,7 @@
                             row.querySelector('.edit-inline-link-desc').value = '';
                         }
                     });
-                    row.querySelector('.btn-edit-cancel').addEventListener('click', renderEditList);
-                    row.querySelector('.btn-edit-save').addEventListener('click', function () {
+                    var saveHandler = function () {
                         var newName = row.querySelector('.edit-inline-name').value.trim();
                         var newDate = row.querySelector('.edit-inline-date').value;
                         var newStartTime = row.querySelector('.edit-inline-start-time').value;
@@ -436,7 +448,10 @@
                             time: '', desc: newDesc,
                             link: newLink, linkDesc: newLinkDesc
                         });
-                    });
+                    };
+                    row.querySelector('.edit-inline-form').addEventListener('submit', saveHandler);
+                    row.querySelector('.btn-edit-save').addEventListener('click', saveHandler);
+                    row.querySelector('.btn-edit-cancel').addEventListener('click', renderEditList);
                 });
             });
 
@@ -540,6 +555,10 @@
             document.getElementById('add-link-fields').style.display = 'none';
         });
 
+        // Match the Events page add-event card exactly: it renders in block
+        // flow (its script forces display:block), not the grid from CSS.
+        document.getElementById('add-event-form').style.display = 'block';
+
         // Add-link toggle for the add-event form
         var addLinkToggle = document.getElementById('add-link-toggle');
         var addLinkFields = document.getElementById('add-link-fields');
@@ -551,6 +570,19 @@
                 document.getElementById('new-event-link').value = '';
                 document.getElementById('new-event-link-desc').value = '';
             }
+        });
+
+        // Cancel on the add form clears all fields
+        document.getElementById('cancel-add-event-btn').addEventListener('click', function () {
+            document.getElementById('new-event-name').value = '';
+            document.getElementById('new-event-date').value = '';
+            document.getElementById('new-event-start-time').value = '';
+            document.getElementById('new-event-end-time').value = '';
+            document.getElementById('new-event-desc').value = '';
+            document.getElementById('new-event-link').value = '';
+            document.getElementById('new-event-link-desc').value = '';
+            addLinkToggle.checked = false;
+            addLinkFields.style.display = 'none';
         });
 
         document.getElementById('day-modal-close').addEventListener('click', function () {
