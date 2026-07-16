@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css?v=20260716b">
+    <link rel="stylesheet" href="../assets/css/style.css?v=20260716c">
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -135,8 +135,10 @@
                         <label for="add-link-toggle">Add link</label>
                     </div>
                     <div class="edit-link-fields" id="add-link-fields" style="display:none;">
-                        <input type="url" id="new-event-link" placeholder="Link (optional)" />
-                        <input type="text" id="new-event-link-desc" placeholder="e.g. Join WhatsApp group, View location" />
+                        <label>Link</label>
+                        <input type="url" class="edit-inline-link" id="new-event-link" placeholder="Link (optional)" />
+                        <label>Link description</label>
+                        <input type="text" class="edit-inline-link-desc" id="new-event-link-desc" placeholder="e.g. Join WhatsApp group, View location" />
                     </div>
                     <button type="submit">Add Event</button>
                 </form>
@@ -397,7 +399,9 @@
                                 '<label>Add link</label>' +
                             '</div>' +
                             '<div class="edit-link-fields" style="display:' + linkFieldsDisplay + ';">' +
+                                '<label>Link</label>' +
                                 '<input type="url" class="edit-inline-link" value="' + escHtml(eventObj.link || '') + '" placeholder="Link (optional)" />' +
+                                '<label>Link description</label>' +
                                 '<input type="text" class="edit-inline-link-desc" value="' + escHtml(eventObj.linkDesc || '') + '" placeholder="e.g. Join WhatsApp group, View location" />' +
                             '</div>' +
                         '</div>' +

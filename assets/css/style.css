@@ -5478,14 +5478,22 @@ button:active,
     transform: scale(1.02);
 }
 
-/* Add-link fields inside the global calendar add form */
+/* Add-link fields inside the global calendar add form — matches the
+   Events page add-event-card styling exactly */
 .add-event-form .edit-link-toggle-row,
 .add-event-form .edit-link-fields {
     flex-basis: 100%;
 }
 
 .add-event-form .edit-link-fields {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
+    display: grid;
+    gap: 0.3rem;
+}
+
+.add-event-form .edit-link-fields label,
+.add-event-form .edit-link-toggle-row label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #5b6578;
+    margin-bottom: 2px;
 }
