@@ -5478,3 +5478,9 @@ button:active,
     transform: scale(1.02);
 }
 
+
+.footer-social-link[aria-label="YouTube"] {
+    background: linear-gradient(180deg, #fff1f1 0%, #ffe5e5 100%);
+    border-color: #ffbdbd;
+    color: #ff0000;
+}
