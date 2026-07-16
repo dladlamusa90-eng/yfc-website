@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css?v=20260716a">
+    <link rel="stylesheet" href="../assets/css/style.css?v=20260716b">
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -130,6 +130,14 @@
                     <input type="time" id="new-event-start-time" aria-label="Event start time" />
                     <input type="time" id="new-event-end-time" aria-label="Event end time" />
                     <input type="text" id="new-event-desc" placeholder="Description (optional)" />
+                    <div class="edit-link-toggle-row">
+                        <input type="checkbox" class="edit-link-toggle" id="add-link-toggle" />
+                        <label for="add-link-toggle">Add link</label>
+                    </div>
+                    <div class="edit-link-fields" id="add-link-fields" style="display:none;">
+                        <input type="url" id="new-event-link" placeholder="Link (optional)" />
+                        <input type="text" id="new-event-link-desc" placeholder="e.g. Join WhatsApp group, View location" />
+                    </div>
                     <button type="submit">Add Event</button>
                 </form>
                 <div class="edit-event-list" id="edit-event-list"></div>
@@ -188,6 +196,15 @@
             var end = e.endTime || '';
             if (start && end) return start + ' - ' + end;
             return start || end;
+        }
+
+        function buildLinkHtml(e) {
+            if (!e.link) return '';
+            return '<div class="cal-event-link" style="margin-top:4px;">'
+                + '<a href="' + escHtml(e.link) + '" target="_blank" rel="noopener" style="font-size:0.93em;font-weight:500;text-decoration:none;color:inherit;display:inline-flex;align-items:center;">'
+                + '<svg aria-hidden="true" viewBox="0 0 24 24" style="width:1.15em;height:1.15em;margin-right:4px;vertical-align:middle;display:inline;"><path d="M3.9,12c0-1.71,1.39-3.1,3.1-3.1h4v-1.5h-4c-2.54,0-4.6,2.06-4.6,4.6s2.06,4.6,4.6,4.6h4v-1.5h-4C5.29,15.1,3.9,13.71,3.9,12z M7,13h10v-2H7V13z M17,7.9h-4v1.5h4c1.71,0,3.1,1.39,3.1,3.1s-1.39,3.1-3.1,3.1h-4v1.5h4c2.54,0,4.6-2.06,4.6-4.6S19.54,7.9,17,7.9z" fill="#555"/></svg>'
+                + '<span style="font-size:0.93em;vertical-align:middle;color:#1a5ad7;">' + escHtml(e.linkDesc || 'Click here for more info') + '</span>'
+                + '</a></div>';
         }
 
         function setupListener() {
@@ -289,10 +306,11 @@
                             '<span class="badge-day">' + d.getDate() + '</span>' +
                             '<span class="badge-dow">' + DAY_NAMES[d.getDay()] + '</span>' +
                         '</div>' +
-                        '<div class="cal-event-info">' +
+                        '<div class="cal-event-info" style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">' +
                             '<strong>' + escHtml(e.name) + '</strong>' +
                             (e.desc ? '<span class="cal-event-desc">' + escHtml(e.desc) + '</span>' : '') +
                             (timeRange ? '<span class="cal-event-time">Time: ' + escHtml(timeRange) + '</span>' : '') +
+                            buildLinkHtml(e) +
                         '</div>';
                     item.style.borderLeft = '4px solid ' + GLOBAL_COLOR;
                     item.querySelector('.cal-event-badge').style.background = GLOBAL_COLOR;
@@ -319,9 +337,12 @@
                     var item = document.createElement('div');
                     item.className = 'day-modal-event';
                     item.innerHTML =
-                        '<strong>' + escHtml(e.name) + '</strong>' +
-                        (e.desc ? '<span class="cal-event-desc">' + escHtml(e.desc) + '</span>' : '') +
-                        (timeRange ? '<span class="cal-event-time">Time: ' + escHtml(timeRange) + '</span>' : '');
+                        '<div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">' +
+                            '<strong>' + escHtml(e.name) + '</strong>' +
+                            (e.desc ? '<span class="cal-event-desc">' + escHtml(e.desc) + '</span>' : '') +
+                            (timeRange ? '<span class="cal-event-time">Time: ' + escHtml(timeRange) + '</span>' : '') +
+                            buildLinkHtml(e) +
+                        '</div>';
                     item.style.borderLeft = '4px solid ' + GLOBAL_COLOR;
                     body.appendChild(item);
                 });
@@ -345,6 +366,7 @@
                         '<div class="edit-event-row-info">' +
                             '<strong>' + escHtml(e.name) + '</strong>' +
                             (e.desc ? '<span class="edit-event-desc-line">' + escHtml(e.desc) + '</span>' : '') +
+                            (e.link ? '<span class="edit-event-link"><a href="' + escHtml(e.link) + '" target="_blank" rel="noopener">Event Link</a></span>' : '') +
                             '<span class="edit-event-meta">' + escHtml(e.date) + (timeRange ? ' • ' + escHtml(timeRange) : '') + '</span>' +
                         '</div>' +
                         '<div class="edit-event-actions">' +
@@ -361,6 +383,8 @@
                     var eventObj = allEvents.find(function (ev) { return ev._id === id; });
                     var row = btn.closest('.edit-event-row');
                     if (!eventObj || !row) return;
+                    var linkChecked = eventObj.link ? 'checked' : '';
+                    var linkFieldsDisplay = eventObj.link ? '' : 'none';
                     row.innerHTML =
                         '<div class="edit-inline-form">' +
                             '<input type="text" class="edit-inline-name" value="' + escHtml(eventObj.name || '') + '" placeholder="Event name" />' +
@@ -368,11 +392,30 @@
                             '<input type="time" class="edit-inline-start-time" value="' + escHtml(eventObj.startTime || eventObj.time || '') + '" />' +
                             '<input type="time" class="edit-inline-end-time" value="' + escHtml(eventObj.endTime || '') + '" />' +
                             '<input type="text" class="edit-inline-desc" value="' + escHtml(eventObj.desc || '') + '" placeholder="Description" />' +
+                            '<div class="edit-link-toggle-row">' +
+                                '<input type="checkbox" class="edit-link-toggle" ' + linkChecked + ' />' +
+                                '<label>Add link</label>' +
+                            '</div>' +
+                            '<div class="edit-link-fields" style="display:' + linkFieldsDisplay + ';">' +
+                                '<input type="url" class="edit-inline-link" value="' + escHtml(eventObj.link || '') + '" placeholder="Link (optional)" />' +
+                                '<input type="text" class="edit-inline-link-desc" value="' + escHtml(eventObj.linkDesc || '') + '" placeholder="e.g. Join WhatsApp group, View location" />' +
+                            '</div>' +
                         '</div>' +
                         '<div class="edit-event-actions">' +
                             '<button class="btn-edit-save" type="button">Save</button>' +
                             '<button class="btn-edit-cancel" type="button">Cancel</button>' +
                         '</div>';
+                    var linkToggle = row.querySelector('.edit-link-toggle');
+                    var linkFields = row.querySelector('.edit-link-fields');
+                    linkToggle.addEventListener('change', function () {
+                        if (linkToggle.checked) {
+                            linkFields.style.display = '';
+                        } else {
+                            linkFields.style.display = 'none';
+                            row.querySelector('.edit-inline-link').value = '';
+                            row.querySelector('.edit-inline-link-desc').value = '';
+                        }
+                    });
                     row.querySelector('.btn-edit-cancel').addEventListener('click', renderEditList);
                     row.querySelector('.btn-edit-save').addEventListener('click', function () {
                         var newName = row.querySelector('.edit-inline-name').value.trim();
@@ -380,11 +423,14 @@
                         var newStartTime = row.querySelector('.edit-inline-start-time').value;
                         var newEndTime = row.querySelector('.edit-inline-end-time').value;
                         var newDesc = row.querySelector('.edit-inline-desc').value.trim();
+                        var newLink = row.querySelector('.edit-inline-link').value.trim();
+                        var newLinkDesc = row.querySelector('.edit-inline-link-desc').value.trim();
                         if (!newName || !newDate) return;
                         db.collection('global-events').doc(id).update({
                             name: newName, date: newDate,
                             startTime: newStartTime || '', endTime: newEndTime || '',
-                            time: '', desc: newDesc
+                            time: '', desc: newDesc,
+                            link: newLink, linkDesc: newLinkDesc
                         });
                     });
                 });
@@ -469,18 +515,38 @@
             var startTime = document.getElementById('new-event-start-time').value;
             var endTime = document.getElementById('new-event-end-time').value;
             var desc = document.getElementById('new-event-desc').value.trim();
+            var link = document.getElementById('new-event-link').value.trim();
+            var linkDesc = document.getElementById('new-event-link-desc').value.trim();
             if (!name || !date) return;
             var newId = Date.now().toString();
             db.collection('global-events').doc(newId).set({
                 id: newId, name: name, date: date,
                 startTime: startTime || '', endTime: endTime || '',
-                time: '', desc: desc
+                time: '', desc: desc,
+                link: link, linkDesc: linkDesc
             });
             document.getElementById('new-event-name').value = '';
             document.getElementById('new-event-date').value = '';
             document.getElementById('new-event-start-time').value = '';
             document.getElementById('new-event-end-time').value = '';
             document.getElementById('new-event-desc').value = '';
+            document.getElementById('new-event-link').value = '';
+            document.getElementById('new-event-link-desc').value = '';
+            document.getElementById('add-link-toggle').checked = false;
+            document.getElementById('add-link-fields').style.display = 'none';
+        });
+
+        // Add-link toggle for the add-event form
+        var addLinkToggle = document.getElementById('add-link-toggle');
+        var addLinkFields = document.getElementById('add-link-fields');
+        addLinkToggle.addEventListener('change', function () {
+            if (addLinkToggle.checked) {
+                addLinkFields.style.display = '';
+            } else {
+                addLinkFields.style.display = 'none';
+                document.getElementById('new-event-link').value = '';
+                document.getElementById('new-event-link-desc').value = '';
+            }
         });
 
         document.getElementById('day-modal-close').addEventListener('click', function () {

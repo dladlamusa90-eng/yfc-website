@@ -5477,3 +5477,15 @@ button:active,
 .gallery-item-link:hover .gallery-thumb {
     transform: scale(1.02);
 }
+
+/* Add-link fields inside the global calendar add form */
+.add-event-form .edit-link-toggle-row,
+.add-event-form .edit-link-fields {
+    flex-basis: 100%;
+}
+
+.add-event-form .edit-link-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
