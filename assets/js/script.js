@@ -974,4 +974,146 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Merchandise photo lightbox
+    if (merchCards.length) {
+        const lightbox = document.createElement("div");
+        lightbox.className = "merch-lightbox";
+        lightbox.setAttribute("role", "dialog");
+        lightbox.setAttribute("aria-modal", "true");
+        lightbox.setAttribute("aria-label", "Product photo viewer");
+        lightbox.innerHTML =
+            '<p class="merch-lightbox-counter"></p>' +
+            '<button type="button" class="merch-lightbox-close" aria-label="Close photo viewer">&times;</button>' +
+            '<button type="button" class="merch-lightbox-nav merch-lightbox-prev" aria-label="Previous photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 4.5 8 12l7.5 7.5-1.8 1.8L4.4 12l9.3-9.3 1.8 1.8Z"/></svg></button>' +
+            '<div class="merch-lightbox-stage"></div>' +
+            '<button type="button" class="merch-lightbox-nav merch-lightbox-next" aria-label="Next photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 4.5 16 12l-7.5 7.5 1.8 1.8L19.6 12l-9.3-9.3-1.8 1.8Z"/></svg></button>' +
+            '<p class="merch-lightbox-caption"></p>';
+        document.body.appendChild(lightbox);
+
+        const stage = lightbox.querySelector(".merch-lightbox-stage");
+        const counterEl = lightbox.querySelector(".merch-lightbox-counter");
+        const captionEl = lightbox.querySelector(".merch-lightbox-caption");
+        const closeBtn = lightbox.querySelector(".merch-lightbox-close");
+        let slides = [];
+        let slideIndex = 0;
+        let lastTrigger = null;
+
+        const photoUrls = (photo) =>
+            (photo.dataset.photos || "").split(",").map((u) => u.trim()).filter(Boolean);
+
+        const buildSlides = () => {
+            slides = [];
+            for (const card of merchCards) {
+                if (card.style.display === "none") continue;
+                const photo = card.querySelector(".merch-photo");
+                if (!photo) continue;
+                const title = card.querySelector(".merch-title");
+                const price = card.querySelector(".merch-price");
+                const caption =
+                    (title ? title.textContent.trim() : "") +
+                    (price ? " — " + price.textContent.trim() : "");
+                const urls = photoUrls(photo);
+                if (urls.length) {
+                    urls.forEach((url, i) => slides.push({ photo, url, caption, first: i === 0 }));
+                } else {
+                    slides.push({ photo, url: null, caption, first: true });
+                }
+            }
+        };
+
+        const renderSlide = () => {
+            const slide = slides[slideIndex];
+            stage.innerHTML = "";
+            if (slide.url) {
+                const img = document.createElement("img");
+                img.src = slide.url;
+                img.alt = slide.caption;
+                stage.appendChild(img);
+            } else {
+                const art = slide.photo.cloneNode(true);
+                art.removeAttribute("role");
+                art.removeAttribute("tabindex");
+                art.removeAttribute("aria-label");
+                const badge = art.querySelector(".merch-photo-count");
+                if (badge) badge.remove();
+                stage.appendChild(art);
+            }
+            counterEl.textContent = (slideIndex + 1) + " / " + slides.length;
+            captionEl.textContent = slide.caption;
+        };
+
+        const openLightbox = (photo) => {
+            buildSlides();
+            if (!slides.length) return;
+            const start = slides.findIndex((s) => s.photo === photo && s.first);
+            slideIndex = start >= 0 ? start : 0;
+            renderSlide();
+            lightbox.classList.add("is-open");
+            document.body.style.overflow = "hidden";
+            closeBtn.focus();
+        };
+
+        const closeLightbox = () => {
+            lightbox.classList.remove("is-open");
+            document.body.style.overflow = "";
+            if (lastTrigger) lastTrigger.focus();
+        };
+
+        const step = (dir) => {
+            slideIndex = (slideIndex + dir + slides.length) % slides.length;
+            renderSlide();
+        };
+
+        for (const card of merchCards) {
+            const photo = card.querySelector(".merch-photo");
+            if (!photo) continue;
+            photo.setAttribute("role", "button");
+            photo.setAttribute("tabindex", "0");
+            photo.setAttribute("aria-label", "View product photos");
+
+            const urls = photoUrls(photo);
+            const badge = photo.querySelector(".merch-photo-count");
+            if (urls.length && badge) {
+                badge.lastChild.textContent = String(urls.length);
+            }
+
+            const trigger = () => {
+                lastTrigger = photo;
+                openLightbox(photo);
+            };
+            photo.addEventListener("click", trigger);
+            photo.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    trigger();
+                }
+            });
+        }
+
+        closeBtn.addEventListener("click", closeLightbox);
+        lightbox.querySelector(".merch-lightbox-prev").addEventListener("click", () => step(-1));
+        lightbox.querySelector(".merch-lightbox-next").addEventListener("click", () => step(1));
+        lightbox.addEventListener("click", (e) => {
+            if (e.target === lightbox || e.target === stage) closeLightbox();
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (!lightbox.classList.contains("is-open")) return;
+            if (e.key === "Escape") closeLightbox();
+            else if (e.key === "ArrowLeft") step(-1);
+            else if (e.key === "ArrowRight") step(1);
+        });
+
+        let touchStartX = null;
+        lightbox.addEventListener("touchstart", (e) => {
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        lightbox.addEventListener("touchend", (e) => {
+            if (touchStartX === null) return;
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            touchStartX = null;
+            if (Math.abs(dx) > 45) step(dx < 0 ? 1 : -1);
+        });
+    }
+
 });

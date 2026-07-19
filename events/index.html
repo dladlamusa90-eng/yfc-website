@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css?v=20260716e">
+    <link rel="stylesheet" href="../assets/css/style.css?v=20260719c">
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -196,8 +196,8 @@
         var selectedBranchFilter = 'all';
 
         var DEFAULT_EVENTS = [
-            { id: '1', name: 'Rockland Ministries, Pretoria', branch: 'pretoria', date: '2026-06-04', desc: 'June 4–6' },
-            { id: '2', name: 'Soweto Outreach', branch: 'soweto', date: '2026-09-25', desc: 'Sept 25–26' },
+            { id: '1', name: 'Rockland Ministries, Pretoria', branch: 'pretoria', date: '2026-06-04', desc: 'June 4â€“6' },
+            { id: '2', name: 'Soweto Outreach', branch: 'soweto', date: '2026-09-25', desc: 'Sept 25â€“26' },
             { id: '3', name: 'All Night Encounter', branch: 'witbank', date: '2026-12-18', desc: '' },
             { id: '4', name: 'December Camp', branch: 'witbank', date: '2026-12-22', desc: 'Annual year-end discipleship camp' }
         ];
@@ -355,7 +355,7 @@
                     setupRealtimeListener();
                 }
             }).catch(function() {
-                // Firestore unavailable — fall back to real-time listener which may use cache
+                // Firestore unavailable â€” fall back to real-time listener which may use cache
                 setupRealtimeListener();
             });
         }
@@ -377,7 +377,7 @@
                     renderEditList();
                 }
             }, function() {
-                // Snapshot error — render with whatever is already loaded
+                // Snapshot error â€” render with whatever is already loaded
                 if (isInitialized) renderCalendar();
             });
         }
@@ -564,7 +564,7 @@
                             '<span class="cal-event-branch"><span class="cal-event-branch-dot" style="background:' + BRANCH_CONFIG[branchKey].color + '"></span>' + escHtml(BRANCH_CONFIG[branchKey].label) + '</span>' +
                             (e.desc ? '<span class="edit-event-desc-line">' + escHtml(e.desc) + '</span>' : '') +
                             (e.link ? '<span class="edit-event-link"><a href="' + escHtml(e.link) + '" target="_blank" rel="noopener">Event Link</a></span>' : '') +
-                            '<span class="edit-event-meta">' + escHtml(e.date) + (timeRange ? ' • ' + escHtml(timeRange) : '') + '</span>' +
+                            '<span class="edit-event-meta">' + escHtml(e.date) + (timeRange ? ' â€¢ ' + escHtml(timeRange) : '') + '</span>' +
                         '</div>' +
                         '<div class="edit-event-actions">' +
                             '<button class="btn-edit-event" data-id="' + e.id + '">Edit</button>' +
@@ -881,7 +881,7 @@
         </div>
     </footer>
 
-        <script src="../assets/js/script.js?v=20260716a"></script>
+        <script src="../assets/js/script.js?v=20260719c"></script>
         <script>
         // Force Add Event form and Cancel button to always be visible and functional
         document.addEventListener('DOMContentLoaded', function() {

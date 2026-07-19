@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css?v=20260716e">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260719c">
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     <!-- Firebase (admin upload only) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -159,7 +159,7 @@
         </div>
     </footer>
 
-    <script src="assets/js/script.js?v=20260716a"></script>
+    <script src="assets/js/script.js?v=20260719c"></script>
 
     <!-- Banner picker modal -->
     <div class="banner-picker-modal" id="bannerPickerModal" role="dialog" aria-modal="true" aria-label="Choose banner photo" style="display:none">
@@ -556,7 +556,7 @@
             }
         });
 
-        // Change Banner — opens photo picker
+        // Change Banner â€” opens photo picker
         var btnChangeBanner = document.getElementById('btnChangeBanner');
         var bannerPickerModal = document.getElementById('bannerPickerModal');
         var bannerPickerGrid = document.getElementById('bannerPickerGrid');
@@ -667,7 +667,7 @@
                                 ));
                                 return;
                             }
-                            // WebP not supported — fall back to JPEG
+                            // WebP not supported â€” fall back to JPEG
                             canvas.toBlob(function (jpegBlob) {
                                 if (!jpegBlob) { resolve(file); return; }
                                 resolve(new File(
