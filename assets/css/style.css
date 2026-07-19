@@ -668,6 +668,25 @@ p {
     margin-top: 0.6rem;
 }
 
+.hero-actions .button {
+    border-radius: 12px;
+    min-height: 52px;
+    padding: 0.9rem 1.7rem;
+}
+
+.hero-actions .button-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    backdrop-filter: blur(8px);
+    box-shadow: none;
+}
+
+.hero-actions .button-secondary:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.65);
+}
+
 .fade-in-up {
     animation: fadeInUp 760ms ease-out both;
 }
@@ -1659,7 +1678,7 @@ p {
 }
 
 .merch-section {
-    background: #0c0806;
+    background: #ffffff;
     padding: 3rem 0 5rem;
 }
 
@@ -1673,10 +1692,10 @@ p {
 .merch-filter {
     min-height: 38px;
     padding: 0.45rem 1.2rem;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 1px solid #d8dbe0;
     border-radius: 999px;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.55);
+    background: #ffffff;
+    color: #55585e;
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
@@ -1684,9 +1703,9 @@ p {
 }
 
 .merch-filter:hover {
-    background: rgba(255, 255, 255, 0.07);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.28);
+    background: #f4f5f7;
+    color: #1a1c1f;
+    border-color: #b9bec6;
 }
 
 .merch-filter.is-active {
@@ -1705,22 +1724,22 @@ p {
 .merch-product-card {
     display: flex;
     flex-direction: column;
-    border-radius: 16px;
+    border-radius: 10px;
     overflow: hidden;
-    background: #18100a;
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: #ffffff;
+    border: 1px solid #e2e5e9;
     transition: transform 280ms ease, box-shadow 280ms ease, border-color 280ms ease;
 }
 
 .merch-product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
-    border-color: rgba(239, 71, 35, 0.38);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(18, 28, 44, 0.14);
+    border-color: rgba(239, 71, 35, 0.45);
 }
 
 .merch-photo {
     position: relative;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 1 / 1;
     overflow: hidden;
 }
 
@@ -1738,58 +1757,155 @@ p {
     user-select: none;
 }
 
-.merch-badge {
+.merch-photo-count {
     position: absolute;
-    top: 1rem;
-    left: 1rem;
-    padding: 0.3rem 0.75rem;
-    border-radius: 999px;
-    background: rgba(239, 71, 35, 0.88);
+    bottom: 0.75rem;
+    left: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.6rem;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.6);
     color: #ffffff;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 600;
     backdrop-filter: blur(4px);
     z-index: 1;
 }
 
+.merch-photo-count svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
 .merch-info {
-    padding: 1.2rem 1.25rem 1.5rem;
+    padding: 0.95rem 1rem 1.15rem;
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
+    gap: 0.5rem;
     flex: 1;
 }
 
-.merch-info h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #ffffff;
+.merch-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4a4d52;
     margin: 0;
-    line-height: 1.3;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-.merch-info p {
+.merch-brand {
+    align-self: flex-start;
     font-size: 0.84rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+    color: var(--color-gold);
+    text-decoration: none;
+}
+
+.merch-brand:hover {
+    text-decoration: underline;
+}
+
+.merch-price {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #1a1c1f;
     margin: 0;
-    line-height: 1.55;
+    line-height: 1.2;
+}
+
+.merch-delivery-pill {
+    padding: 0.45rem 0.65rem;
+    border-radius: 4px;
+    background: rgba(239, 71, 35, 0.08);
+    color: #3c3f44;
+    font-size: 0.78rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.merch-delivery-pill strong {
+    color: #1a1c1f;
+    font-weight: 800;
+}
+
+.merch-stock {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #3c3f44;
+    margin: 0;
+}
+
+.merch-delivery-date {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #1a1c1f;
+    margin: 0;
+}
+
+.merch-delivery-date svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    fill: #85898f;
 }
 
 .merch-sizes {
-    font-size: 0.78rem !important;
-    font-weight: 600 !important;
-    color: var(--color-gold) !important;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #9aa0a6;
     letter-spacing: 0.08em;
+    margin: 0;
 }
 
-.merch-info .button {
+.merch-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #4a4d52;
+    margin: 0 0 0.35rem;
+}
+
+.merch-rating-star {
+    color: #f5a623;
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.merch-rating-count {
+    font-weight: 400;
+    color: #9aa0a6;
+}
+
+.merch-shop-btn {
     margin-top: auto;
-    padding-top: 0.6rem;
-    padding-bottom: 0.6rem;
-    font-size: 0.85rem;
+    display: block;
     text-align: center;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--color-gold);
+    border-radius: 6px;
+    background: #ffffff;
+    color: var(--color-gold);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background var(--transition), color var(--transition);
+}
+
+.merch-shop-btn:hover {
+    background: var(--color-gold);
+    color: #ffffff;
 }
 
 /* Merch photo backgrounds */
