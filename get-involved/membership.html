@@ -5,13 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Membership | Youth For Christ International (YFC)</title>
     <meta name="description" content="Apply for YFC membership and connect with Friday Prayer and Home Cells community discipleship.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Youth For Christ International">
+    <meta property="og:title" content="Membership | Youth For Christ International (YFC)">
+    <meta property="og:description" content="Apply for YFC membership and connect with Friday Prayer and Home Cells community discipleship.">
+    <meta name="twitter:card" content="summary">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css?v=20260719c">
+    <link rel="stylesheet" href="../assets/css/style.css?v=20260725">
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="site-header">
         <div class="container nav-bar">
             <a class="brand" href="../index.html" aria-label="Youth For Christ International home">
@@ -30,6 +36,7 @@
                     <div class="nav-dropdown-menu" role="menu">
                         <a href="../about/index.html" role="menuitem">About Us</a>
                         <a href="../yfc-culture/index.html" role="menuitem">YFC Culture</a>
+                        <a href="../get-involved/membership.html" role="menuitem">Membership</a>
                         <a href="../contact/index.html" role="menuitem">Contact</a>
                     </div>
                 </div>
@@ -41,7 +48,7 @@
             </nav>
         </div>
     </header>
-        <section class="content-section">
+        <section class="content-section" id="main-content">
             <div class="container">
                 <div class="section-heading">
                     <p class="section-label">Get Involved</p>
@@ -61,7 +68,7 @@
                         <p>Please complete all sections below. Parent or guardian details are required for younger members.</p>
                     </article>
                 </div>
-                <form class="membership-form" action="#" method="post">
+                <form class="membership-form" id="membership-form" action="#" method="post">
                     <section class="form-section">
                         <h3>Personal Details</h3>
                         <div class="form-grid">
@@ -120,6 +127,7 @@
                     </section>
 
                     <button class="button" type="submit">Submit Membership Application</button>
+                    <p class="form-submit-note">Submitting opens your email app with the completed application addressed to our team &mdash; just press send.</p>
                 </form>
             </div>
         </section>
@@ -177,7 +185,47 @@
         </div>
     </footer>
 
-    <script src="../assets/js/script.js?v=20260719c"></script>
+    <script src="../assets/js/script.js?v=20260725"></script>
+    <script>
+    (function () {
+        var form = document.getElementById('membership-form');
+        if (!form) { return; }
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            function val(id) {
+                var el = document.getElementById(id);
+                return el ? el.value.trim() : '';
+            }
+            var lines = [
+                'YFC Membership Application',
+                '',
+                '--- Personal Details ---',
+                'First Name: ' + val('first-name'),
+                'Last Name: ' + val('last-name'),
+                'Date of Birth: ' + val('dob'),
+                'Gender: ' + val('gender'),
+                'Phone: ' + val('phone'),
+                'Email: ' + val('email'),
+                'Home Address: ' + val('address'),
+                '',
+                '--- Parent / Guardian ---',
+                'Name: ' + val('guardian-name'),
+                'Phone: ' + val('guardian-phone'),
+                'Email: ' + val('guardian-email'),
+                'Relationship: ' + val('guardian-relationship'),
+                '',
+                '--- Next of Kin ---',
+                'Name: ' + val('nok-name'),
+                'Phone: ' + val('nok-phone'),
+                'Relationship: ' + val('nok-relationship')
+            ];
+            var subject = 'Membership Application - ' + val('first-name') + ' ' + val('last-name');
+            window.location.href = 'mailto:youthsforchrist99@gmail.com'
+                + '?subject=' + encodeURIComponent(subject)
+                + '&body=' + encodeURIComponent(lines.join('\n'));
+        });
+    })();
+    </script>
 </body>
 </html>
 

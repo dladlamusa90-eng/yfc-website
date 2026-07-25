@@ -5,15 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Events | Youth For Christ International (YFC)</title>
     <meta name="description" content="Explore upcoming and major YFC events, outreaches, camps, and annual ministry activities.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Youth For Christ International">
+    <meta property="og:title" content="Events | Youth For Christ International (YFC)">
+    <meta property="og:description" content="Explore upcoming and major YFC events, outreaches, camps, and annual ministry activities.">
+    <meta name="twitter:card" content="summary">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css?v=20260719c">
+    <link rel="stylesheet" href="../assets/css/style.css?v=20260725">
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="site-header">
         <div class="container nav-bar">
             <a class="brand" href="../index.html" aria-label="Youth For Christ International home">
@@ -32,6 +39,7 @@
                     <div class="nav-dropdown-menu" role="menu">
                         <a href="../about/index.html" role="menuitem">About Us</a>
                         <a href="../yfc-culture/index.html" role="menuitem">YFC Culture</a>
+                        <a href="../get-involved/membership.html" role="menuitem">Membership</a>
                         <a href="../contact/index.html" role="menuitem">Contact</a>
                     </div>
                 </div>
@@ -43,7 +51,7 @@
             </nav>
         </div>
     </header>
-        <section class="events-page-section">
+        <section class="events-page-section" id="main-content">
             <div class="container">
 
                 <div class="page-hero-heading">
@@ -112,7 +120,17 @@
         <div class="pw-modal-overlay" id="pw-modal" role="dialog" aria-modal="true" aria-labelledby="pw-modal-title">
             <div class="pw-modal-box">
                 <h2 id="pw-modal-title">Admin Access</h2>
-                <p>Enter your branch admin code to manage events.</p>
+                <p>Select your branch and enter your admin code to manage events.</p>
+                <select id="pw-branch" class="edit-inline-branch pw-branch-select" aria-label="Your branch">
+                    <option value="eastrand">Eastrand</option>
+                    <option value="durban">Durban</option>
+                    <option value="pretoria">Pretoria</option>
+                    <option value="soweto">Soweto</option>
+                    <option value="potchefstroom">Potchefstroom</option>
+                    <option value="gqeberha">Gqeberha</option>
+                    <option value="polokwane">Polokwane</option>
+                    <option value="witbank" selected>Witbank</option>
+                </select>
                 <div class="pw-input-wrap">
                     <input type="password" id="pw-input" placeholder="Enter code" autocomplete="off" />
                     <button type="button" class="pw-toggle-btn" id="pw-toggle" aria-label="Show password">
@@ -181,23 +199,29 @@
     <script>
     (function () {
         var BRANCH_CONFIG = {
-            eastrand: { label: 'Eastrand', color: '#ef4723', code: 'East@123' },
-            durban: { label: 'Durban', color: '#ff8c42', code: 'Durban@123' },
-            pretoria: { label: 'Pretoria', color: '#be8a00', code: 'Pta@123' },
-            soweto: { label: 'Soweto', color: '#facc15', code: 'Soweto@123' },
-            potchefstroom: { label: 'Potchefstroom', color: '#3867d6', code: 'Potch@123' },
-            gqeberha: { label: 'Gqeberha', color: '#7d4fe0', code: 'Gqe@123' },
-            polokwane: { label: 'Polokwane', color: '#db2777', code: 'Polo@123' },
-            witbank: { label: 'Witbank', color: '#0f766e', code: 'Musa@990302' }
+            eastrand: { label: 'Eastrand', color: '#ef4723' },
+            durban: { label: 'Durban', color: '#ff8c42' },
+            pretoria: { label: 'Pretoria', color: '#be8a00' },
+            soweto: { label: 'Soweto', color: '#facc15' },
+            potchefstroom: { label: 'Potchefstroom', color: '#3867d6' },
+            gqeberha: { label: 'Gqeberha', color: '#7d4fe0' },
+            polokwane: { label: 'Polokwane', color: '#db2777' },
+            witbank: { label: 'Witbank', color: '#0f766e' }
         };
+        // Branch admin sign-in uses Firebase Auth accounts named
+        // <branch>@yfc-website-d5529.firebaseapp.com; Firestore rules
+        // only allow writes from signed-in admins.
+        function adminEmailFor(branchKey) {
+            return branchKey + '@yfc-website-d5529.firebaseapp.com';
+        }
         var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
         var DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
         var currentAdminBranch = 'witbank';
         var selectedBranchFilter = 'all';
 
         var DEFAULT_EVENTS = [
-            { id: '1', name: 'Rockland Ministries, Pretoria', branch: 'pretoria', date: '2026-06-04', desc: 'June 4â€“6' },
-            { id: '2', name: 'Soweto Outreach', branch: 'soweto', date: '2026-09-25', desc: 'Sept 25â€“26' },
+            { id: '1', name: 'Rockland Ministries, Pretoria', branch: 'pretoria', date: '2026-06-04', desc: 'June 4\u20136' },
+            { id: '2', name: 'Soweto Outreach', branch: 'soweto', date: '2026-09-25', desc: 'Sept 25\u201326' },
             { id: '3', name: 'All Night Encounter', branch: 'witbank', date: '2026-12-18', desc: '' },
             { id: '4', name: 'December Camp', branch: 'witbank', date: '2026-12-22', desc: 'Annual year-end discipleship camp' }
         ];
@@ -309,20 +333,6 @@
             return resolveBranchFilterFromQuery(hashBranch);
         }
 
-        function resolveBranchFromCode(inputCode) {
-            var code = String(inputCode || '').trim();
-            var keys = Object.keys(BRANCH_CONFIG);
-
-            for (var i = 0; i < keys.length; i++) {
-                var key = keys[i];
-                if (BRANCH_CONFIG[key].code === code) {
-                    return key;
-                }
-            }
-
-            return null;
-        }
-
         function renderBranchLegend() {
             var legend = document.getElementById('cal-branch-legend');
             if (!legend) return;
@@ -355,7 +365,7 @@
                     setupRealtimeListener();
                 }
             }).catch(function() {
-                // Firestore unavailable â€” fall back to real-time listener which may use cache
+                // Firestore unavailable -- fall back to real-time listener which may use cache
                 setupRealtimeListener();
             });
         }
@@ -377,7 +387,7 @@
                     renderEditList();
                 }
             }, function() {
-                // Snapshot error â€” render with whatever is already loaded
+                // Snapshot error -- render with whatever is already loaded
                 if (isInitialized) renderCalendar();
             });
         }
@@ -564,7 +574,7 @@
                             '<span class="cal-event-branch"><span class="cal-event-branch-dot" style="background:' + BRANCH_CONFIG[branchKey].color + '"></span>' + escHtml(BRANCH_CONFIG[branchKey].label) + '</span>' +
                             (e.desc ? '<span class="edit-event-desc-line">' + escHtml(e.desc) + '</span>' : '') +
                             (e.link ? '<span class="edit-event-link"><a href="' + escHtml(e.link) + '" target="_blank" rel="noopener">Event Link</a></span>' : '') +
-                            '<span class="edit-event-meta">' + escHtml(e.date) + (timeRange ? ' â€¢ ' + escHtml(timeRange) : '') + '</span>' +
+                            '<span class="edit-event-meta">' + escHtml(e.date) + (timeRange ? ' \u2022 ' + escHtml(timeRange) : '') + '</span>' +
                         '</div>' +
                         '<div class="edit-event-actions">' +
                             '<button class="btn-edit-event" data-id="' + e.id + '">Edit</button>' +
@@ -720,9 +730,16 @@
 
         function tryEnter() {
             var val = document.getElementById('pw-input').value;
-            var selectedBranch = resolveBranchFromCode(val);
-            var selectedConfig = selectedBranch ? BRANCH_CONFIG[selectedBranch] : null;
-            if (selectedConfig && val === selectedConfig.code) {
+            var selectedBranch = document.getElementById('pw-branch').value;
+            var selectedConfig = BRANCH_CONFIG[selectedBranch];
+            var submitBtn = document.getElementById('pw-submit');
+            if (!selectedConfig || !val) {
+                document.getElementById('pw-error').style.display = 'block';
+                return;
+            }
+            submitBtn.disabled = true;
+            firebase.auth().signInWithEmailAndPassword(adminEmailFor(selectedBranch), val).then(function () {
+                submitBtn.disabled = false;
                 currentAdminBranch = selectedBranch;
                 document.getElementById('pw-modal').classList.remove('active');
                 document.getElementById('edit-panel').classList.add('active');
@@ -731,11 +748,12 @@
                 document.getElementById('edit-branch-chip').style.background = selectedConfig.color;
                 document.getElementById('edit-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 renderEditList();
-            } else {
+            }).catch(function () {
+                submitBtn.disabled = false;
                 document.getElementById('pw-error').style.display = 'block';
                 document.getElementById('pw-input').value = '';
                 document.getElementById('pw-input').focus();
-            }
+            });
         }
 
         document.getElementById('pw-submit').addEventListener('click', tryEnter);
@@ -881,7 +899,7 @@
         </div>
     </footer>
 
-        <script src="../assets/js/script.js?v=20260719c"></script>
+        <script src="../assets/js/script.js?v=20260725"></script>
         <script>
         // Force Add Event form and Cancel button to always be visible and functional
         document.addEventListener('DOMContentLoaded', function() {

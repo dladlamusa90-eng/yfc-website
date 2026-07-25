@@ -5,17 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Album | Youth For Christ International</title>
     <meta name="description" content="Photo albums for Youth For Christ International moments and activities.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Youth For Christ International">
+    <meta property="og:title" content="Photo Album | Youth For Christ International">
+    <meta property="og:description" content="Photo albums for Youth For Christ International moments and activities.">
+    <meta name="twitter:card" content="summary">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css?v=20260719c">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260725">
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     <!-- Firebase (admin upload only) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="site-header">
         <div class="container nav-bar">
             <a class="brand" href="index.html" aria-label="Youth For Christ International home">
@@ -40,6 +47,7 @@
                     <div class="nav-dropdown-menu" role="menu">
                         <a href="about/index.html" role="menuitem">About Us</a>
                         <a href="yfc-culture/index.html" role="menuitem">YFC Culture</a>
+                        <a href="get-involved/membership.html" role="menuitem">Membership</a>
                         <a href="contact/index.html" role="menuitem">Contact</a>
                     </div>
                 </div>
@@ -52,7 +60,7 @@
         </div>
     </header>
 
-    <main>
+    <main id="main-content">
         <section class="album-hero" id="album-hero">
             <div class="container">
                 <div class="section-heading">
@@ -159,7 +167,7 @@
         </div>
     </footer>
 
-    <script src="assets/js/script.js?v=20260719c"></script>
+    <script src="assets/js/script.js?v=20260725"></script>
 
     <!-- Banner picker modal -->
     <div class="banner-picker-modal" id="bannerPickerModal" role="dialog" aria-modal="true" aria-label="Choose banner photo" style="display:none">
@@ -237,16 +245,12 @@
 
     <script>
     (function () {
-        var BRANCH_CODES = {
-            eastrand:      'East@123',
-            durban:        'Durban@123',
-            pretoria:      'Pta@123',
-            soweto:        'Soweto@123',
-            potchefstroom: 'Potch@123',
-            gqeberha:      'Gqe@123',
-            polokwane:     'Polo@123',
-            witbank:       'Musa@990302'
-        };
+        // Branch admin sign-in uses Firebase Auth accounts named
+        // <branch>@yfc-website-d5529.firebaseapp.com; Firestore rules
+        // only allow writes from signed-in admins.
+        function adminEmailFor(branchKey) {
+            return branchKey + '@yfc-website-d5529.firebaseapp.com';
+        }
         var firebaseConfig = {
             apiKey: "AIzaSyBhdh8bLPksi2B9Z0bNvufjvDHFibFg_zY",
             authDomain: "yfc-website-d5529.firebaseapp.com",
@@ -519,8 +523,14 @@
         document.getElementById('albumPwCancel').addEventListener('click', function () { pwModal.style.display = 'none'; });
 
         function checkPw() {
-            var expectedCode = BRANCH_CODES[currentBranch] || '';
-            if (pwInput.value === expectedCode) {
+            var submitBtn = document.getElementById('albumPwSubmit');
+            if (!pwInput.value) {
+                pwError.style.display = 'block';
+                return;
+            }
+            submitBtn.disabled = true;
+            firebase.auth().signInWithEmailAndPassword(adminEmailFor(currentBranch), pwInput.value).then(function () {
+                submitBtn.disabled = false;
                 isAdmin = true; pwModal.style.display = 'none'; openUploadPanel();
                 var sel = document.getElementById('uploadCategory');
                 var branchSel = document.getElementById('uploadBranch');
@@ -531,9 +541,10 @@
                 }
                 document.getElementById('btnChangeBanner').style.display = '';
                 attachDeleteBtns();
-            } else {
+            }).catch(function () {
+                submitBtn.disabled = false;
                 pwError.style.display = 'block'; pwInput.value = ''; pwInput.focus();
-            }
+            });
         }
         function closeUploadPanel() {
             adminPanel.style.display = 'none';
@@ -556,7 +567,7 @@
             }
         });
 
-        // Change Banner â€” opens photo picker
+        // Change Banner -- opens photo picker
         var btnChangeBanner = document.getElementById('btnChangeBanner');
         var bannerPickerModal = document.getElementById('bannerPickerModal');
         var bannerPickerGrid = document.getElementById('bannerPickerGrid');
@@ -667,7 +678,7 @@
                                 ));
                                 return;
                             }
-                            // WebP not supported â€” fall back to JPEG
+                            // WebP not supported -- fall back to JPEG
                             canvas.toBlob(function (jpegBlob) {
                                 if (!jpegBlob) { resolve(file); return; }
                                 resolve(new File(

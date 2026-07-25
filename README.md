@@ -45,9 +45,30 @@ The `.nojekyll` file is included to ensure static asset paths are served as-is.
 
 `netlify.toml` is included with static publish settings and security headers.
 
+## Branch Admin Access (Firebase Auth)
+
+Event, global-calendar, and photo-album editing requires sign-in. Each branch
+has a Firebase Auth account named `<branch>@yfc-website-d5529.firebaseapp.com`
+(plus `global@...` for the YFC & Partners calendar); admins only ever type
+their branch code, the page supplies the email. Firestore rules
+(`firestore.rules`) allow public reads but only authenticated writes.
+
+To create the accounts or rotate codes (requires the service account key in
+`C:/Users/sinen/yfc-secrets/`, which must never live inside this folder):
+
+1. `node admin-tools/provision-admins.js` — creates/updates the branch admin
+   accounts. Codes are set inside that script and never printed.
+2. Push the site so the pages that use auth sign-in are live.
+3. `node admin-tools/deploy-rules.js` — publishes `firestore.rules` to the
+   live project (or `firebase deploy --only firestore:rules`).
+
+`admin-tools/` is gitignored; it is local tooling, not part of the site.
+
 ## Post-Deploy Checklist
 
-1. Replace placeholder social links (`#`) with official channel URLs.
-2. Replace placeholder media blocks with real YouTube embeds.
-3. Add real merchandise images under `assets/images/`.
-4. Verify all forms are connected to a backend or form service.
+1. Set the live site URL in `og:url`/`og:image` tags and add a `sitemap.xml`
+   once the final domain is known.
+2. Add real merchandise images under `assets/images/` and link each product's
+   Order button to its real listing when one exists.
+3. Confirm the giving page's account holder name with the bank and add it to
+   the donation details.

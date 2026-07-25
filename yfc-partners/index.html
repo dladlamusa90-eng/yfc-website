@@ -5,15 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YFC &amp; Partners | Youth For Christ International</title>
     <meta name="description" content="Global calendar of Youth For Christ international events and partner ministry activities.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Youth For Christ International">
+    <meta property="og:title" content="YFC &amp; Partners | Youth For Christ International">
+    <meta property="og:description" content="Global calendar of Youth For Christ international events and partner ministry activities.">
+    <meta name="twitter:card" content="summary">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css?v=20260719c">
+    <link rel="stylesheet" href="../assets/css/style.css?v=20260725">
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="site-header">
         <div class="container nav-bar">
             <a class="brand" href="../index.html" aria-label="Youth For Christ International home">
@@ -32,6 +39,7 @@
                     <div class="nav-dropdown-menu" role="menu">
                         <a href="../about/index.html" role="menuitem">About Us</a>
                         <a href="../yfc-culture/index.html" role="menuitem">YFC Culture</a>
+                        <a href="../get-involved/membership.html" role="menuitem">Membership</a>
                         <a href="../contact/index.html" role="menuitem">Contact</a>
                     </div>
                 </div>
@@ -44,7 +52,7 @@
         </div>
     </header>
 
-    <main>
+    <main id="main-content">
         <section class="events-page-section">
             <div class="container">
                 <div class="page-hero-heading">
@@ -158,7 +166,9 @@
     <script>
     (function () {
         var GLOBAL_COLOR = '#ef4723';
-        var ADMIN_CODE = 'Musa@990302';
+        // Global calendar admin signs in with the "global" Firebase Auth
+        // account; Firestore rules only allow writes from signed-in admins.
+        var ADMIN_EMAIL = 'global@yfc-website-d5529.firebaseapp.com';
         var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
         var DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
@@ -377,7 +387,7 @@
                             '<strong>' + escHtml(e.name) + '</strong>' +
                             (e.desc ? '<span class="edit-event-desc-line">' + escHtml(e.desc) + '</span>' : '') +
                             (e.link ? '<span class="edit-event-link"><a href="' + escHtml(e.link) + '" target="_blank" rel="noopener">Event Link</a></span>' : '') +
-                            '<span class="edit-event-meta">' + escHtml(e.date) + (timeRange ? ' â€¢ ' + escHtml(timeRange) : '') + '</span>' +
+                            '<span class="edit-event-meta">' + escHtml(e.date) + (timeRange ? ' \u2022 ' + escHtml(timeRange) : '') + '</span>' +
                         '</div>' +
                         '<div class="edit-event-actions">' +
                             '<button class="btn-edit-event" data-id="' + e._id + '">Edit</button>' +
@@ -499,16 +509,24 @@
 
         function tryEnter() {
             var val = document.getElementById('pw-input').value.trim();
-            if (val === ADMIN_CODE) {
+            var submitBtn = document.getElementById('pw-submit');
+            if (!val) {
+                document.getElementById('pw-error').style.display = 'block';
+                return;
+            }
+            submitBtn.disabled = true;
+            firebase.auth().signInWithEmailAndPassword(ADMIN_EMAIL, val).then(function () {
+                submitBtn.disabled = false;
                 document.getElementById('pw-modal').classList.remove('active');
                 document.getElementById('edit-panel').classList.add('active');
                 document.getElementById('edit-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 renderEditList();
-            } else {
+            }).catch(function () {
+                submitBtn.disabled = false;
                 document.getElementById('pw-error').style.display = 'block';
                 document.getElementById('pw-input').value = '';
                 document.getElementById('pw-input').focus();
-            }
+            });
         }
 
         document.getElementById('pw-submit').addEventListener('click', tryEnter);
@@ -653,6 +671,6 @@
         </div>
     </footer>
 
-    <script src="../assets/js/script.js?v=20260719c"></script>
+    <script src="../assets/js/script.js?v=20260725"></script>
 </body>
 </html>
