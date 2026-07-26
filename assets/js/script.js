@@ -274,9 +274,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const linkPath = normalizePath(new URL(link.href, window.location.origin).pathname);
         const isProgramsGroup = currentPath.includes("/programs/") && linkPath.includes("/programs/daily-juice");
-        const isGetInvolvedGroup = currentPath.includes("/get-involved/") && linkPath.includes("/get-involved/membership");
 
-        if (linkPath === currentPath || isProgramsGroup || isGetInvolvedGroup) {
+        if (linkPath === currentPath || isProgramsGroup) {
             link.classList.add("is-active");
         }
     }

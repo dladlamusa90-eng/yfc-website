@@ -12,7 +12,7 @@ Static ministry website for evangelism, discipleship, and mobilization.
 - `events/index.html` — branch events calendar (Firebase Firestore)
 - `yfc-partners/index.html` — global calendar (Firebase Firestore)
 - `atmosphere-album.html` — photo albums (static + Firebase gallery/banners)
-- `get-involved/membership.html`, `get-involved/merchandise.html`
+- `get-involved/merchandise.html`
 - `giving/index.html` — donation details
 - `contact/index.html`, `privacy-policy/index.html`
 - `assets/css/style.css` — single shared stylesheet

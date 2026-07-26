@@ -1226,55 +1226,6 @@ p {
     color: #4a5569;
 }
 
-.membership-form {
-    margin-top: 1.2rem;
-    display: grid;
-    gap: 1rem;
-}
-
-.form-section {
-    display: grid;
-    gap: 0.75rem;
-    padding: var(--space-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background: linear-gradient(180deg, #ffffff, #fffefe);
-}
-
-.form-section h3 {
-    font-size: 1.1rem;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.7rem 1rem;
-}
-
-.form-grid label {
-    grid-column: span 1;
-    font-size: 0.86rem;
-    font-weight: 700;
-    color: #1f2734;
-}
-
-.form-grid input {
-    grid-column: span 1;
-    width: 100%;
-    min-height: 46px;
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    background: #ffffff;
-    color: #1f2734;
-    font: inherit;
-    padding: 0.72rem 0.9rem;
-}
-
-.form-grid input:focus-visible {
-    outline: 2px solid rgba(239, 71, 35, 0.5);
-    outline-offset: 2px;
-}
-
 .gallery-intro {
     margin-bottom: 1.2rem;
     max-width: 66ch;
@@ -4174,8 +4125,7 @@ p {
     .daily-juice-layout,
     .programs-group-grid,
     .ministry-layout,
-    .ministry-grid,
-    .form-grid {
+    .ministry-grid {
         grid-template-columns: 1fr;
     }
 
