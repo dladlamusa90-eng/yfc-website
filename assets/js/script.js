@@ -299,6 +299,24 @@ document.addEventListener("DOMContentLoaded", () => {
             link.addEventListener("click", closeNav);
         }
 
+        // Tapping the dimmed page or pressing Escape closes the open mobile menu.
+        document.addEventListener("click", (event) => {
+            if (!siteNav.classList.contains("is-open") || siteNav.contains(event.target) || navToggle.contains(event.target)) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            closeNav();
+        }, true);
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && siteNav.classList.contains("is-open")) {
+                closeNav();
+                navToggle.focus();
+            }
+        });
+
         window.addEventListener("resize", () => {
             if (window.innerWidth > 768) {
                 closeNav();
@@ -357,6 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const galleryFilters = document.querySelectorAll(".gallery-filter");
     const galleryItems = document.querySelectorAll(".gallery-item");
     const galleryLinks = document.querySelectorAll(".gallery-item-link");
+    const galleryGrid = document.querySelector(".gallery-grid");
 
     for (const btn of galleryFilters) {
         btn.addEventListener("click", () => {
@@ -370,6 +389,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     item.style.display = "none";
                 }
+            }
+
+            // Phones show a lone filtered tile full width instead of half width.
+            if (galleryGrid) {
+                galleryGrid.classList.toggle("is-filtered", filter !== "all");
             }
         });
     }

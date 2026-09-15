@@ -1561,7 +1561,7 @@ p {
 .giving-cta-compose {
     display: inline-block;
     margin-top: 0.5rem;
-    background: var(--color-accent);
+    background: var(--color-gold);
     color: #ffffff;
     font-weight: 700;
     font-size: 0.92rem;
@@ -5775,4 +5775,236 @@ button:active,
 .pw-branch-select {
     width: 100%;
     margin-bottom: 0.7rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Mobile polish — compact header, swipeable rows, tighter grids
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    html {
+        scroll-padding-top: 76px;
+    }
+
+    /* Compact sticky header (~63px tall instead of ~79px) */
+    .site-header {
+        padding: 0.55rem 0;
+    }
+
+    .nav-toggle {
+        position: relative;
+        z-index: 1;
+        width: 44px;
+        min-width: 44px;
+        height: 44px;
+        min-height: 44px;
+        border-radius: 12px;
+    }
+
+    .site-nav {
+        top: 70px;
+        gap: 0.1rem;
+        padding: 0.5rem;
+        background: #ffffff;
+    }
+
+    /* Dim the page behind the open menu; script.js closes it on an outside tap */
+    .site-nav.is-open {
+        box-shadow: var(--shadow-soft), 0 0 0 100vmax rgba(12, 8, 6, 0.45);
+    }
+
+    .site-nav > a,
+    .nav-dropdown-toggle {
+        padding: 0.75rem 0.85rem;
+        border-radius: 12px;
+    }
+
+    .site-nav > a::after {
+        display: none;
+    }
+
+    .site-nav > a.is-active,
+    .nav-dropdown-toggle.is-active {
+        background: rgba(239, 71, 35, 0.08);
+    }
+
+    .nav-dropdown-menu {
+        width: auto;
+        margin: 0.15rem 0.35rem 0.35rem 0.85rem;
+    }
+
+    .hero-section {
+        min-height: calc(100vh - 63px);
+        min-height: calc(100svh - 63px);
+    }
+
+    /* Video Programs: one swipeable row instead of a six-card stack */
+    .media-grid {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: min(82%, 340px);
+        gap: 0.85rem;
+        margin: 0 -0.75rem;
+        padding: 0.25rem 0.75rem 1.25rem;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: 0.75rem;
+        scrollbar-width: none;
+    }
+
+    .media-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .media-card {
+        scroll-snap-align: start;
+    }
+
+    /* Cards still off to the side would otherwise stay hidden until swiped in */
+    .media-grid > .reveal-on-scroll {
+        opacity: 1;
+        transform: none;
+    }
+
+    /* Branches: compact pills, two or more per row */
+    .branches-showcase {
+        padding: 1.3rem 1rem;
+    }
+
+    .branches-showcase::after {
+        inset: 0.5rem;
+    }
+
+    .branches-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.6rem;
+    }
+
+    .branch-pill {
+        min-height: 54px;
+        padding: 0.7rem 0.8rem;
+        gap: 0.5rem;
+        border-radius: 14px;
+        font-size: clamp(0.8rem, 3.6vw, 0.92rem);
+    }
+
+    /* Gallery filters: a single swipeable row of chips */
+    .gallery-filters {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 0.45rem;
+        margin: 0 -0.75rem 1.4rem;
+        padding: 0.2rem 0.75rem 0.5rem;
+        overflow-x: auto;
+        scroll-padding-inline: 0.75rem;
+        scrollbar-width: none;
+    }
+
+    .gallery-filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .gallery-filter {
+        flex: 0 0 auto;
+    }
+
+    /* Gallery tiles: a wide lead tile, then squares two-up */
+    .gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.7rem;
+    }
+
+    .gallery-grid .gallery-thumb {
+        aspect-ratio: 1 / 1;
+    }
+
+    .gallery-grid > .gallery-item:first-child,
+    .gallery-grid.is-filtered > .gallery-item {
+        grid-column: 1 / -1;
+    }
+
+    .gallery-grid > .gallery-item:first-child .gallery-thumb,
+    .gallery-grid.is-filtered .gallery-thumb {
+        aspect-ratio: 16 / 10;
+    }
+
+    .gallery-overlay {
+        padding: 0.9rem;
+    }
+
+    .gallery-cat-label {
+        font-size: 0.98rem;
+    }
+
+    /* Contact cards: keep the email address on one line */
+    .ct-card {
+        gap: 0.9rem;
+        padding: 1.1rem;
+    }
+
+    .ct-card-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+    }
+
+    .ct-card-text {
+        min-width: 0;
+    }
+
+    .ct-card-value {
+        overflow-wrap: normal;
+    }
+
+    .ct-card-arrow {
+        display: none;
+    }
+
+    /* "Tell us who you are" band: less dead space */
+    .giving-contact-section {
+        padding: 3.2rem 0 3.6rem;
+    }
+
+    .giving-contact-inner {
+        gap: 1.75rem;
+    }
+
+    .giving-cta-card {
+        padding: 1.6rem 1.35rem;
+    }
+}
+
+@media (max-width: 560px) {
+    /* Footer: organisation on its own line instead of a dangling separator */
+    .footer-org {
+        display: block;
+    }
+
+    .footer-org + .footer-sep {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Hero: primary action full width, the two secondary actions side by side */
+    .hero-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65rem;
+    }
+
+    .hero-actions .button {
+        min-height: 50px;
+        padding: 0.8rem 0.5rem;
+        font-size: clamp(0.85rem, 3.9vw, 0.95rem);
+        overflow-wrap: normal;
+    }
+
+    .hero-actions .button:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .merch-delivery-pill {
+        font-size: 0.72rem;
+    }
 }
