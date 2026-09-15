@@ -51,7 +51,9 @@ Event, global-calendar, and photo-album editing requires sign-in. Each branch
 has a Firebase Auth account named `<branch>@yfc-website-d5529.firebaseapp.com`
 (plus `global@...` for the YFC & Partners calendar); admins only ever type
 their branch code, the page supplies the email. Firestore rules
-(`firestore.rules`) allow public reads but only authenticated writes.
+(`firestore.rules`) allow public reads, but only the admin accounts listed in
+`isAdmin()` can write. Anyone can self-register a Firebase account with the
+public API key, so when adding a branch, add its account to that list too.
 
 To create the accounts or rotate codes (requires the service account key in
 `C:/Users/sinen/yfc-secrets/`, which must never live inside this folder):

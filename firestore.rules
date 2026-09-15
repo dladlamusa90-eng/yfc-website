@@ -1,27 +1,42 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Public site content is readable by everyone; writes require a
-    // signed-in branch admin (Firebase Auth email/password account).
+    // Public site content is readable by everyone; writes require one of the
+    // provisioned branch admin accounts. Anyone can self-register a Firebase
+    // Auth account with the site's public API key, so being signed in is not
+    // enough on its own.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email in [
+        'eastrand@yfc-website-d5529.firebaseapp.com',
+        'durban@yfc-website-d5529.firebaseapp.com',
+        'pretoria@yfc-website-d5529.firebaseapp.com',
+        'soweto@yfc-website-d5529.firebaseapp.com',
+        'potchefstroom@yfc-website-d5529.firebaseapp.com',
+        'gqeberha@yfc-website-d5529.firebaseapp.com',
+        'polokwane@yfc-website-d5529.firebaseapp.com',
+        'witbank@yfc-website-d5529.firebaseapp.com',
+        'global@yfc-website-d5529.firebaseapp.com'
+      ];
+    }
     // Branch events calendar (events/index.html)
     match /events/{eventId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
     // Global calendar (yfc-partners/index.html)
     match /global-events/{eventId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
     // Photo albums (atmosphere-album.html)
     match /gallery/{photoId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
     // Album hero banners (atmosphere-album.html)
     match /banners/{bannerId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
     match /{document=**} {
       allow read, write: if false;
