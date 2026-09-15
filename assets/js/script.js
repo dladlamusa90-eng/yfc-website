@@ -977,29 +977,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Video Programs: on phones the cards form a swipeable row. Advance it one
-    // card at a time until the visitor touches, scrolls or tabs into it.
+    // card at a time until the visitor taps a card, swipes the row sideways or
+    // tabs into it. Scrolling the page past the row does not count.
     const mediaRow = document.querySelector(".media-grid");
 
     if (mediaRow && !prefersReducedMotion) {
         let autoTimer = null;
         let userTookOver = false;
         let rowVisible = !("IntersectionObserver" in window);
-        let hovering = false;
+        let fingerDown = false;
+        let touchStart = null;
+
+        // Exact snap point of each card (scroll-snap-align: start, less the
+        // row's scroll padding). Landing exactly on one stops Safari from
+        // snapping a smooth programmatic scroll back.
+        const snapPoints = () => {
+            const rowLeft = mediaRow.getBoundingClientRect().left;
+            const padding = parseFloat(getComputedStyle(mediaRow).scrollPaddingLeft) || 0;
+            return Array.from(mediaRow.children, (card) =>
+                Math.round(mediaRow.scrollLeft + card.getBoundingClientRect().left - rowLeft - padding));
+        };
 
         const advance = () => {
             const max = mediaRow.scrollWidth - mediaRow.clientWidth;
             if (max <= 2) return; // desktop grid: nothing to scroll
-            const card = mediaRow.querySelector(".media-card");
-            const gap = parseFloat(getComputedStyle(mediaRow).columnGap) || 0;
-            const stepWidth = card ? card.getBoundingClientRect().width + gap : mediaRow.clientWidth;
-            const next = mediaRow.scrollLeft >= max - 2 ? 0 : Math.min(mediaRow.scrollLeft + stepWidth, max);
-            mediaRow.scrollTo({ left: next, behavior: "smooth" });
+            const next = snapPoints().find((point) => point > mediaRow.scrollLeft + 4);
+            const target = next === undefined || mediaRow.scrollLeft >= max - 2 ? 0 : Math.min(next, max);
+            mediaRow.scrollTo({ left: target, behavior: "smooth" });
         };
 
         const updateAutoScroll = () => {
             clearInterval(autoTimer);
             autoTimer = null;
-            if (!userTookOver && rowVisible && !hovering && !document.hidden) {
+            if (!userTookOver && rowVisible && !fingerDown && !document.hidden) {
                 autoTimer = setInterval(advance, 3500);
             }
         };
@@ -1009,11 +1019,37 @@ document.addEventListener("DOMContentLoaded", () => {
             updateAutoScroll();
         };
 
-        ["pointerdown", "touchstart", "wheel", "keydown", "focusin"].forEach((type) => {
-            mediaRow.addEventListener(type, stopAutoScroll, { passive: true, once: true });
+        // Touch: hold still while a finger is on the row. A tap or a sideways
+        // swipe hands the row to the visitor; a vertical page scroll does not.
+        mediaRow.addEventListener("touchstart", (e) => {
+            fingerDown = true;
+            touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            updateAutoScroll();
+        }, { passive: true });
+
+        const touchFinished = (e) => {
+            if (!fingerDown) return;
+            fingerDown = false;
+            const t = e.changedTouches[0];
+            const dx = Math.abs(t.clientX - touchStart.x);
+            const dy = Math.abs(t.clientY - touchStart.y);
+            const sideways = dx >= 10 && dx > dy;
+            const tapped = e.type === "touchend" && dx < 10 && dy < 10;
+            if (sideways || tapped) stopAutoScroll();
+            else updateAutoScroll();
+        };
+        mediaRow.addEventListener("touchend", touchFinished, { passive: true });
+        mediaRow.addEventListener("touchcancel", touchFinished, { passive: true });
+
+        // Mouse and keyboard: a click, a sideways trackpad swipe or tabbing in.
+        mediaRow.addEventListener("pointerdown", (e) => {
+            if (e.pointerType === "mouse") stopAutoScroll();
         });
-        mediaRow.addEventListener("mouseenter", () => { hovering = true; updateAutoScroll(); });
-        mediaRow.addEventListener("mouseleave", () => { hovering = false; updateAutoScroll(); });
+        mediaRow.addEventListener("wheel", (e) => {
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) stopAutoScroll();
+        }, { passive: true });
+        mediaRow.addEventListener("keydown", stopAutoScroll);
+        mediaRow.addEventListener("focusin", stopAutoScroll);
         document.addEventListener("visibilitychange", updateAutoScroll);
 
         if ("IntersectionObserver" in window) {
