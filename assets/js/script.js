@@ -976,7 +976,64 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Merchandise filter
+    // Video Programs: on phones the cards form a swipeable row. Advance it one
+    // card at a time until the visitor touches, scrolls or tabs into it.
+    const mediaRow = document.querySelector(".media-grid");
+
+    if (mediaRow && !prefersReducedMotion) {
+        let autoTimer = null;
+        let userTookOver = false;
+        let rowVisible = !("IntersectionObserver" in window);
+        let hovering = false;
+
+        const advance = () => {
+            const max = mediaRow.scrollWidth - mediaRow.clientWidth;
+            if (max <= 2) return; // desktop grid: nothing to scroll
+            const card = mediaRow.querySelector(".media-card");
+            const gap = parseFloat(getComputedStyle(mediaRow).columnGap) || 0;
+            const stepWidth = card ? card.getBoundingClientRect().width + gap : mediaRow.clientWidth;
+            const next = mediaRow.scrollLeft >= max - 2 ? 0 : Math.min(mediaRow.scrollLeft + stepWidth, max);
+            mediaRow.scrollTo({ left: next, behavior: "smooth" });
+        };
+
+        const updateAutoScroll = () => {
+            clearInterval(autoTimer);
+            autoTimer = null;
+            if (!userTookOver && rowVisible && !hovering && !document.hidden) {
+                autoTimer = setInterval(advance, 3500);
+            }
+        };
+
+        const stopAutoScroll = () => {
+            userTookOver = true;
+            updateAutoScroll();
+        };
+
+        ["pointerdown", "touchstart", "wheel", "keydown", "focusin"].forEach((type) => {
+            mediaRow.addEventListener(type, stopAutoScroll, { passive: true, once: true });
+        });
+        mediaRow.addEventListener("mouseenter", () => { hovering = true; updateAutoScroll(); });
+        mediaRow.addEventListener("mouseleave", () => { hovering = false; updateAutoScroll(); });
+        document.addEventListener("visibilitychange", updateAutoScroll);
+
+        if ("IntersectionObserver" in window) {
+            new IntersectionObserver((entries) => {
+                rowVisible = entries[0].isIntersecting;
+                updateAutoScroll();
+            }, { threshold: 0.5 }).observe(mediaRow);
+        }
+
+        updateAutoScroll();
+    }
+
+    // Merchandise filter. Cards marked data-trending ("What's Hot") always lead
+    // the collection, so move them to the front before anything reads the order.
+    const merchGrid = document.querySelector(".merch-product-grid");
+
+    if (merchGrid) {
+        merchGrid.prepend(...merchGrid.querySelectorAll(".merch-product-card[data-trending]"));
+    }
+
     const merchFilters = document.querySelectorAll(".merch-filter");
     const merchCards = document.querySelectorAll(".merch-product-card");
 
@@ -988,7 +1045,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const filter = btn.dataset.filter;
 
             for (const card of merchCards) {
-                if (filter === "all" || card.dataset.category === filter) {
+                if (filter === "all" || card.dataset.category === filter || (filter === "hot" && card.hasAttribute("data-trending"))) {
                     card.style.display = "";
                 } else {
                     card.style.display = "none";

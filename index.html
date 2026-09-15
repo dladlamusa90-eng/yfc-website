@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css?v=20260915">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260915b">
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
 </head>
 <body>
@@ -71,7 +71,7 @@
                     <p class="hero-text">Give life to your story</p>
                     <div class="hero-actions" aria-label="Hero actions">
                         <a class="button" href="programs/bible-study.html">Join a Bible Study</a>
-                        <a class="button button-secondary" href="events/index.html">Upcoming Events</a>
+                        <a class="button button-secondary" href="events/index.html" data-upcoming-events>Upcoming Events<span class="button-count" aria-hidden="true" hidden></span></a>
                         <a class="button button-secondary" href="get-involved/merchandise.html">Shop Merchandise</a>
                     </div>
                 </div>
@@ -349,6 +349,39 @@
         </div>
     </footer>
 
-    <script src="assets/js/script.js?v=20260915"></script>
+    <script src="assets/js/script.js?v=20260915b"></script>
+    <script>
+        // Upcoming Events badge: live count of branch events dated today or
+        // later, read from the same Firestore collection as the Events calendar.
+        (function () {
+            var button = document.querySelector('[data-upcoming-events]');
+            var badge = button && button.querySelector('.button-count');
+            if (!badge || !window.fetch) return;
+            var now = new Date();
+            var today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+            fetch('https://firestore.googleapis.com/v1/projects/yfc-website-d5529/databases/(default)/documents:runAggregationQuery?key=AIzaSyBhdh8bLPksi2B9Z0bNvufjvDHFibFg_zY', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    structuredAggregationQuery: {
+                        structuredQuery: {
+                            from: [{ collectionId: 'events' }],
+                            where: { fieldFilter: { field: { fieldPath: 'date' }, op: 'GREATER_THAN_OR_EQUAL', value: { stringValue: today } } }
+                        },
+                        aggregations: [{ alias: 'upcoming', count: {} }]
+                    }
+                })
+            }).then(function (res) {
+                return res.ok ? res.json() : null;
+            }).then(function (data) {
+                var result = data && data[0] && data[0].result;
+                var count = result ? parseInt(result.aggregateFields.upcoming.integerValue, 10) : 0;
+                if (!count) return;
+                badge.textContent = count > 99 ? '99+' : String(count);
+                badge.hidden = false;
+                button.setAttribute('aria-label', 'Upcoming Events, ' + count + ' coming up');
+            }).catch(function () {});
+        })();
+    </script>
 </body>
 </html>
