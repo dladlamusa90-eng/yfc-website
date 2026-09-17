@@ -6202,9 +6202,10 @@ button:active,
     text-transform: uppercase;
 }
 .blog-card-body {
-    display: grid;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
     gap: 0.6rem;
-    align-content: start;
     padding: 1.25rem 1.25rem 1.4rem;
 }
 .blog-card-meta {
@@ -6226,11 +6227,14 @@ button:active,
     color: var(--color-text-muted);
     line-height: 1.68;
 }
+/* Pushed to the bottom so the call to action lines up across a row of cards. */
 .blog-card-more {
     display: inline-flex;
     align-items: center;
+    align-self: flex-start;
     gap: 0.4rem;
-    margin-top: 0.2rem;
+    margin-top: auto;
+    padding-top: 0.4rem;
     font-weight: 700;
     color: var(--color-gold);
 }
@@ -6257,7 +6261,7 @@ button:active,
         aspect-ratio: auto;
     }
     .blog-card-featured .blog-card-body {
-        align-content: center;
+        justify-content: center;
         padding: 2.2rem 2.1rem;
     }
     .blog-card-featured .blog-card-body h2 {
