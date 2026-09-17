@@ -6582,19 +6582,28 @@ button:active,
     line-height: 1.25;
     color: var(--color-text);
 }
-/* Clamped so a long title or excerpt cannot grow the card. */
+/* Plain block wrapper: a flex item blockifies -webkit-box away, which silently
+   disables the clamp everywhere except Chrome. */
+.home-latest-text {
+    min-width: 0;
+}
+/* Clamped so a long title or excerpt cannot grow the card. The body sets
+   overflow-wrap: anywhere, which makes the clamp cut mid-word and leave a
+   stray letter before the ellipsis, so these break on words instead. */
 .home-latest-card h2,
 .home-latest-excerpt {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    overflow-wrap: normal;
+    word-break: normal;
 }
 .home-latest-card h2 {
     -webkit-line-clamp: 2;
 }
 .home-latest-excerpt {
     -webkit-line-clamp: 2;
-    margin: 0;
+    margin: 0.35rem 0 0;
     font-size: 0.92rem;
     line-height: 1.6;
     color: var(--color-text-muted);
@@ -6625,7 +6634,15 @@ button:active,
         flex: none;
         aspect-ratio: 16 / 9;
     }
+    /* A phone fits far fewer words per line, so a tight clamp cut the headline
+       and ended the excerpt mid-word ("Here i..."). The clamp truncates at the
+       character, not the word, so there is no tidy way to cut here: these are
+       loose enough that real posts are never trimmed, and only exist so an
+       unusually long title or excerpt still cannot run away with the card. */
+    .home-latest-card h2 {
+        -webkit-line-clamp: 4;
+    }
     .home-latest-excerpt {
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 6;
     }
 }

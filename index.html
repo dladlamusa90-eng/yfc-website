@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css?v=20260917">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260917b">
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
 </head>
 <body>
@@ -187,8 +187,12 @@
                     </div>
                     <div class="home-latest-body">
                         <p class="home-latest-kicker">Latest Story <span class="home-latest-tag" data-latest-tag>Outreach</span></p>
-                        <h2 id="home-latest-heading" data-latest-title>Soweto is calling: the outreach on the 26th</h2>
-                        <p class="home-latest-excerpt" data-latest-excerpt>On Saturday 26 September our Soweto branch takes the Gospel back into the streets, the taxi ranks and the corners of the township. Here is what the day looks like, what to bring, and how to be part of it.</p>
+                        <!-- The clamped text needs a plain block parent: as flex
+                             items these blockify and the line clamp stops working. -->
+                        <div class="home-latest-text">
+                            <h2 id="home-latest-heading" data-latest-title>Soweto is calling: the outreach on the 26th</h2>
+                            <p class="home-latest-excerpt" data-latest-excerpt>On Saturday 26 September our Soweto branch takes the Gospel back into the streets, the taxi ranks and the corners of the township. Here is what the day looks like, what to bring, and how to be part of it.</p>
+                        </div>
                         <span class="home-latest-more">Read the story
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                         </span>
@@ -370,7 +374,7 @@
         </div>
     </footer>
 
-    <script src="assets/js/script.js?v=20260917"></script>
+    <script src="assets/js/script.js?v=20260917b"></script>
     <script>
         // Latest Story card: mirrors the first post on the blog index so adding
         // a post updates the home page too. The markup in the section is the
