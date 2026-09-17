@@ -8,7 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const revealTargets = document.querySelectorAll(
             ".media-card, .stat-item, .gallery-item, .branch-pill, .about-panel, " +
             ".about-culture-card, .giving-need-card, .merch-product-card, " +
-            ".content-card, .ct-card, .home-spotify-card, .cta-content, .blog-card"
+            ".content-card, .ct-card, .home-spotify-card, .cta-content, .blog-card, " +
+            ".home-latest-card"
         );
 
         const revealObserver = new IntersectionObserver((entries, observer) => {
