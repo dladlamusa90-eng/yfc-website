@@ -10,6 +10,7 @@ Static ministry website for evangelism, discipleship, and mobilization.
 - `programs/daily-juice.html` — all programs overview
 - `programs/bible-study.html`, `programs/leadership.html`, `programs/jrt.html`
 - `events/index.html` — branch events calendar (Firebase Firestore)
+- `blog/index.html` — blog listing; each post is a static page in `blog/`
 - `yfc-partners/index.html` — global calendar (Firebase Firestore)
 - `atmosphere-album.html` — photo albums (static + Firebase gallery/banners)
 - `get-involved/merchandise.html`

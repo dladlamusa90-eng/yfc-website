@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const revealTargets = document.querySelectorAll(
             ".media-card, .stat-item, .gallery-item, .branch-pill, .about-panel, " +
             ".about-culture-card, .giving-need-card, .merch-product-card, " +
-            ".content-card, .ct-card, .home-spotify-card, .cta-content"
+            ".content-card, .ct-card, .home-spotify-card, .cta-content, .blog-card"
         );
 
         const revealObserver = new IntersectionObserver((entries, observer) => {
@@ -274,8 +274,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const linkPath = normalizePath(new URL(link.href, window.location.origin).pathname);
         const isProgramsGroup = currentPath.includes("/programs/") && linkPath.includes("/programs/daily-juice");
+        // Individual blog posts keep the Blog nav item lit, same as the programs group.
+        const isBlogGroup = currentPath.includes("/blog") && linkPath.endsWith("/blog");
 
-        if (linkPath === currentPath || isProgramsGroup) {
+        if (linkPath === currentPath || isProgramsGroup || isBlogGroup) {
             link.classList.add("is-active");
         }
     }
