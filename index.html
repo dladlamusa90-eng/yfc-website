@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css?v=20260917b">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260922">
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
 </head>
 <body>
@@ -77,9 +77,35 @@
                     </div>
                 </div>
             </div>
-            <a class="scroll-indicator" href="#ministry-stats" aria-label="Scroll down">
+            <a class="scroll-indicator" href="#mission-2026" aria-label="Scroll down">
                 <span class="scroll-dot"></span>
             </a>
+        </section>
+
+        <!-- Target 2026 campaign, straight after the hero so it is the first
+             thing a visitor scrolls into. -->
+        <section id="mission-2026" class="mission-section" aria-labelledby="mission-heading">
+            <div class="container">
+                <div class="mission-content">
+                    <p class="mission-badge"><span class="mission-badge-label">Target</span><span class="mission-badge-year">2026</span></p>
+                    <h2 id="mission-heading" class="mission-title">
+                        <span class="mission-number">1 Million</span>
+                        <span class="mission-souls">Souls for Christ</span>
+                    </h2>
+                    <figure class="mission-verse">
+                        <blockquote>
+                            <p>God &ldquo;wants all people to be saved and to come to a knowledge of the truth.&rdquo;</p>
+                        </blockquote>
+                        <figcaption>1 Timothy 2:4</figcaption>
+                    </figure>
+                    <p class="mission-text">This year Youth For Christ is setting out to win one million souls for Christ, through every branch, every street outreach and every conversation. There is a place for you in it.</p>
+                    <div class="mission-actions">
+                        <a class="button" href="events/index.html">Join an Outreach</a>
+                        <a class="button button-secondary" href="giving/index.html">Support the Mission</a>
+                    </div>
+                    <p class="mission-countdown" data-mission-countdown hidden><span class="mission-countdown-dot" aria-hidden="true"></span><span data-mission-days></span></p>
+                </div>
+            </div>
         </section>
 
         <section id="ministry-stats" class="stats-strip" aria-label="Ministry impact">
@@ -374,7 +400,7 @@
         </div>
     </footer>
 
-    <script src="assets/js/script.js?v=20260917b"></script>
+    <script src="assets/js/script.js?v=20260922"></script>
     <script>
         // Latest Story card: mirrors the first post on the blog index so adding
         // a post updates the home page too. The markup in the section is the
@@ -403,6 +429,21 @@
                 card.querySelector('[data-latest-title]').textContent = title.textContent.trim();
                 card.querySelector('[data-latest-excerpt]').textContent = excerpt.textContent.trim();
             }).catch(function () {});
+        })();
+
+        // Target 2026: days left in the campaign year, counted to the end of
+        // 31 December. Stays hidden without JS and once the year is over.
+        (function () {
+            var line = document.querySelector('[data-mission-countdown]');
+            if (!line) return;
+            var now = new Date();
+            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            var days = Math.round((new Date(2027, 0, 1) - today) / 86400000);
+            if (days < 1 || days > 365) return;
+            line.querySelector('[data-mission-days]').textContent = days === 1
+                ? 'Last day of 2026'
+                : days + ' days left in 2026';
+            line.hidden = false;
         })();
 
         // Upcoming Events badge: live count of branch events dated today or

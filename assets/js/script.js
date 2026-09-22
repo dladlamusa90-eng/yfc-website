@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ".media-card, .stat-item, .gallery-item, .branch-pill, .about-panel, " +
             ".about-culture-card, .giving-need-card, .merch-product-card, " +
             ".content-card, .ct-card, .home-spotify-card, .cta-content, .blog-card, " +
-            ".home-latest-card"
+            ".home-latest-card, .mission-content"
         );
 
         const revealObserver = new IntersectionObserver((entries, observer) => {
