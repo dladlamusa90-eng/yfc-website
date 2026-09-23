@@ -332,8 +332,10 @@ section {
     position: relative;
 }
 
+/* Block-level flex: an inline toggle leaves line-box space in its wrapper
+   and sits lower than the neighbouring links. */
 .nav-dropdown-toggle {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 0.3rem;
     background: none;
@@ -353,6 +355,7 @@ section {
     color: #1d2430;
     background: none;
     box-shadow: none;
+    transform: none;
 }
 
 .nav-dropdown-toggle.is-active {
@@ -5724,12 +5727,20 @@ button:active,
 }
 
 /* ── Bold pass: nav micro-interactions ── */
-.site-nav > a {
+/* The About toggle is a button, so it shares the links' box and underline
+   here; otherwise it sits lower than the links and drops the button letter-spacing. */
+.site-nav > a,
+.nav-dropdown-toggle {
     position: relative;
     padding-bottom: 3px;
 }
 
-.site-nav > a::after {
+.nav-dropdown-toggle {
+    letter-spacing: normal;
+}
+
+.site-nav > a::after,
+.nav-dropdown-toggle::after {
     content: "";
     position: absolute;
     left: 0;
@@ -5744,7 +5755,9 @@ button:active,
 }
 
 .site-nav > a:hover::after,
-.site-nav > a.is-active::after {
+.site-nav > a.is-active::after,
+.nav-dropdown-toggle:hover::after,
+.nav-dropdown-toggle.is-active::after {
     transform: scaleX(1);
 }
 
@@ -5905,7 +5918,8 @@ button:active,
         border-radius: 12px;
     }
 
-    .site-nav > a::after {
+    .site-nav > a::after,
+    .nav-dropdown-toggle::after {
         display: none;
     }
 
