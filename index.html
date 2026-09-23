@@ -407,8 +407,12 @@
         // fallback, so this failing (or file:// previews) changes nothing.
         (function () {
             var card = document.querySelector('[data-latest-post]');
-            if (!card || !window.fetch || !window.DOMParser) return;
-            fetch('blog/index.html', { cache: 'no-cache' }).then(function (res) {
+            if (!card || !window.fetch || !window.DOMParser || !window.URL) return;
+            // Netlify's pretty URLs rewrite the blog index's links to
+            // "/blog/post", so the links are resolved against the index rather
+            // than glued to "blog/", which produced "blog//blog/post" (404).
+            var index = new URL('blog/index.html', location.href);
+            fetch(index.href, { cache: 'no-cache' }).then(function (res) {
                 return res.ok ? res.text() : null;
             }).then(function (html) {
                 if (!html) return;
@@ -421,9 +425,8 @@
                 var excerpt = post.querySelector('.blog-card-excerpt');
                 if (!href || !image || !tag || !title || !excerpt) return;
                 var target = card.querySelector('[data-latest-image]');
-                card.setAttribute('href', 'blog/' + href);
-                // Blog paths are relative to blog/, the home page is one level up.
-                target.setAttribute('src', image.getAttribute('src').replace('../', ''));
+                card.setAttribute('href', new URL(href, index).href);
+                target.setAttribute('src', new URL(image.getAttribute('src'), index).href);
                 target.setAttribute('alt', image.getAttribute('alt') || '');
                 card.querySelector('[data-latest-tag]').textContent = tag.textContent.trim();
                 card.querySelector('[data-latest-title]').textContent = title.textContent.trim();
