@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css?v=20260922b">
+    <link rel="stylesheet" href="../assets/css/style.css?v=20261001">
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -92,6 +92,14 @@
                     </div>
                     <div id="cal-events-list"></div>
                     <p class="cal-no-events" id="cal-no-events" style="display:none;">No events scheduled this month.</p>
+                </div>
+
+                <!-- Blog posts published in the selected month, read from the
+                     blog index. Stays hidden if the index cannot be loaded. -->
+                <div class="cal-blog-wrap" id="cal-blog" hidden>
+                    <p class="cal-events-title" id="cal-blog-title">From the blog this month</p>
+                    <div id="cal-blog-list"></div>
+                    <p class="cal-no-events" id="cal-no-posts" style="display:none;">No stories posted this month. <a href="../blog/index.html">Browse all posts</a></p>
                 </div>
 
                 <!-- Edit Events button -->
@@ -505,6 +513,73 @@
                     listEl.appendChild(item);
                 });
             }
+
+            renderBlogPosts();
+        }
+
+        // Blog posts, read from the cards on the blog index so a new post only
+        // has to be added there. Links are resolved against the index because
+        // Netlify's pretty URLs rewrite them (see the home page's Latest Story).
+        var blogPosts = null;
+
+        function loadBlogPosts() {
+            if (!window.fetch || !window.DOMParser || !window.URL) return;
+            var index = new URL('../blog/index.html', location.href);
+            fetch(index.href, { cache: 'no-cache' }).then(function (res) {
+                return res.ok ? res.text() : null;
+            }).then(function (html) {
+                if (!html) return;
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                blogPosts = [];
+                doc.querySelectorAll('.blog-card').forEach(function (card, i) {
+                    var time = card.querySelector('time[datetime]');
+                    var title = card.querySelector('.blog-card-body h2');
+                    var date = time ? time.getAttribute('datetime') : '';
+                    if (!card.getAttribute('href') || !title || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+                    var image = card.querySelector('.blog-card-media img');
+                    var tag = card.querySelector('.blog-card-tag');
+                    blogPosts.push({
+                        order: i,
+                        date: date,
+                        href: new URL(card.getAttribute('href'), index).href,
+                        image: image ? new URL(image.getAttribute('src'), index).href : '',
+                        tag: tag ? tag.textContent.trim() : '',
+                        title: title.textContent.trim()
+                    });
+                });
+                // Newest first, same as the blog page.
+                blogPosts.sort(function (a, b) {
+                    if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+                    return a.order - b.order;
+                });
+                document.getElementById('cal-blog').hidden = false;
+                renderBlogPosts();
+            }).catch(function () {});
+        }
+
+        function renderBlogPosts() {
+            if (!blogPosts) return;
+            var monthName = MONTH_NAMES[viewMonth];
+            var postsThisMonth = blogPosts.filter(function (p) {
+                var d = parseLocalDate(p.date);
+                return d.getFullYear() === viewYear && d.getMonth() === viewMonth;
+            });
+            var listEl = document.getElementById('cal-blog-list');
+            var noMsg = document.getElementById('cal-no-posts');
+            document.getElementById('cal-blog-title').textContent = 'From the blog in ' + monthName;
+            noMsg.firstChild.textContent = 'No stories posted in ' + monthName + '. ';
+            noMsg.style.display = postsThisMonth.length ? 'none' : 'block';
+            listEl.innerHTML = postsThisMonth.map(function (p) {
+                var d = parseLocalDate(p.date);
+                var meta = (p.tag ? escHtml(p.tag) + ' &#9642; ' : '') + d.getDate() + ' ' + monthName.slice(0, 3);
+                return '<a class="cal-blog-item" href="' + escHtml(p.href) + '">' +
+                    (p.image ? '<img class="cal-blog-thumb" src="' + escHtml(p.image) + '" alt="" loading="lazy">' : '') +
+                    '<span class="cal-blog-info">' +
+                        '<span class="cal-blog-meta">' + meta + '</span>' +
+                        '<strong>' + escHtml(p.title) + '</strong>' +
+                    '</span>' +
+                '</a>';
+            }).join('');
         }
 
         function openDayModal(day) {
@@ -683,6 +758,7 @@
 
         initializeFirestore();
         renderBranchLegend();
+        loadBlogPosts();
 
         setTimeout(function() {
             isInitialized = true;

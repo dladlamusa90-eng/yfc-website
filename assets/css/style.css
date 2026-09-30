@@ -4779,6 +4779,69 @@ p {
     font-size: 0.92rem;
 }
 
+/* Blog posts for the selected month, below the events list. Same row card as
+   .cal-event-item, with the post photo standing in for the date badge. */
+.cal-blog-wrap {
+    max-width: 660px;
+    margin: 1.75rem auto 0;
+}
+
+.cal-blog-wrap .cal-events-title {
+    margin-bottom: 0.9rem;
+}
+
+.cal-blog-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #fff;
+    border-left: 4px solid var(--color-gold);
+    border-radius: 14px;
+    padding: 0.7rem 1.1rem 0.7rem 0.7rem;
+    margin-bottom: 0.6rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    color: inherit;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.cal-blog-item:hover,
+.cal-blog-item:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(239, 71, 35, 0.14);
+}
+
+.cal-blog-thumb {
+    flex: 0 0 76px;
+    width: 76px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: #f1e7e2;
+}
+
+.cal-blog-meta {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+}
+
+.cal-blog-info strong {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.97rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #1a1a2e;
+}
+
+.cal-no-events a {
+    font-weight: 700;
+    color: var(--color-gold);
+}
+
 /* Edit Events bar */
 .edit-events-bar {
     max-width: 660px;
@@ -6349,6 +6412,33 @@ button:active,
     margin-top: 0.7rem;
     font-size: 0.85rem;
     color: var(--color-text-muted);
+}
+/* Keeps the top of the photo (a projector screen, a face) when 16:9 crops it. */
+.post-figure-top img {
+    object-position: center top;
+}
+/* Posters and flyers are shown whole, never cropped. */
+.post-figure-poster img {
+    display: block;
+    width: min(100%, 460px);
+    aspect-ratio: auto;
+    margin-inline: auto;
+}
+.post-figure-poster figcaption {
+    text-align: center;
+}
+/* Portrait-friendly pairs of photos, two per row. */
+.post-figure-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+.post-figure-grid img {
+    aspect-ratio: 4 / 5;
+}
+.post-figure-grid figcaption {
+    grid-column: 1 / -1;
+    margin-top: 0;
 }
 
 .post-section {
